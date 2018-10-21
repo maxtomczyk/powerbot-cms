@@ -1,0 +1,90 @@
+const EventEmitter = require('events');
+const express = require('express')
+const path = require('path')
+
+const config = require('./config/config.js')
+const routes = require('./modules/routes.js')
+const auth = require('./modules/auth.js')();
+const User = require('./modules/bot/models/User.js')
+const BotText = require('./modules/models/BotText.js')
+const echo = require('./modules/bot/echo.js')
+const staticElements = require('./modules/bot/static_elements.js')
+const postback = require('./modules/bot/postbacks.js')
+const startup = require('./modules/startup.js')
+const logger = require('./modules/logger')
+const unknownText = require('./modules/bot/unknown_text')
+const unknownPostback = require('./modules/bot/unknown_postback')
+const incredbot = require('./modules/incredbot.js')
+
+staticElements()
+startup()
+
+class Emitter extends EventEmitter {}
+const emitter = new Emitter();
+
+const texts = new BotText()
+
+const webhook = incredbot.Server.setup()
+const app = webhook.server
+const bot = webhook.bot
+
+app.use('/', express.static(path.join(__dirname, 'dist')))
+app.use('/static', express.static(path.join(__dirname, 'dist/static')))
+app.use('/', routes)
+app.use(auth.initialize())
+
+
+bot.on('text', async (message, raw) => {
+    try {
+        let user = await new User(message.sender_id).loadOrCreate()
+        if (user.moderator_chat) return
+
+        emitter.emit('text', message, user, raw)
+    } catch (e) {
+        logger.error(e)
+    }
+})
+
+bot.on('payload', async (message, raw) => {
+    try {
+        let user = await new User(message.sender_id).loadOrCreate()
+        if (user.moderator_chat) return
+
+        await postback(message, user)
+        emitter.emit('payload', message, user, raw)
+    } catch (e) {
+        logger.error(e)
+    }
+})
+
+bot.on('echo', async (message, raw) => {
+    try {
+        let user = await new User(message.recipient_id)
+        echo(message, user)
+
+        emitter.emit('echo', message, user, raw)
+    } catch (e) {
+        logger.error(e)
+    }
+})
+
+async function getText(text, locale) {
+    return await texts.get(text, locale)
+}
+
+async function getButton(text, locale) {
+    return await texts.getButton(text, locale)
+}
+
+module.exports = {
+    server: app,
+    utils: {
+        handleText: unknownText,
+        handlePostback: unknownPostback
+    },
+    bot: emitter,
+    getText: getText,
+    getButton: getButton,
+    incredbot: incredbot,
+    User
+}

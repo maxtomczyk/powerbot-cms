@@ -1,0 +1,22 @@
+.DS_Store
+node_modules/
+/dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Files that are symlinked during installation
+/config/config.js
+src/router/index.js
+src/main.js
+src/App.vue
+modules/routes.js
+modules/api/custom_api.js
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
