@@ -15,8 +15,8 @@ module.exports = async function(message, user) {
         case 'CONTACT':
             {
                 let qrs = [
-                    new incredbot.Helpers.QuickReply('text', 'Tak 💬', 'CONTACT_CONFIRM'),
-                    new incredbot.Helpers.QuickReply('text', 'Anuluj ❌', 'CONTACT_CANCEL')
+                    new incredbot.Helpers.QuickReply('text', await texts.getButton('chat_accept'), 'CONTACT_CONFIRM'),
+                    new incredbot.Helpers.QuickReply('text', await texts.getButton('chat_cancel'), 'CONTACT_CANCEL')
                 ]
 
                 await message.reply.quick_replies(await texts.get('moderator_chat', user.locale), qrs)
@@ -40,8 +40,8 @@ module.exports = async function(message, user) {
         case 'CLEAR_USER_DATA':
             {
                 let qrs = [
-                    new incredbot.Helpers.QuickReply('text', 'Wymaż moje dane ❌', 'REMOVE_USER_DATA'),
-                    new incredbot.Helpers.QuickReply('text', 'Zostań z nami ❤️', 'CLEAR_USER_DATA_CANCEL')
+                    new incredbot.Helpers.QuickReply('text', await texts.getButton('data_remove'), 'REMOVE_USER_DATA'),
+                    new incredbot.Helpers.QuickReply('text', await texts.getButton('data_remove_cancel'), 'CLEAR_USER_DATA_CANCEL')
                 ]
                 await message.reply.quick_replies(await texts.get('user_data_remove', user.locale), qrs)
             }
