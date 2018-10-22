@@ -15,6 +15,8 @@ const logger = require('./modules/logger')
 const unknownText = require('./modules/bot/unknown_text')
 const unknownPostback = require('./modules/bot/unknown_postback')
 const incredbot = require('./modules/incredbot.js')
+const knex = require('./modules/knex.js')
+const redis = require('./modules/redis.js')
 
 staticElements()
 startup()
@@ -86,5 +88,8 @@ module.exports = {
     getText: getText,
     getButton: getButton,
     incredbot: incredbot,
-    User
+    knex: knex,
+    redis: redis,
+    logger: logger,
+    User: User
 }
