@@ -1,5 +1,6 @@
-const EventEmitter = require('events');
 const express = require('express')
+const format = require('string-template')
+const EventEmitter = require('events')
 const path = require('path')
 
 const config = require('./config/config.js')
@@ -70,12 +71,12 @@ bot.on('echo', async (message, raw) => {
     }
 })
 
-async function getText(text, locale) {
-    return await texts.get(text, locale)
+async function getText(text, user) {
+    return format(await texts.get(text, user.locale), user)
 }
 
-async function getButton(text, locale) {
-    return await texts.getButton(text, locale)
+async function getButton(text, user) {
+    return await texts.getButton(text, user.locale)
 }
 
 module.exports = {
