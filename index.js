@@ -72,13 +72,14 @@ bot.on('echo', async (message, raw) => {
 })
 
 async function getText(text, user) {
+    if (!user) user = {}
     return format(await texts.get(text, user.locale), user)
 }
 
 async function getButton(text, user) {
+    if (!user) user = {}
     return await texts.getButton(text, user.locale)
 }
-
 module.exports = {
     server: app,
     utils: {
