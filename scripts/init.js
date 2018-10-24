@@ -1,6 +1,6 @@
 const fs = require('fs')
 
-const initialized = fs.existsSync('../../config/config.js') && fs.existsSync('../../cms/main.js') && fs.existsSync('../../cms/router.js')
+const initialized = fs.existsSync('../../config/config.js') && fs.existsSync('../../cms/main.js') && fs.existsSync('../../cms/vue_router.js')
 
 if (!initialized) {
     fs.mkdirSync('../../config')
