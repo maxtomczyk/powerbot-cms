@@ -149,7 +149,10 @@ class User {
 
     async enableModeratorChat() {
         try {
-            let [updated] = await knex('users').update('moderator_chat', true).where('messenger_id', this.messenger_id).returning('*')
+            let [updated] = await knex('users').update({
+                moderator_chat: true,
+                waiting_for_reason: true
+            }).where('messenger_id', this.messenger_id).returning('*')
         } catch (e) {
             throw e
         }
@@ -157,7 +160,12 @@ class User {
 
     async disableModeratorChat() {
         try {
-            let [updated] = await knex('users').update('moderator_chat', false).where('messenger_id', this.messenger_id).returning('*')
+            let [updated] = await knex('users').update({
+                moderator_chat: false,
+                bot_lock: false,
+                chat_reason: '',
+                waiting_for_reason: false
+            }).where('messenger_id', this.messenger_id).returning('*')
             if (updated) await incredbot.send.text(await texts.get('moderator_chat_ended', updated.locale), {
                 recipient_id: this.messenger_id
             })
@@ -168,7 +176,12 @@ class User {
 
     async disableModeratorChatWithId(id) {
         try {
-            let [updated] = await knex('users').update('moderator_chat', false).where('id', id).returning('*')
+            let [updated] = await knex('users').update({
+                moderator_chat: false,
+                bot_lock: false,
+                chat_reason: '',
+                waiting_for_reason: false
+            }).where('id', id).returning('*')
             if (updated) await incredbot.send.text(await texts.get('moderator_chat_ended', updated.locale), {
                 recipient_id: updated.messenger_id
             })

@@ -40,7 +40,16 @@ app.use(auth.initialize())
 bot.on('text', async (message, raw) => {
     try {
         let user = await new User(message.sender_id).loadOrCreate()
-        if (user.moderator_chat) return
+        if (user.bot_lock) return
+        if (user.waiting_for_reason) {
+            await knex('users').update({
+                waiting_for_reason: false,
+                chat_reason: message.text
+            }).where('id', user.id)
+
+            await message.reply.quick_replies(await getText('chat_reason_added', user), [new incredbot.Helpers.QuickReply('text', await getButton('chat_reason_given', user), 'BOT_MENU')])
+            return
+        }
 
         emitter.emit('text', message, user, raw)
     } catch (e) {
@@ -51,7 +60,7 @@ bot.on('text', async (message, raw) => {
 bot.on('payload', async (message, raw) => {
     try {
         let user = await new User(message.sender_id).loadOrCreate()
-        if (user.moderator_chat) return
+        if (user.bot_lock) return
 
         await postback(message, user)
         emitter.emit('payload', message, user, raw)

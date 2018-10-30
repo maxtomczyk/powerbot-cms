@@ -128,6 +128,10 @@ router.post('/api/broadcast-cancel', auth.authenticate(), async (req, res) => {
     api.broadcast.cancel(req, res)
 })
 
+router.post('/api/chat_request_lock', auth.authenticate(), async (req, res) => {
+    api.chats.lock(req, res)
+})
+
 router.delete('/api/admins', auth.authenticate(), async (req, res) => {
     api.admins.deleteAdmin(req, res)
 })

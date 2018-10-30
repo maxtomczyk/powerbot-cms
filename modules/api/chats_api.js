@@ -23,7 +23,18 @@ async function unlock(req, res) {
     }
 }
 
+async function lock(req, res){
+    try {
+        await knex('users').update('bot_lock', true).where('id', req.body.id)
+        res.sendStatus(200)
+    } catch (e) {
+        logger.error(e)
+        res.sendStatus(500)
+    }
+}
+
 module.exports = {
     list,
-    unlock
+    unlock,
+    lock
 }
