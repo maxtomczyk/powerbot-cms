@@ -51,13 +51,13 @@ module.exports = async function(message, user) {
             {
                 let u = new User(user.messenger_id)
                 await u.removeFromDatabase()
-                await message.reply.quick_replies(await texts.get('user_data_removed', user.locale),  [new incredbot.Helpers.QuickReply('text', await texts.getButton('restart', user.locale), 'BOT_MENU')])
+                await message.reply.quick_replies(await texts.get('user_data_removed', user.locale),  [new incredbot.Helpers.QuickReply('text', await texts.getButton('restart', user.locale), 'GET_STARTED')])
             }
             break
 
         case 'CLEAR_USER_DATA_CANCEL':
             {
-                await message.reply.quick_replies(await texts.get('user_data_remove_canceled', user.locale),  [new incredbot.Helpers.QuickReply('text', await texts.getButton('back_to_menu_2', user.locale), 'GET_STARTED')])
+                await message.reply.quick_replies(await texts.get('user_data_remove_canceled', user.locale),  [new incredbot.Helpers.QuickReply('text', await texts.getButton('back_to_menu_2', user.locale), 'BOT_MENU')])
             }
             break;
 
