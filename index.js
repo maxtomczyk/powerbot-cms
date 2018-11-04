@@ -98,10 +98,7 @@ bot.on('entry', async (entry) => {
 
 bot.on('message', async (message, raw) => {
     try {
-        if (user.bot_lock) return
-
-        await postback(message, user)
-        emitter.emit('message', message, user, raw)
+        emitter.emit('message', message, raw)
     } catch (e) {
         logger.error(e)
     }
@@ -112,7 +109,6 @@ bot.on('location', async (message, raw) => {
         let user = await new User(message.sender_id).loadOrCreate()
         if (user.bot_lock) return
 
-        await postback(message, user)
         emitter.emit('location', message, user, raw)
     } catch (e) {
         logger.error(e)
@@ -124,7 +120,6 @@ bot.on('image', async (message, raw) => {
         let user = await new User(message.sender_id).loadOrCreate()
         if (user.bot_lock) return
 
-        await postback(message, user)
         emitter.emit('image', message, user, raw)
     } catch (e) {
         logger.error(e)
