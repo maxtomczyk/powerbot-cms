@@ -80,6 +80,58 @@ bot.on('echo', async (message, raw) => {
     }
 })
 
+bot.on('comment', async (message, raw) => {
+    try {
+        emitter.emit('comment', message, raw)
+    } catch (e) {
+        logger.error(e)
+    }
+})
+
+bot.on('entry', async (entry) => {
+    try {
+        emitter.emit('entry', entry)
+    } catch (e) {
+        logger.error(e)
+    }
+})
+
+bot.on('message', async (message, raw) => {
+    try {
+        let user = await new User(message.sender_id).loadOrCreate()
+        if (user.bot_lock) return
+
+        await postback(message, user)
+        emitter.emit('message', message, user, raw)
+    } catch (e) {
+        logger.error(e)
+    }
+})
+
+bot.on('location', async (message, raw) => {
+    try {
+        let user = await new User(message.sender_id).loadOrCreate()
+        if (user.bot_lock) return
+
+        await postback(message, user)
+        emitter.emit('location', message, user, raw)
+    } catch (e) {
+        logger.error(e)
+    }
+})
+
+bot.on('image', async (message, raw) => {
+    try {
+        let user = await new User(message.sender_id).loadOrCreate()
+        if (user.bot_lock) return
+
+        await postback(message, user)
+        emitter.emit('image', message, user, raw)
+    } catch (e) {
+        logger.error(e)
+    }
+})
+
 async function getText(text, user) {
     if (!user) user = {}
     return format(await texts.get(text, user.locale), user)
@@ -89,6 +141,7 @@ async function getButton(text, user) {
     if (!user) user = {}
     return await texts.getButton(text, user.locale)
 }
+
 module.exports = {
     server: app,
     utils: {
