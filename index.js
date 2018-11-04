@@ -98,7 +98,6 @@ bot.on('entry', async (entry) => {
 
 bot.on('message', async (message, raw) => {
     try {
-        let user = await new User(message.sender_id).loadOrCreate()
         if (user.bot_lock) return
 
         await postback(message, user)
