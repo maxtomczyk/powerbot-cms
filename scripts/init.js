@@ -1,5 +1,4 @@
 const fs = require('fs')
-const chalk = require('chalk')
 const initialized = fs.existsSync('../../config/config.js') && fs.existsSync('../../cms/main.js') && fs.existsSync('../../cms/vue_router.js')
 
 if (!initialized) {
@@ -43,5 +42,3 @@ fs.symlinkSync('../../../../cms/vue_router.js', './src/router/index.js')
 fs.symlinkSync('../../../cms/App.vue', './src/App.vue')
 fs.symlinkSync('../../../cms/api_routes.js', './modules/routes.js')
 fs.symlinkSync('../../../../cms/api.js', './modules/api/custom_api.js')
-
-if (!initialized) console.log(chalk.green(`\nProject initialized successfully. Now you need to configure your database connection in config.js file and then run 'incredbot database setup' inside project directory.`))

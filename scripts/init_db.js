@@ -48,6 +48,7 @@ async function start () {
     await knex.schema.createTable('messages_groups', function (table) {
       table.increments()
       table.string('name', 64)
+      table.boolean('builtin').defaultTo(false)
 
       table.unique('id')
     })
@@ -224,10 +225,11 @@ async function start () {
       value: `Hello, it's default hello message of Incredbot CMS`,
       json: null
     }])
+
+    process.exit(0)
   } catch (e) {
     console.error(e)
-  } finally {
-    process.exit()
+    process.exit(1)
   }
 }
 
