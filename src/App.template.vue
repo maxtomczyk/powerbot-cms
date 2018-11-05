@@ -33,16 +33,10 @@
                             <span class="md-list-item-text drawer__link">Chat requests</span>
                         </md-list-item>
                     </router-link>
-                    <router-link to="/texts">
-                        <md-list-item class="drawer__item" @click="closeDrawer()">
-                            <md-icon class="drawer__icon">title</md-icon>
-                            <span class="md-list-item-text drawer__link">Texts</span>
-                        </md-list-item>
-                    </router-link>
                     <router-link to="/messages">
                         <md-list-item class="drawer__item" @click="closeDrawer()">
                             <md-icon class="drawer__icon">chat</md-icon>
-                            <span class="md-list-item-text drawer__link">Custom messages</span>
+                            <span class="md-list-item-text drawer__link">Messages</span>
                         </md-list-item>
                     </router-link>
                     <router-link to="/keywords">
@@ -57,10 +51,10 @@
                             <span class="md-list-item-text drawer__link">Custom postbacks</span>
                         </md-list-item>
                     </router-link>
-                    <router-link to="/unknown_words">
+                    <router-link to="/unknown_phrases">
                         <md-list-item class="drawer__item" @click="closeDrawer()">
                             <md-icon class="drawer__icon">error</md-icon>
-                            <span class="md-list-item-text drawer__link">Mismatched words</span>
+                            <span class="md-list-item-text drawer__link">Unknown phrases</span>
                         </md-list-item>
                     </router-link>
                     <router-link to="/emissions">

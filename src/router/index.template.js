@@ -5,11 +5,10 @@ import Login from '@/views/Login'
 import Logout from '@/views/Logout'
 import Dashboard from '@/views/Dashboard'
 import Admins from '@/views/Admins'
-import Texts from '@/views/Texts'
 import ChatRequests from '@/views/ChatRequests'
-import CustomMessages from '@/views/CustomMessages'
+import Messages from '@/views/Messages'
 import CustomPostbacks from '@/views/CustomPostbacks'
-import UnknownWords from '@/views/UnknownWords'
+import UnknownPhrases from '@/views/UnknownPhrases'
 import Emissions from '@/views/Emissions'
 import Keywords from '@/views/Keywords'
 
@@ -32,19 +31,14 @@ export default new Router({
         component: Admins,
         beforeEnter: Guard.auth
     }, {
-        path: '/texts',
-        name: 'Texts',
-        component: Texts,
-        beforeEnter: Guard.auth
-    }, {
         path: '/chats',
         name: 'Chat Requests',
         component: ChatRequests,
         beforeEnter: Guard.auth
     }, {
         path: '/messages',
-        name: 'Custom Messages',
-        component: CustomMessages,
+        name: 'Messages',
+        component: Messages,
         beforeEnter: Guard.auth
     }, {
         path: '/postbacks',
@@ -52,9 +46,9 @@ export default new Router({
         component: CustomPostbacks,
         beforeEnter: Guard.auth
     }, {
-        path: '/unknown_words',
-        name: 'Mismatched words',
-        component: UnknownWords,
+        path: '/unknown_phrases',
+        name: 'Unknown phrases',
+        component: UnknownPhrases,
         beforeEnter: Guard.auth
     }, {
         path: '/emissions',
