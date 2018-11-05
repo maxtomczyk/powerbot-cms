@@ -7,12 +7,10 @@
 
     <md-table class="unknown-words__table">
         <md-table-row>
-            <md-table-head>Word</md-table-head>
-            <md-table-head>Occurrences</md-table-head>
+            <md-table-head>Phrase</md-table-head>
         </md-table-row>
-        <md-table-row v-for="word in words" :key="word.id">
-            <md-table-cell>{{ word.word }}</md-table-cell>
-            <md-table-cell>{{ word.occurrences }}</md-table-cell>
+        <md-table-row v-for="phrase in phrases" :key="phrase.id">
+            <md-table-cell>{{ phrase.phrase }}</md-table-cell>
         </md-table-row>
     </md-table>
 </div>
@@ -24,7 +22,7 @@ import axios from 'axios'
 export default {
     data() {
         return {
-            words: [],
+            phrases: [],
             loadError: false
         }
     },
@@ -36,8 +34,8 @@ export default {
     async created() {
         try {
             axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token')
-            const words = await axios.get('/api/words')
-            this.words = words.data
+            const phrases = await axios.get('/api/phrases')
+            this.phrases = phrases.data
         } catch (e) {
             this.loadError = true
         }

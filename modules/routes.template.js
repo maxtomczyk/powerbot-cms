@@ -68,8 +68,8 @@ router.get('/api/postbacks', auth.authenticate(), async (req, res) => {
     api.postbacks.list(req, res)
 })
 
-router.get('/api/words', auth.authenticate(), async (req, res) => {
-    api.messages.listUnknownWords(req, res)
+router.get('/api/phrases', auth.authenticate(), async (req, res) => {
+    api.messages.listUnknownPhrases(req, res)
 })
 
 router.get('/api/labels', auth.authenticate(), async (req, res) => {
