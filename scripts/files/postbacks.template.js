@@ -1,14 +1,12 @@
-const cms = require('incredbot-cms');
+const cms = require('incredbot-cms')
 
-module.exports = async function(message, user) {
-    switch (message.payload) {
-        case 'YOUR_PAYLOAD':
-            {
+module.exports = async function (message, user) {
+  switch (message.payload) {
+    case 'YOUR_PAYLOAD':
 
-            }
-            break;
-        default:
-            await cms.utils.handlePostback(message, message.payload)
-            break
-    }
+      break
+    default:
+      await cms.utils.handlePostback(message, message.payload)
+      break
+  }
 }

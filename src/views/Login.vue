@@ -1,28 +1,28 @@
 <template>
 <div class="md-layout md-gutter md-alignment-center-center loginscreen">
-    <md-snackbar md-position="center" :md-duration="3000" :md-active.sync="login_incorrect">
-        <span>User credentials incorrect! Please, try again.</span>
-        <md-button class="md-primary" @click="login_incorrect = false">close</md-button>
-    </md-snackbar>
+  <md-snackbar md-position="center" :md-duration="3000" :md-active.sync="login_incorrect">
+    <span>User credentials incorrect! Please, try again.</span>
+    <md-button class="md-primary" @click="login_incorrect = false">close</md-button>
+  </md-snackbar>
 
-    <md-card class="md-layout-item md-size-30 md-xsmall-size-100  loginscreen__box">
-        <md-card-header class="loginbox__header">
-            <img class="loginbox__logo" alt="logo" src="../assets/logo.jpg">
-        </md-card-header>
-        <md-card-content>
-            <md-field>
-                <label>Login</label>
-                <md-input v-model="user.login" @keyup="loginKeyUp($event)"></md-input>
-            </md-field>
-            <md-field>
-                <label>Password</label>
-                <md-input type="password" v-model="user.password" @keyup="loginKeyUp($event)"></md-input>
-            </md-field>
-        </md-card-content>
-        <md-card-actions>
-            <md-button class="md-raised md-primary" @click="auth()">Log in</md-button>
-        </md-card-actions>
-    </md-card>
+  <md-card class="md-layout-item md-size-30 md-xsmall-size-100  loginscreen__box">
+    <md-card-header class="loginbox__header">
+      <img class="loginbox__logo" alt="logo" src="../assets/logo.jpg">
+    </md-card-header>
+    <md-card-content>
+      <md-field>
+        <label>Login</label>
+        <md-input v-model="user.login" @keyup="loginKeyUp($event)"></md-input>
+      </md-field>
+      <md-field>
+        <label>Password</label>
+        <md-input type="password" v-model="user.password" @keyup="loginKeyUp($event)"></md-input>
+      </md-field>
+    </md-card-content>
+    <md-card-actions>
+      <md-button class="md-raised md-primary" @click="auth()">Log in</md-button>
+    </md-card-actions>
+  </md-card>
 </div>
 </template>
 
@@ -32,41 +32,41 @@ import router from '@/router'
 import store from '@/store'
 
 export default {
-    name: 'Login',
-    data() {
-        return {
-            login_incorrect: false,
-            user: {
-                login: '',
-                password: ''
-            }
+  name: 'Login',
+  data() {
+    return {
+      login_incorrect: false,
+      user: {
+        login: '',
+        password: ''
+      }
+    }
+  },
+
+  methods: {
+    async auth() {
+      try {
+        let auth = await axios.post('/api/auth', this.user)
+        localStorage.setItem('token', auth.data.token)
+        localStorage.setItem('user', auth.data.user)
+        store.commit('LOGIN_USER')
+        this.$emit('logged')
+        router.push('/')
+      } catch (e) {
+        if (e.response.status === 401) {
+          this.login_incorrect = true
+          document.querySelector('.loginbox__logo').classList.add('e401')
+          setTimeout(() => {
+            document.querySelector('.loginbox__logo').classList.remove('e401')
+          }, 850)
         }
+      }
     },
 
-    methods: {
-        async auth() {
-            try {
-                let auth = await axios.post('/api/auth', this.user)
-                localStorage.setItem('token', auth.data.token)
-                localStorage.setItem('user', auth.data.user)
-                store.commit('LOGIN_USER')
-                this.$emit('logged')
-                router.push('/')
-            } catch (e) {
-                if (e.response.status === 401) {
-                    this.login_incorrect = true
-                    document.querySelector('.loginbox__logo').classList.add('e401')
-                    setTimeout(() => {
-                        document.querySelector('.loginbox__logo').classList.remove('e401')
-                    }, 850)
-                }
-            }
-        },
-
-        loginKeyUp(e) {
-            if (e.key === 'Enter') this.auth()
-        }
+    loginKeyUp(e) {
+      if (e.key === 'Enter') this.auth()
     }
+  }
 }
 </script>
 
@@ -93,7 +93,7 @@ export default {
         display: flex;
         align-items: center;
         justify-content: center;
-        padding-bottom: 0
+        padding-bottom: 0;
     }
 }
 

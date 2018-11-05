@@ -6,25 +6,25 @@ import regeneratorRuntime from 'babel-regenerator-runtime'
 import App from './App'
 import router from './vue_router'
 import {
-    MdField,
-    MdButton,
-    MdContent,
-    MdTabs,
-    MdCard,
-    MdApp,
-    MdSnackbar,
-    MdDrawer,
-    MdToolbar,
-    MdList,
-    MdTable,
-    MdSpeedDial,
-    MdDialog,
-    MdAvatar,
-    MdRipple,
-    MdEmptyState,
-    MdMenu,
-    MdRadio,
-    MdCheckbox
+  MdField,
+  MdButton,
+  MdContent,
+  MdTabs,
+  MdCard,
+  MdApp,
+  MdSnackbar,
+  MdDrawer,
+  MdToolbar,
+  MdList,
+  MdTable,
+  MdSpeedDial,
+  MdDialog,
+  MdAvatar,
+  MdRipple,
+  MdEmptyState,
+  MdMenu,
+  MdRadio,
+  MdCheckbox
 } from 'vue-material/dist/components'
 import 'vue-material/dist/vue-material.min.css'
 import 'vue-material/dist/theme/default.css'
@@ -62,10 +62,10 @@ Vue.config.productionTip = false
 
 /* eslint-disable no-new */
 new Vue({
-    el: '#app',
-    router,
-    components: {
-        App
-    },
-    template: '<App/>'
+  el: '#app',
+  router,
+  components: {
+    App
+  },
+  template: '<App/>'
 })

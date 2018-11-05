@@ -7,7 +7,7 @@ async function list (req, res) {
     let messages = await knex('messages')
     if (q.id) {
       messages = messages.filter(m => {
-        return m.group_id == q.id
+        return parseInt(m.group_id) === parseInt(q.id)
       })
     }
     res.json(messages)
