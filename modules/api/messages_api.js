@@ -1,16 +1,20 @@
 const knex = require('../knex')
 const logger = require('../logger')
 
-async function list (req, res) {
+async function listPlugs (req, res) {
   try {
-    const q = req.query
     let messages = await knex('messages')
-    if (q.id) {
-      messages = messages.filter(m => {
-        return parseInt(m.group_id) === parseInt(q.id)
-      })
-    }
     res.json(messages)
+  } catch (e) {
+    logger.error(e)
+    res.sendStatus(500)
+  }
+}
+
+async function listGroups (req, res) {
+  try {
+    const groups = await knex('messages_groups')
+    res.json(groups)
   } catch (e) {
     logger.error(e)
     res.sendStatus(500)
@@ -58,9 +62,21 @@ async function listUnknownPhrases (req, res) {
   }
 }
 
+async function createPlug (req, res) {
+  try {
+    const [created] = await knex('messages').insert(req.body).returning('*')
+    res.json(created)
+  } catch (e) {
+    logger.error(e)
+    res.sendStatus(500)
+  }
+}
+
 module.exports = {
-  list,
+  listPlugs,
+  listGroups,
   create,
   remove,
-  listUnknownPhrases
+  listUnknownPhrases,
+  createPlug
 }

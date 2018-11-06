@@ -27,18 +27,34 @@
     </md-dialog-actions>
   </md-dialog>
 
-  <md-dialog :md-active.sync="previewDialog.show">
-    <md-dialog-title>Custom message preview</md-dialog-title>
+  <md-dialog :md-active.sync="plugDialog.show" style="min-width: 500px; min-height: 520px;">
+    <md-dialog-title>Create new plug</md-dialog-title>
     <md-dialog-content>
-      {{ previewDialog.code }}
+      <md-field>
+        <label>Group</label>
+        <md-select v-model="plugDialog.data.group_id">
+          <md-option v-for="group in groups" :key="group.id" :value="group.id">{{ group.name }}</md-option>
+        </md-select>
+      </md-field>
+      <md-field>
+        <label>API access name</label>
+        <md-input v-model="plugDialog.data.name"></md-input>
+      </md-field>
+      <md-field>
+        <label>Friendly name</label>
+        <md-input v-model="plugDialog.data.friendly_name"></md-input>
+      </md-field>
+      <md-field>
+        <label>Description</label>
+        <md-textarea v-model="plugDialog.data.description"></md-textarea>
+      </md-field>
     </md-dialog-content>
 
     <md-dialog-actions>
-      <md-button class="md-primary" @click="previewDialog.show = false">Close</md-button>
+      <md-button class="md-primary" @click="plugDialog.show = false">Close</md-button>
+      <md-button class="md-primary" @click="createPlug">Create</md-button>
     </md-dialog-actions>
   </md-dialog>
-
-  <message-creator :active="createDialog" @close="createDialog = false" @create="createMessage"></message-creator>
 
   <md-tabs :md-active-tab="activeGroup" @md-changed="tabChange">
     <md-tab v-for="group in groups" :id="`${group.id}`" :md-label="group.name" :key="group.id">
@@ -51,22 +67,20 @@
       <md-table-head>Description</md-table-head>
       <md-table-head>Actions</md-table-head>
     </md-table-row>
-    <md-table-row v-for="message in messages" v-show="message.group_id == activeGroup" :key="message.id">
-      <md-table-cell>{{ message.friendly_name }}</md-table-cell>
-      <md-table-cell>{{ message.description }}</md-table-cell>
+    <md-table-row v-for="plug in plugs" v-show="plug.group_id == activeGroup" :key="plug.id">
+      <md-table-cell>{{ plug.friendly_name }}</md-table-cell>
+      <md-table-cell>{{ plug.description }}</md-table-cell>
       <md-table-cell>
-        <md-button class="md-icon-button" @click="showRemoveDialog(message)">
-          <md-icon>delete</md-icon>
-        </md-button>
-        <md-button class="md-icon-button" @click="showPreviewDialog(message)">
-          <md-icon>visibility</md-icon>
+        <md-button class="md-icon-button" @click="messagesDialogs[plug.id] = true; $forceUpdate()">
+          <md-icon>chat</md-icon>
         </md-button>
       </md-table-cell>
+      <message-creator :message="plug.json" :type="plug.type" :active="messagesDialogs[plug.id]" @close="messagesDialogs[plug.id] = false; $forceUpdate()" :langs="langs"></message-creator>
     </md-table-row>
   </md-table>
 
   <md-speed-dial class="md-bottom-right">
-    <md-speed-dial-target @click="createDialog = true">
+    <md-speed-dial-target @click="plugDialog.data.group_id = parseInt(activeGroup); plugDialog.show = true">
       <md-icon>add</md-icon>
     </md-speed-dial-target>
   </md-speed-dial>
@@ -81,50 +95,34 @@ export default {
     return {
       loadError: false,
       success: false,
+      message: {},
+      langs: [],
       removeDialog: {
         name: '',
         show: false,
         id: null
       },
-      previewDialog: {
+      plugDialog: {
         show: false,
-        code: null
+        data: {
+          name: '',
+          description: '',
+          group_id: null,
+          friendly_name: ''
+        }
       },
+      messagesDialogs: {},
       error: false,
       activeGroup: '1',
       createDialog: false,
-      groups: [{
-        id: 1,
-        name: 'Emissions messages'
-      }, {
-        id: 2,
-        name: 'Postbacks reactions'
-      }, {
-        id: 3,
-        name: 'Keywords messages'
-      }, {
-        id: 4,
-        name: 'Special messages'
-      }],
-      messages: []
+      groups: [],
+      plugs: []
     }
   },
 
   methods: {
     tabChange(e) {
       this.activeGroup = e
-    },
-    async createMessage(e) {
-      try {
-        e.group_id = this.activeGroup
-        const message = await axios.put('/api/messages', e)
-        this.messages.push(message.data)
-        this.createDialog = false
-        this.success = true
-      } catch (e) {
-        console.error(e)
-        this.error = true
-      }
     },
 
     showRemoveDialog(message) {
@@ -133,26 +131,20 @@ export default {
       this.removeDialog.show = true
     },
 
-    showPreviewDialog(message) {
-      this.previewDialog.code = message.json
-      this.previewDialog.show = true
-    },
-
-    async removeMessage() {
+    async createPlug(){
       try {
-        await axios.delete('/api/messages', {
-          data: {
-            id: this.removeDialog.id
-          }
-        })
-        this.messages.map((m, i) => {
-          if (m.id === this.removeDialog.id) this.messages.splice(i, 1)
-        })
+        const created = await axios.put('/api/messages/plug', this.plugDialog.data)
+        this.plugs.push(created.data)
+        this.plugDialog.show = false
         this.success = true
-        this.removeDialog.show = false
+        this.plugDialog.data = {
+          group_id: null,
+          name: '',
+          description: '',
+          friendly_name: ''
+        }
       } catch (e) {
         this.error = true
-        console.error(e)
       }
     }
   },
@@ -160,8 +152,16 @@ export default {
   async created() {
     try {
       axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token')
-      const messages = await axios.get('/api/messages')
-      this.messages = messages.data
+      const plugs = await axios.get('/api/messages/plugs')
+      const groups = await axios.get('/api/messages/groups')
+      const langs = await axios.get('/api/languages')
+      this.langs = langs.data
+      this.plugs = plugs.data
+      this.groups = groups.data
+      this.plugs.map(plug => {
+        this.messagesDialogs[plug.id] = false
+      })
+      console.log(this.messagesDialogs);
     } catch (e) {
       this.loadError = true
     }

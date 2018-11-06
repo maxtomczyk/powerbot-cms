@@ -53,22 +53,14 @@ async function start () {
       table.unique('id')
     })
 
-    await knex.schema.createTable('messages_plugs', function (table) {
-      table.increments()
-      table.integer('group_id').references('messages_groups.id').onUpdate('cascade').onDelete('cascade')
-      table.string('name', 64)
-
-      table.unique('id')
-    })
-
     await knex.schema.createTable('messages', function (table) {
       table.increments()
-      table.varchar('name', 32).notNullable()
+      table.string('name', 64).notNullable()
       table.string('friendly_name', 64)
+      table.text('description')
       table.json('json').notNullable()
-      table.integer('plug_id').references('messages_plugs.id').onUpdate('cascade').onDelete('cascade')
-      table.integer('language_id').references('languages.id').onUpdate('cascade').onDelete('cascade')
-      table.varchar('description', 64)
+      table.integer('group_id').notNullable().references('messages_groups.id').onUpdate('cascade').onDelete('cascade')
+      table.varchar('type', 32).notNullable()
 
       table.unique('id')
       table.unique('name')
@@ -176,7 +168,8 @@ async function start () {
     })
 
     await knex('messages_groups').insert({
-      name: 'Default'
+      name: 'Basic',
+      builtin: true
     })
 
     await knex('settings').insert([{

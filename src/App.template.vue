@@ -166,4 +166,8 @@ export default {
         font-size: 27px !important;
     }
 }
+
+.md-select-menu {
+    z-index: 9999;
+}
 </style>
