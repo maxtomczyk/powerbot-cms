@@ -28,7 +28,7 @@
   </md-dialog>
 
   <md-dialog :md-active.sync="plugDialog.show" style="min-width: 500px; min-height: 520px;">
-    <md-dialog-title>Create new plug</md-dialog-title>
+    <md-dialog-title>Create new message</md-dialog-title>
     <md-dialog-content>
       <md-field>
         <label>Group</label>
@@ -75,7 +75,7 @@
           <md-icon>chat</md-icon>
         </md-button>
       </md-table-cell>
-      <message-creator :message="plug.json" :type="plug.type" :active="messagesDialogs[plug.id]" @close="messagesDialogs[plug.id] = false; $forceUpdate()" :langs="langs"></message-creator>
+      <message-creator :message="plug.json" :active="messagesDialogs[plug.id]" @close="messagesDialogs[plug.id] = false; $forceUpdate()" :langs="langs"></message-creator>
     </md-table-row>
   </md-table>
 
@@ -131,7 +131,7 @@ export default {
       this.removeDialog.show = true
     },
 
-    async createPlug(){
+    async createPlug() {
       try {
         const created = await axios.put('/api/messages/plug', this.plugDialog.data)
         this.plugs.push(created.data)
@@ -161,7 +161,6 @@ export default {
       this.plugs.map(plug => {
         this.messagesDialogs[plug.id] = false
       })
-      console.log(this.messagesDialogs);
     } catch (e) {
       this.loadError = true
     }

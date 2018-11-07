@@ -64,6 +64,14 @@ async function listUnknownPhrases (req, res) {
 
 async function createPlug (req, res) {
   try {
+    const languages = await knex('languages')
+    req.body.json = {}
+    req.body.type = 'text'
+    languages.forEach(language => {
+      req.body.json[language.locale] = {
+        texts: [`${req.body.friendly_name || req.body.name} default text in ${language.name} (${language.locale}) language.`]
+      }
+    })
     const [created] = await knex('messages').insert(req.body).returning('*')
     res.json(created)
   } catch (e) {

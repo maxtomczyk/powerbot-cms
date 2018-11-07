@@ -6,25 +6,26 @@ import regeneratorRuntime from 'babel-regenerator-runtime'
 import App from './App'
 import router from './vue_router'
 import {
-  MdField,
-  MdButton,
-  MdContent,
-  MdTabs,
-  MdCard,
-  MdApp,
-  MdSnackbar,
-  MdDrawer,
-  MdToolbar,
-  MdList,
-  MdTable,
-  MdSpeedDial,
-  MdDialog,
-  MdAvatar,
-  MdRipple,
-  MdEmptyState,
-  MdMenu,
-  MdRadio,
-  MdCheckbox
+    MdField,
+    MdButton,
+    MdContent,
+    MdTabs,
+    MdCard,
+    MdApp,
+    MdSnackbar,
+    MdDrawer,
+    MdToolbar,
+    MdList,
+    MdTable,
+    MdSpeedDial,
+    MdDialog,
+    MdAvatar,
+    MdRipple,
+    MdEmptyState,
+    MdMenu,
+    MdRadio,
+    MdCheckbox,
+    MdDivider
 } from 'vue-material/dist/components'
 import 'vue-material/dist/vue-material.min.css'
 import 'vue-material/dist/theme/default.css'
@@ -52,6 +53,7 @@ Vue.use(MdEmptyState)
 Vue.use(MdMenu)
 Vue.use(MdRadio)
 Vue.use(MdCheckbox)
+Vue.use(MdDivider)
 
 Vue.component('bot-text-row', BotTextRow)
 Vue.component('bot-text-field', BotTextField)
