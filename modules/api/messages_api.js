@@ -23,18 +23,15 @@ async function listGroups (req, res) {
 
 async function create (req, res) {
   try {
-    const insert = {
-      friendly_name: req.body.name,
-      description: req.body.description,
-      json: req.body.message,
-      group_id: req.body.group_id,
-      name: req.body.name.replace(' ', '_').toLowerCase()
+    const id = req.body.id
+    const update = {
+      json: req.body.json,
+      type: req.body.type
     }
 
-    if (!insert.friendly_name || !insert.name || !insert.group_id) return res.sendStatus(400)
-
-    const [inserted] = await knex('messages').insert(insert).returning('*')
-    res.json(inserted)
+    const [updated] = await knex('messages').update(update).where('id', id).returning('*')
+    console.log(updated)
+    res.json(updated)
   } catch (e) {
     logger.error(e)
     res.sendStatus(500)
