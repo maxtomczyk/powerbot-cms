@@ -30,7 +30,6 @@ async function create (req, res) {
     }
 
     const [updated] = await knex('messages').update(update).where('id', id).returning('*')
-    console.log(updated)
     res.json(updated)
   } catch (e) {
     logger.error(e)
