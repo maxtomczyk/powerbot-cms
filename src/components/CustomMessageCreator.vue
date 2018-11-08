@@ -1,5 +1,10 @@
 <template>
 <div class="message-creator__wrapper">
+  <md-snackbar md-position="center" :md-duration="3000" :md-active.sync="error">
+    <span>Request ended with error!</span>
+    <md-button class="md-primary" @click="password_dialog.success = false">close</md-button>
+  </md-snackbar>
+
   <md-dialog :md-active.sync="active" :md-close-on-esc="false" :md-click-outside-to-close="false" class="message-creator">
     <md-dialog-title>Edit message
       <span class="md-body-1" style="display: block">{{ name }}</span>
@@ -112,6 +117,7 @@ export default {
   data() {
     return {
       activeLang: null,
+      error: false,
       langNames: {},
       type: 'text',
       temp: {
@@ -267,6 +273,16 @@ export default {
         width: 49%;
         height: 46vh;
         overflow-y: scroll;
+
+        &::-webkit-scrollbar {
+            width: 2px;
+            background-color: #f5f5f5;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background-color: #a8a8a8;
+        }
+
     }
 
     &__qr-row {

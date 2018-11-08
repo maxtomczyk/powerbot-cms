@@ -97,7 +97,7 @@ router.put('/api/admins', auth.authenticate(), async (req, res) => {
 })
 
 router.put('/api/messages', auth.authenticate(), async (req, res) => {
-  api.messages.create(req, res)
+  api.messages.update(req, res)
 })
 
 router.put('/api/broadcast', auth.authenticate(), async (req, res) => {

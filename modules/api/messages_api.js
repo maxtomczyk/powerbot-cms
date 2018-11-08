@@ -21,13 +21,48 @@ async function listGroups (req, res) {
   }
 }
 
-async function create (req, res) {
+function isUpdateValid (json) {
+  for (const lang in json) {
+    const message = json[lang]
+    if (message === {}) return false
+    if (message.texts && (message.texts.length === 0 || message.texts[0].length === 0)) return false
+    if (message.quick_replies) {
+      if (message.quick_replies.length > 10 || message.quick_replies.length < 0) return false
+      message.quick_replies.map(qr => {
+        if (qr.text.title.length > 20 || qr.text.title.length < 1) return false
+      })
+    }
+    if (message.buttons) {
+      if (message.buttons.length > 3 || message.buttons.length < 0) return false
+      message.buttons.map(btn => {
+        if (btn.title.length < 1 || btn.title.length > 20) return false
+        if (btn.payload.length < 1 || btn.payload.length > 1000) return false
+        if (btn.type === 'postback' && (btn.payload.length > 1000 || btn.payload.length < 1)) return false
+        if (btn.type === 'web_url' && btn.url.length < 1) return false
+      })
+    }
+
+    if (message.raw || message.raw === '') {
+      if (message.raw.length < 1) return false
+      try {
+        JSON.parse(message.raw)
+      } catch (e) {
+        return false
+      }
+    }
+  }
+  return true
+}
+
+async function update (req, res) {
   try {
     const id = req.body.id
     const update = {
       json: req.body.json,
       type: req.body.type
     }
+    const valid = isUpdateValid(update.json)
+    if (!valid) return res.sendStatus(403)
 
     const [updated] = await knex('messages').update(update).where('id', id).returning('*')
     res.json(updated)
@@ -79,7 +114,7 @@ async function createPlug (req, res) {
 module.exports = {
   listPlugs,
   listGroups,
-  create,
+  update,
   remove,
   listUnknownPhrases,
   createPlug
