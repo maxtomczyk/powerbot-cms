@@ -29,9 +29,14 @@ const bot = webhook.bot
 
 app.use('/', express.static(path.join(__dirname, 'dist')))
 app.use('/static', express.static(path.join(__dirname, 'dist/static')))
-app.use('/', routes)
 app.use('/custom', customRoutes)
+app.use('/', routes)
 app.use(auth.initialize())
+
+app.use(function (err, req, res, next) {
+  console.error(err.stack)
+  res.status(500).send('Something broke!')
+})
 
 bot.on('text', async (message, raw) => {
   try {

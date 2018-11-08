@@ -164,6 +164,7 @@ export default {
       const plugs = await axios.get('/api/messages/plugs')
       const groups = await axios.get('/api/messages/groups')
       const langs = await axios.get('/api/languages')
+
       this.langs = langs.data
       this.plugs = plugs.data
       this.groups = groups.data
