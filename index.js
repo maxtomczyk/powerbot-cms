@@ -2,20 +2,21 @@ const express = require('express')
 const EventEmitter = require('events')
 const path = require('path')
 
-const routes = require('./modules/routes.js')
-const customRoutes = require('./modules/custom_routes.js')
-const auth = require('./modules/auth.js')()
-const User = require('./modules/bot/models/User.js')
-const echo = require('./modules/bot/echo.js')
-const staticElements = require('./modules/bot/static_elements.js')
-const postback = require('./modules/bot/postbacks.js')
-const startup = require('./modules/startup.js')
+const routes = require('./modules/routes')
+const customRoutes = require('./modules/custom_routes')
+const auth = require('./modules/auth')()
+const User = require('./modules/bot/models/User')
+const echo = require('./modules/bot/echo')
+const staticElements = require('./modules/bot/static_elements')
+const postback = require('./modules/bot/postbacks')
+const startup = require('./modules/startup')
 const logger = require('./modules/logger')
 const unknownText = require('./modules/bot/unknown_text')
 const unknownPostback = require('./modules/bot/unknown_postback')
-const incredbot = require('./modules/incredbot.js')
-const knex = require('./modules/knex.js')
-const redis = require('./modules/redis.js')
+const incredbot = require('./modules/incredbot')
+const knex = require('./modules/knex')
+const redis = require('./modules/redis')
+const messages = require('./modules/messages')
 
 staticElements()
 startup()
@@ -134,5 +135,6 @@ module.exports = {
   knex: knex,
   redis: redis,
   logger: logger,
-  User: User
+  User: User,
+  messages: messages
 }

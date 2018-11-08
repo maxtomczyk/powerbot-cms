@@ -75,7 +75,7 @@
           <md-icon>chat</md-icon>
         </md-button>
       </md-table-cell>
-      <message-creator :mType="plug.type" :name="plug.friendly_name || plug.name" :id="plug.id" :message="plug.json" :active="messagesDialogs[plug.id]" :langs="langs" @saved="saved($event, plug.id)" @close="messagesDialogs[plug.id] = false; $forceUpdate()"></message-creator>
+      <message-creator :mType="plug.type" :name="`${plug.friendly_name} (${plug.name})` || plug.name" :id="plug.id" :message="plug.json" :active="messagesDialogs[plug.id]" :langs="langs" @saved="saved($event, plug.id)" @close="messagesDialogs[plug.id] = false; $forceUpdate()"></message-creator>
     </md-table-row>
   </md-table>
 

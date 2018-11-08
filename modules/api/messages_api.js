@@ -31,7 +31,7 @@ function isUpdateValid (json) {
     if (message.quick_replies) {
       if (message.quick_replies.length > 10 || message.quick_replies.length < 0) return false
       message.quick_replies.map(qr => {
-        if (qr.text.title.length > 20 || qr.text.title.length < 1) return false
+        if (qr.title.length > 20 || qr.title.length < 1) return false
       })
     }
     if (message.buttons) {
