@@ -5,15 +5,13 @@ const messages = require('./messages_api')
 const postbacks = require('./postbacks_api')
 const broadcast = require('./broadcast_api')
 const keywords = require('./keywords_api')
-const custom = require('./custom_api')
 
 module.exports = {
-    admins,
-    texts,
-    chats,
-    messages,
-    postbacks,
-    broadcast,
-    keywords,
-    custom
+  admins,
+  texts,
+  chats,
+  messages,
+  postbacks,
+  broadcast,
+  keywords
 }

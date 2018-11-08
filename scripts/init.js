@@ -12,9 +12,9 @@ if (!initialized) {
   fs.copyFileSync('./src/router/index.template.js', '../../cms/vue_router.js')
   fs.copyFileSync('./src/App.template.vue', '../../cms/App.vue')
   fs.copyFileSync('./modules/custom_routes.template.js', '../../cms/api_routes.js')
-  fs.copyFileSync('./modules/api/custom_api.template.js', '../../cms/api.js')
   fs.copyFileSync('./scripts/files/index.template.js', '../../index.js')
   fs.copyFileSync('./scripts/files/postbacks.template.js', '../../postbacks.js')
+  fs.copyFileSync('./scripts/files/api.template.js', '../../cms/api.js')
 
   fs.writeFileSync('../../.gitignore', 'node_modules/', 'utf8')
 } else {
@@ -41,4 +41,3 @@ fs.symlinkSync('../../../cms/main.js', './src/main.js')
 fs.symlinkSync('../../../../cms/vue_router.js', './src/router/index.js')
 fs.symlinkSync('../../../cms/App.vue', './src/App.vue')
 fs.symlinkSync('../../../cms/api_routes.js', './modules/custom_routes.js')
-fs.symlinkSync('../../../../cms/api.js', './modules/api/custom_api.js')
