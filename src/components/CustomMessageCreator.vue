@@ -185,6 +185,7 @@ export default {
 
     async create() {
       try {
+        let revertUrlToPayload = false;
         switch (this.type) {
           case 'text':
             for (let lang in this.message) {
@@ -207,12 +208,11 @@ export default {
               delete this.message[lang].raw
               this.message[lang].buttons.map(button => {
                 if((button.payload || button.payload === '') && this.isUrl(button.payload)){
-                  alert('PAYLOAD WITH URL')
                   button.type = 'web_url'
                   button.url = button.payload
                   delete button.payload
+                  revertUrlToPayload = true
                 } else if(button.type === 'web_url' && !this.isUrl(button.payload)){
-                  alert('URL WITH PAYLOAD')
                   button.type = 'postback'
                   delete button.url
                 }
@@ -234,6 +234,8 @@ export default {
           type: this.type,
           id: this.id
         })
+
+          if(revertUrlToPayload) location.reload()
 
         this.$emit('saved', updated.data)
       } catch (e) {
