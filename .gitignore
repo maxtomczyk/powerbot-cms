@@ -10,7 +10,7 @@ yarn-error.log*
 src/router/index.js
 src/main.js
 src/App.vue
-modules/routes.js
+modules/custom_routes.js
 modules/api/custom_api.js
 
 # Editor directories and files

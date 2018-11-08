@@ -1,11 +1,11 @@
 const jwt = require('jsonwebtoken')
 const router = require('express').Router()
 
-const auth = require('../node_modules/incredbot-cms/modules/auth.js')()
+const auth = require('./auth.js')()
 const config = require('../config/config.js')
-const Admin = require('../node_modules/incredbot-cms/modules/models/Admin.js')
-const api = require('../node_modules/incredbot-cms/modules/api')
-const logger = require('../node_modules/incredbot-cms/modules/logger.js')
+const Admin = require('./models/Admin.js')
+const api = require('./api')
+const logger = require('./logger.js')
 
 router.post('/api/auth', async (req, res) => {
   try {

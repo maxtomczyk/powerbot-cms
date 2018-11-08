@@ -3,6 +3,7 @@ const EventEmitter = require('events')
 const path = require('path')
 
 const routes = require('./modules/routes.js')
+const customRoutes = require('./modules/custom_routes.js')
 const auth = require('./modules/auth.js')()
 const User = require('./modules/bot/models/User.js')
 const echo = require('./modules/bot/echo.js')
@@ -29,6 +30,7 @@ const bot = webhook.bot
 app.use('/', express.static(path.join(__dirname, 'dist')))
 app.use('/static', express.static(path.join(__dirname, 'dist/static')))
 app.use('/', routes)
+app.use('/custom', customRoutes)
 app.use(auth.initialize())
 
 bot.on('text', async (message, raw) => {
