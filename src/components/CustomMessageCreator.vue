@@ -131,7 +131,7 @@ export default {
           title: ''
         },
         quick_reply: {
-          type: 'text',
+          content_type: 'text',
           title: '',
           payload: ''
         }
