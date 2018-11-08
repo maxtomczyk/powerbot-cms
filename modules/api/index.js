@@ -1,5 +1,5 @@
 const admins = require('./admins_api')
-const texts = require('./texts_api')
+const languages = require('./languages_api')
 const chats = require('./chats_api')
 const messages = require('./messages_api')
 const postbacks = require('./postbacks_api')
@@ -8,7 +8,7 @@ const keywords = require('./keywords_api')
 
 module.exports = {
   admins,
-  texts,
+  languages,
   chats,
   messages,
   postbacks,

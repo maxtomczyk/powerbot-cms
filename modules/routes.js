@@ -32,32 +32,12 @@ router.get('/api/admins', auth.authenticate(), async (req, res) => {
   api.admins.list(req, res)
 })
 
-router.get('/api/plugs', auth.authenticate(), async (req, res) => {
-  api.texts.plugs(req, res)
-})
-
-router.get('/api/texts', auth.authenticate(), async (req, res) => {
-  api.texts.texts(req, res)
-})
-
-router.get('/api/plugs_groups', auth.authenticate(), async (req, res) => {
-  api.texts.groups(req, res)
-})
-
 router.get('/api/languages', auth.authenticate(), async (req, res) => {
-  api.texts.languages(req, res)
+  api.languages.list(req, res)
 })
 
 router.get('/api/chat_requests', auth.authenticate(), async (req, res) => {
   api.chats.list(req, res)
-})
-
-router.get('/api/buttons', auth.authenticate(), async (req, res) => {
-  api.texts.buttons(req, res)
-})
-
-router.get('/api/buttons_plugs', auth.authenticate(), async (req, res) => {
-  api.texts.buttonsPlugs(req, res)
 })
 
 router.get('/api/messages', auth.authenticate(), async (req, res) => {
@@ -124,16 +104,8 @@ router.post('/api/broadcast', auth.authenticate(), async (req, res) => {
   api.broadcast.push(req, res)
 })
 
-router.post('/api/texts', auth.authenticate(), async (req, res) => {
-  api.texts.updateTexts(req, res)
-})
-
 router.post('/api/chat_request', auth.authenticate(), async (req, res) => {
   api.chats.unlock(req, res)
-})
-
-router.post('/api/buttons', auth.authenticate(), async (req, res) => {
-  api.texts.updateButtons(req, res)
 })
 
 router.post('/api/broadcast-cancel', auth.authenticate(), async (req, res) => {
