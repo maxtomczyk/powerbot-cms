@@ -38,7 +38,6 @@ function isUpdateValid (json) {
       if (message.buttons.length > 3 || message.buttons.length < 0) return false
       message.buttons.map(btn => {
         if (btn.title.length < 1 || btn.title.length > 20) return false
-        if (btn.payload.length < 1 || btn.payload.length > 1000) return false
         if (btn.type === 'postback' && (btn.payload.length > 1000 || btn.payload.length < 1)) return false
         if (btn.type === 'web_url' && btn.url.length < 1) return false
       })

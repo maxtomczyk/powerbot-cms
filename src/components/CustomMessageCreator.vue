@@ -125,8 +125,7 @@ export default {
       },
       elements: {
         button: {
-          type: 'web_url',
-          url: '',
+          type: 'postback',
           payload: '',
           title: ''
         },
@@ -206,6 +205,18 @@ export default {
             for (let lang in this.message) {
               delete this.message[lang].quick_replies
               delete this.message[lang].raw
+              this.message[lang].buttons.map(button => {
+                if((button.payload || button.payload === '') && this.isUrl(button.payload)){
+                  alert('PAYLOAD WITH URL')
+                  button.type = 'web_url'
+                  button.url = button.payload
+                  delete button.payload
+                } else if(button.type === 'web_url' && !this.isUrl(button.payload)){
+                  alert('URL WITH PAYLOAD')
+                  button.type = 'postback'
+                  delete button.url
+                }
+              })
             }
             break
 
@@ -228,6 +239,15 @@ export default {
       } catch (e) {
         this.error = true
       }
+    },
+    /* es-lint-disable */
+    isUrl(str){
+      const pattern = new RegExp('^(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,}))\.?)(?::\d{2,5})?(?:[/?#]\S*)?$', 'i');
+        if (!pattern.test(str)) {
+          return false;
+        } else {
+          return true;
+      }
     }
   },
 
@@ -244,6 +264,11 @@ export default {
       if (!this.message[lang].buttons) this.message[lang].buttons = [Object.assign({}, this.elements.button)]
       if (!this.message[lang].raw) this.message[lang].raw = ''
       if (!this.message[lang].texts) this.message[lang].texts = ['']
+
+      this.message[lang].buttons.map(btn => {
+        if(btn.type === 'web_url') btn.payload = btn.url
+        delete btn.url
+      })
     }
     this.activeLang = this.langs[0].locale
   }
