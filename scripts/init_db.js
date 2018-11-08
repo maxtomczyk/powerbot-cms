@@ -168,7 +168,26 @@ async function start () {
     })
 
     await knex('messages_groups').insert({
+      id: 1,
       name: 'Basic',
+      builtin: true
+    })
+
+    await knex('messages_groups').insert({
+      id: 2,
+      name: 'Emissions',
+      builtin: true
+    })
+
+    await knex('messages_groups').insert({
+      id: 3,
+      name: 'Text reactions',
+      builtin: true
+    })
+
+    await knex('messages_groups').insert({
+      id: 4,
+      name: 'Postbacks reactions',
       builtin: true
     })
 

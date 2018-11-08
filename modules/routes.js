@@ -60,6 +60,10 @@ router.get('/api/buttons_plugs', auth.authenticate(), async (req, res) => {
   api.texts.buttonsPlugs(req, res)
 })
 
+router.get('/api/messages', auth.authenticate(), async (req, res) => {
+  api.messages.listPlugs(req, res)
+})
+
 router.get('/api/messages/plugs', auth.authenticate(), async (req, res) => {
   api.messages.listPlugs(req, res)
 })

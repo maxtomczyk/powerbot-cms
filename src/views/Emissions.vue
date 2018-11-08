@@ -269,7 +269,7 @@ export default {
       axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token')
 
       const labels = await axios.get('/api/labels')
-      const messages = await axios.get('/api/messages?id=1')
+      const messages = await axios.get('/api/messages?id=2')
       const broadcasts = await axios.get('/api/broadcasts')
       this.labels = labels.data
       this.messages = messages.data

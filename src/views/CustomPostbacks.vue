@@ -152,7 +152,7 @@ export default {
     try {
       axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token')
       const postbacks = await axios.get('/api/postbacks')
-      const messages = await axios.get('/api/messages?id=2')
+      const messages = await axios.get('/api/messages?id=4')
       this.messages = messages.data
       this.postbacks = postbacks.data
     } catch (e) {

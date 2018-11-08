@@ -3,7 +3,9 @@ const logger = require('../logger')
 
 async function listPlugs (req, res) {
   try {
-    let messages = await knex('messages')
+    let messages = null
+    if (req.query.id) messages = await knex('messages as m').join('messages_groups as mg', 'mg.id', 'm.group_id').where('mg.id', req.query.id)
+    else messages = await knex('messages')
     res.json(messages)
   } catch (e) {
     logger.error(e)
