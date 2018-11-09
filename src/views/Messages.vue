@@ -153,9 +153,9 @@ export default {
       this.plugs.map(plug => {
         if (plug.id === plugId) {
           plug.json = updated.json
-          for(let lang in plug.json){
+          for (let lang in plug.json) {
             plug.json[lang].buttons.map(btn => {
-              if(btn.url){
+              if (btn.url) {
                 btn.payload = btn.url
               }
             })
@@ -179,6 +179,7 @@ export default {
       this.groups = groups.data
       this.plugs.map(plug => {
         this.messagesDialogs[plug.id] = false
+        console.log(plug.json['en_US']);
       })
     } catch (e) {
       this.loadError = true

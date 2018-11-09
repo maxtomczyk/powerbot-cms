@@ -42,7 +42,7 @@
               <div v-if="type === 'quick_replies'" style="text-align: center;">
                 <div style="text-align: left;">
                   <span class="md-subheading">Quick replies</span>
-                  <div class="message-creator__qr-row-wrapper" v-for="(qr, i) in langMessage.quick_replies" :key="`${i}-${Math.random()}`">
+                  <div class="message-creator__qr-row-wrapper" v-for="(qr, i) in langMessage.quick_replies" :key="hash(createHashString(i+1, 'qr'))">
                     <span class="md-caption">Reply {{ i + 1 }}</span>
                     <div class="message-creator__qr-row">
                       <md-field class="message-creator__qr-input">
@@ -68,7 +68,7 @@
               <div v-if="type === 'buttons'" style="text-align: center;">
                 <div style="text-align: left;">
                   <span class="md-subheading">Buttons</span>
-                  <div class="message-creator__qr-row-wrapper" v-for="(btn, i) in langMessage.buttons" :key="`${i}-${Math.random()}`">
+                  <div class="message-creator__qr-row-wrapper" v-for="(btn, i) in langMessage.buttons" :key="hash(createHashString(i+1, 'btn'))">
                     <span class="md-caption">Button {{ i + 1 }}</span>
                     <div class="message-creator__qr-row">
                       <md-field class="message-creator__qr-input">
@@ -76,7 +76,7 @@
                         <md-input v-model="btn.title"></md-input>
                       </md-field>
                       <md-field class="message-creator__qr-input">
-                        <label>Payload</label>
+                        <label>Payload / URL</label>
                         <md-input v-model="btn.payload"></md-input>
                       </md-field>
                       <md-button class="md-icon-button message-creator__qr-icon" @click="deleteBtn(i)">
@@ -111,6 +111,7 @@
 
 <script>
 import axios from 'axios'
+import hash from 'object-hash'
 
 export default {
   props: ['active', 'langs', 'message', 'mType', 'id', 'name'],
@@ -123,6 +124,7 @@ export default {
       temp: {
 
       },
+      hash: null,
       elements: {
         button: {
           type: 'postback',
@@ -233,25 +235,13 @@ export default {
           id: this.id
         })
 
-        if (this.type === 'buttons') {
-          for (let lang in updated.data.json) {
-            updated.data.json[lang].buttons.map(btn => {
-              // if (btn.type === 'web_url') {
-              //   // btn.payload = btn.url
-              //   // delete btn.url
-              // }
-              if(!btn.payload) btn.payload = ''
-            })
-          }
-          this.$forceUpdate()
-        }
-
         this.$emit('saved', updated.data)
       } catch (e) {
         this.error = true
         console.error(e)
       }
     },
+
     isUrl(str) {
       // eslint-disable-next-line
       const pattern = new RegExp('^(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,}))\.?)(?::\d{2,5})?(?:[/?#]\S*)?$', 'i');
@@ -261,6 +251,15 @@ export default {
       } else {
         return true
       }
+    },
+
+    createHashString(i, c){
+      let els = []
+      for(let o = 0; o < i; o++){
+        els.push(c)
+      }
+      els.push(i)
+      return els.join('')
     }
   },
 
@@ -277,15 +276,9 @@ export default {
       if (!this.message[lang].buttons) this.message[lang].buttons = [Object.assign({}, this.elements.button)]
       if (!this.message[lang].raw) this.message[lang].raw = ''
       if (!this.message[lang].texts) this.message[lang].texts = ['']
-
-      this.message[lang].buttons.map(btn => {
-        if (btn.type === 'web_url') {
-          btn.payload = btn.url
-          delete btn.url
-        }
-      })
     }
     this.activeLang = this.langs[0].locale
+    this.hash = hash
   }
 }
 </script>
