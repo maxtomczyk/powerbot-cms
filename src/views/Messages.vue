@@ -151,7 +151,16 @@ export default {
     saved(updated, plugId) {
       this.messagesDialogs[plugId] = false
       this.plugs.map(plug => {
-        if (plug.id === plugId) plug = updated
+        if (plug.id === plugId) {
+          plug.json = updated.json
+          for(let lang in plug.json){
+            plug.json[lang].buttons.map(btn => {
+              if(btn.url){
+                btn.payload = btn.url
+              }
+            })
+          }
+        }
       })
       this.$forceUpdate()
       this.success = true

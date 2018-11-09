@@ -185,7 +185,6 @@ export default {
 
     async create() {
       try {
-        let revertUrlToPayload = false;
         switch (this.type) {
           case 'text':
             for (let lang in this.message) {
@@ -207,12 +206,11 @@ export default {
               delete this.message[lang].quick_replies
               delete this.message[lang].raw
               this.message[lang].buttons.map(button => {
-                if((button.payload || button.payload === '') && this.isUrl(button.payload)){
+                if (this.isUrl(button.payload)) {
                   button.type = 'web_url'
                   button.url = button.payload
                   delete button.payload
-                  revertUrlToPayload = true
-                } else if(button.type === 'web_url' && !this.isUrl(button.payload)){
+                } else {
                   button.type = 'postback'
                   delete button.url
                 }
@@ -235,20 +233,33 @@ export default {
           id: this.id
         })
 
-          if(revertUrlToPayload) location.reload()
+        if (this.type === 'buttons') {
+          for (let lang in updated.data.json) {
+            updated.data.json[lang].buttons.map(btn => {
+              // if (btn.type === 'web_url') {
+              //   // btn.payload = btn.url
+              //   // delete btn.url
+              // }
+              if(!btn.payload) btn.payload = ''
+            })
+          }
+          this.$forceUpdate()
+        }
 
         this.$emit('saved', updated.data)
       } catch (e) {
         this.error = true
+        console.error(e)
       }
     },
-    /* es-lint-disable */
-    isUrl(str){
+    isUrl(str) {
+      // eslint-disable-next-line
       const pattern = new RegExp('^(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,}))\.?)(?::\d{2,5})?(?:[/?#]\S*)?$', 'i');
-        if (!pattern.test(str)) {
-          return false;
-        } else {
-          return true;
+
+      if (!pattern.test(str)) {
+        return false
+      } else {
+        return true
       }
     }
   },
@@ -268,8 +279,10 @@ export default {
       if (!this.message[lang].texts) this.message[lang].texts = ['']
 
       this.message[lang].buttons.map(btn => {
-        if(btn.type === 'web_url') btn.payload = btn.url
-        delete btn.url
+        if (btn.type === 'web_url') {
+          btn.payload = btn.url
+          delete btn.url
+        }
       })
     }
     this.activeLang = this.langs[0].locale
