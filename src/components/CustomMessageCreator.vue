@@ -260,6 +260,15 @@ export default {
       }
       els.push(i)
       return els.join('')
+    },
+
+    setProps(){
+      for (let lang in this.message) {
+        if (!this.message[lang].quick_replies) this.message[lang].quick_replies = [Object.assign({}, this.elements.quick_reply), Object.assign({}, this.elements.quick_reply)]
+        if (!this.message[lang].buttons) this.message[lang].buttons = [Object.assign({}, this.elements.button)]
+        if (!this.message[lang].raw) this.message[lang].raw = ''
+        if (!this.message[lang].texts) this.message[lang].texts = ['']
+      }
     }
   },
 

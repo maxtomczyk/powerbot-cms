@@ -75,7 +75,7 @@
           <md-icon>chat</md-icon>
         </md-button>
       </md-table-cell>
-      <message-creator :mType="plug.type" :name="`${plug.friendly_name} (${plug.name})` || plug.name" :id="plug.id" :message="plug.json" :active="messagesDialogs[plug.id]" :langs="langs" @saved="saved($event, plug.id)" @close="messagesDialogs[plug.id] = false; $forceUpdate()"></message-creator>
+      <message-creator ref="messageCreator" :mType="plug.type" :name="`${plug.friendly_name} (${plug.name})` || plug.name" :id="plug.id" :message="plug.json" :active="messagesDialogs[plug.id]" :langs="langs" @saved="saved($event, plug.id)" @close="messagesDialogs[plug.id] = false; $forceUpdate()"></message-creator>
     </md-table-row>
   </md-table>
 
@@ -154,15 +154,20 @@ export default {
         if (plug.id === plugId) {
           plug.json = updated.json
           for (let lang in plug.json) {
-            plug.json[lang].buttons.map(btn => {
-              if (btn.url) {
-                btn.payload = btn.url
-              }
-            })
+            if(plug.json[lang].buttons){
+              plug.json[lang].buttons.map(btn => {
+                if (btn.url) {
+                  btn.payload = btn.url
+                }
+              })
+            }
+            if(!plug.json[lang].buttons) plug.json[lang].buttons = []
+            if(!plug.json[lang].quick_replies) plug.json[lang].quick_replies = []
           }
         }
       })
       this.$forceUpdate()
+      this.$refs.messageCreator[0].setProps()
       this.success = true
     }
   },
