@@ -23,8 +23,7 @@ module.exports = async function (message, user) {
       const regex = new RegExp(pattern.regex_body, pattern.regex_flags)
       if (regex.test(message.text)) {
         success = true
-
-        await message.reply.raw(await messages.get('hello', user))
+        await message.reply.raw(await messages.get(pattern.message_id, user))
         break
       }
     }
