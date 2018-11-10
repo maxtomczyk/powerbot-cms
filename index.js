@@ -44,8 +44,8 @@ bot.on('text', async (message, raw) => {
         chat_reason: message.text
       }).where('id', user.id)
 
-      // Need equivalent with planned getMessage function
       // await message.reply.quick_replies(await getText('chat_reason_added', user), [new incredbot.Helpers.QuickReply('text', await getButton('chat_reason_given', user), 'BOT_MENU')])
+      // await message.reply.raw(await messages.get('hello', user))
       return
     }
 

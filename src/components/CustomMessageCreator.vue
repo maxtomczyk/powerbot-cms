@@ -158,7 +158,7 @@ export default {
 
     addQr() {
       for (let lang in this.message) {
-        this.message[lang].quick_replies.push(Object.assign({}, this.elements.button))
+        this.message[lang].quick_replies.push(Object.assign({}, this.elements.quick_reply))
       }
 
       this.$forceUpdate()

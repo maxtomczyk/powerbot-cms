@@ -22,9 +22,10 @@ config.app.logPrefix = process.env.LOG_PREFIX || 'incredbot-cms'
 config.redis.url = process.env.REDIS_URL || ''
 config.redis.prefix = process.env.REDIS_PREFIX || 'incredbot-cms::'
 config.redis.timeouts = {
-  messages: process.env.RT_MESSAGES || 15
+  messages: process.env.RT_MESSAGES || 15,
+  regexReactions: process.env.RT_REGEX || 15
 }
 
-config.features.registerUnknownWords = true || process.env.FEATURE_REGISTER_UNKNOWN_WORDS
+config.features.registerUnknownPhrases = true || process.env.FEATURE_REGISTER_UNKNOWN_PHRASES
 
 module.exports = config
