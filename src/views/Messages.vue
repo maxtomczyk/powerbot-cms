@@ -154,15 +154,15 @@ export default {
         if (plug.id === plugId) {
           plug.json = updated.json
           for (let lang in plug.json) {
-            if(plug.json[lang].buttons){
+            if (plug.json[lang].buttons) {
               plug.json[lang].buttons.map(btn => {
                 if (btn.url) {
                   btn.payload = btn.url
                 }
               })
             }
-            if(!plug.json[lang].buttons) plug.json[lang].buttons = []
-            if(!plug.json[lang].quick_replies) plug.json[lang].quick_replies = []
+            if (!plug.json[lang].buttons) plug.json[lang].buttons = []
+            if (!plug.json[lang].quick_replies) plug.json[lang].quick_replies = []
           }
         }
       })
@@ -184,7 +184,6 @@ export default {
       this.groups = groups.data
       this.plugs.map(plug => {
         this.messagesDialogs[plug.id] = false
-        console.log(plug.json['en_US']);
       })
     } catch (e) {
       this.loadError = true

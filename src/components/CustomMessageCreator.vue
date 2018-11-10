@@ -255,7 +255,7 @@ export default {
 
     createHashString(i, c){
       let els = []
-      for(let o = 0; o < i; o++){
+      for (let o = 0; o < i; o++){
         els.push(c)
       }
       els.push(i)
