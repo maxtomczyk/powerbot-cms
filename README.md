@@ -1,6 +1,6 @@
 # Incredbot
 
-Editable Content Management System based on Vue & own library for Facebook Messenger with awesome functions pre-coded!
+Editable Content Management System based on Knex, PostgreSQL, Redis and Vue for creating bots for Faebook Messenger.
 
 ## Installation
 
@@ -58,7 +58,7 @@ Events that can be catched:
 | image    | Image received                                          | message, user, raw |
 | comment  | Someone commented a post on connected fanpage           | comment, raw       |
 
-** Attention! ** Comment event works only with live facebook applications and feed webhook activated.
+__Attention!__ Comment event works only with live facebook applications and feed webhook activated.
 
 #### Message object
 
@@ -231,7 +231,7 @@ Then you need to register component in `cms/main.js`.  Your views will be saved 
 ### Creating own API route for cms
 You can create your route in `cms/api_routes.js` in the same way as using express.
 
-** One important thing here ** - every route you create in this file are available at localhost:<port>**/custom_api**/<route\>
+__One important thing here__ - every route you create in this file are available at localhost:<port>__/custom_api__/<route\>
 
 ##### Example
 
@@ -250,6 +250,7 @@ Above example will create a route:
 To keep your files clean and readable store routes in file `cms/api_routes.js` and methods in the other one - `cms/api.js`
 
 ## Development targets
+- [ ] Better Docs
 - [ ] Code less flow edit
 - [ ] Create more settings
 - [ ] Connection with some NLP provider
@@ -264,3 +265,6 @@ If you want to help with incredbot-cms development feel free. Just contact me at
 
 ## Support
 Incredbot CMS is my side project and the only dev working on it is me, but it's under active development so I can use it in my job. Right now the best way to support me is to suggest what should be changed/added to this project or just to contribute and directly help me with development.
+
+## License
+Incredbot CMS is licensed under the terms of CC BY-NC 4.0. It means that you can use Incredbot CMS for non commercial purposes. If you like this project and want to use it to make money, contact me at m.tomczyk.dev@gmail.com
