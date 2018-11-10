@@ -26,8 +26,6 @@ async function create (req, res) {
     delete message.messaging_type
     message = message.message
 
-    console.log(message)
-
     const creativeId = await incredbot.broadcast.createMessage(message)
     const insert = {
       creative_id: creativeId,
@@ -39,7 +37,7 @@ async function create (req, res) {
 
     const [created] = await knex('broadcasts').insert(insert).returning('*')
     const label = await knex('channels').where('id', body.label_id).first()
-    created.message_name = message.friendly_name
+    created.message_name = messageData.friendly_name
     created.label_name = label.friendly_name
 
     res.json(created)
