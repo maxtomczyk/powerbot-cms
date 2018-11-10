@@ -4,8 +4,6 @@ const User = require('./models/User.js')
 const texts = new BotText()
 const incredbot = require('../incredbot.js')
 
-const unknownPostback = require('./unknown_postback')
-
 module.exports = async function (message, user) {
   const payload = message.payload
 
@@ -60,8 +58,6 @@ module.exports = async function (message, user) {
       break
 
     default:
-    // await unknownPostback(message, payload)
-
       break
   }
 }

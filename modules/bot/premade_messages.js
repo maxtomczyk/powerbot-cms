@@ -12,7 +12,7 @@ async function loadRegexMessages () {
     }
     rMessages = await knex('regex_reactions as rr').join('messages as m', 'rr.message_id', 'm.id')
 
-    redis.set('pattern-messages', JSON.stringify(rMessages), 'EX', config.redis.timeouts.regexReactions)
+    redis.set('pattern-messages', JSON.stringify(rMessages), 'EX', config.redis.timeouts.regexTable)
     logger.silly('Pattern messages loaded from database and saved to cache memory')
 
     return rMessages

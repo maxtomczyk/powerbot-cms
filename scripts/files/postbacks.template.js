@@ -6,7 +6,7 @@ module.exports = async function (message, user) {
 
       break
     default:
-      await cms.utils.handlePostback(message, message.payload)
+      await cms.utils.handlePostback(message, user)
       break
   }
 }

@@ -1,16 +1,8 @@
 const knex = require('../knex')
 const redis = require('../redis')
 const logger = require('../logger')
+const messages = require('../messages')
 const config = require('../../config/config')
-
-function wrapMessage (sender, message) {
-  let m = {}
-  m.recipient = {}
-  m.recipient.id = sender
-  m.message = message
-
-  return m
-}
 
 async function loadCustomPostbacks () {
   try {
@@ -21,7 +13,7 @@ async function loadCustomPostbacks () {
     }
 
     payloads = await knex('custom_postbacks as cp').join('messages as m', 'cp.message_id', 'm.id')
-    redis.set('custom-postbacks', JSON.stringify(payloads), 'EX', config.redis.timeouts.botPatterns)
+    redis.set('custom-postbacks', JSON.stringify(payloads), 'EX', config.redis.timeouts.postbacksTable)
     logger.silly('Loaded custom postbacks from database and saved in cache memory')
 
     return payloads
@@ -30,15 +22,14 @@ async function loadCustomPostbacks () {
   }
 }
 
-module.exports = async function (message, payload) {
+module.exports = async function (message, user) {
   try {
     const patterns = await loadCustomPostbacks()
-    let success = false
+    const payload = message.payload
 
     for (const pattern of patterns) {
       if (pattern.postback === payload) {
-        success = true
-        await message.reply.raw(wrapMessage(message.sender_id, pattern.json))
+        await message.reply.raw(await messages.get(pattern.message_id, user))
         break
       }
     }

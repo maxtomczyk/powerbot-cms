@@ -5,7 +5,7 @@ const logger = require('./logger')
 const incredbot = require('./incredbot')
 const config = require('../config/config')
 
-async function getFromDbOrCache (name) {
+async function getFromDbOrCache (name, getById) {
   try {
     let message = await redis.getAsync(`message:${name}`)
     if (message) {
@@ -14,7 +14,8 @@ async function getFromDbOrCache (name) {
       return message
     }
 
-    message = await knex('messages').where('name', name).first()
+    if (!getById) message = await knex('messages').where('name', name).first()
+    else message = await knex('messages').where('id', name).first()
     logger.debug(`Loaded message '${name}' (${message.id}) from database.`)
     redis.set(`message:${name}`, JSON.stringify(message), 'EX', config.redis.timeouts.messages)
     logger.debug(`Saved message '${name}' (${message.id}) to cache memory.`)
@@ -30,8 +31,10 @@ function getRandom (array) {
 
 async function getCoreMessage (name, user) {
   try {
-    const messages = await getFromDbOrCache(name)
+    const getByIdMode = !isNaN(parseInt(name))
+    const messages = await getFromDbOrCache(name, getByIdMode)
     const defaultLanguage = await knex('languages').where('default', true).first()
+
     let message = null
     if (user && messages.json[user.locale]) message = messages.json[user.locale]
     else message = messages.json[defaultLanguage.locale]
