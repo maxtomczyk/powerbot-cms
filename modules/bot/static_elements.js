@@ -16,7 +16,7 @@ module.exports = async function set (bot) {
         elements[element.name] = element
       })
 
-      let getStarted = new incredbot.Helpers.GetStartedButton(elements.getStarted_payload.value)
+      let getStarted = new incredbot.Helpers.GetStartedButton(elements.get_started_payload.value)
       let greeting = new incredbot.Helpers.Greeting(elements.hello.value)
 
       await incredbot.send.setting(getStarted)
@@ -27,6 +27,7 @@ module.exports = async function set (bot) {
       logger.info('Updated Get Started button, Greeting message and Persistent Menu.')
     }
   } catch (e) {
+    console.error(e)
     logger.error(e)
   }
 }
