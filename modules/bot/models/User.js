@@ -4,6 +4,7 @@ const knex = require('../../knex.js')
 const BotText = require('../../models/BotText.js')
 const logger = require('../../logger.js')
 const incredbot = require('../../incredbot.js')
+const messages = require('../../messages.js')
 
 const texts = new BotText()
 
@@ -167,9 +168,7 @@ class User {
         waiting_for_reason: false
       }).where('messenger_id', this.messenger_id).returning('*')
       if (updated) {
-        await incredbot.send.text(await texts.get('moderator_chat_ended', updated.locale), {
-          recipient_id: this.messenger_id
-        })
+        await incredbot.send.raw(await messages.get('contact_ended', updated))
       }
     } catch (e) {
       throw e
@@ -185,9 +184,7 @@ class User {
         waiting_for_reason: false
       }).where('id', id).returning('*')
       if (updated) {
-        await incredbot.send.text(await texts.get('moderator_chat_ended', updated.locale), {
-          recipient_id: updated.messenger_id
-        })
+        await incredbot.send.raw(await messages.get('contact_ended', updated))
       }
     } catch (e) {
       throw e

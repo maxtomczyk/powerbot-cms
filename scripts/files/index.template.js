@@ -5,7 +5,7 @@ const bot = cms.bot
 
 bot.on('text', async (message, user, raw) => {
   try {
-    await cms.utils.handleText(message)
+    await cms.utils.handleText(message, user)
   } catch (e) {
     console.error(e)
   }

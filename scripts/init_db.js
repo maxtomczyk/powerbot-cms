@@ -238,6 +238,130 @@ async function start () {
       json: null
     }])
 
+    await knex('messages').insert([{
+      name: 'default',
+      friendly_name: 'Unknown message reaction',
+      description: 'Sended when received textmessage unhandled by code and CMS regex reactions.',
+      json: {
+        'en_US': {
+          'texts': [`Ohh, sorry. I don't know what to say... You can set reaction for text messages in your code or CMS! :)`]
+        }
+      },
+      group_id: 1,
+      type: 'text'
+    }, {
+      name: 'contact_question',
+      friendly_name: 'Contact question',
+      description: `Sended after 'Contact' button.`,
+      json: {
+        'en_US': {
+          'texts': ['You are going to contact our moderator, do you want to continue?'],
+          'quick_replies': [{
+            'content_type': 'text',
+            'title': 'Continue',
+            'payload': 'CONTACT_CONFIRM'
+          }, {
+            'content_type': 'text',
+            'title': 'Cancel',
+            'payload': 'CONTACT_CANCEL'
+          }]
+        }
+      },
+      group_id: 1,
+      type: 'quick_replies'
+    }, {
+      name: 'contact_confirmed',
+      friendly_name: 'Contact confirmed',
+      description: 'Bot replies this message to user which confirmed contact question',
+      json: {
+        'en_US': {
+          'texts': ['Okay. Can you describe your problem/question? This will be joined to your moderator chat request ;)\nPlease, send it in one message :D']
+        }
+      },
+      group_id: 1,
+      type: 'text'
+    }, {
+      name: 'contact_canceled',
+      friendly_name: 'Contact canceled',
+      description: 'Sended when user canceled moderator chat request',
+      json: {
+        'en_US': {
+          'texts': ['Contact with moderator has been canceled! ']
+        }
+      },
+      group_id: 1,
+      type: 'text'
+    }, {
+      name: 'contact_message_saved',
+      friendly_name: 'Contact description saved',
+      description: 'Sended when user sends message with question for moderator',
+      json: {
+        'en_US': {
+          'texts': ["Okay, your question has been saved!\nModerator will contact you as soon as it's possible!"]
+        }
+      },
+      group_id: 1,
+      type: 'text'
+    }, {
+      name: 'contact_ended',
+      friendly_name: 'Contact ended',
+      description: 'Sended when moderator finishes contact and unblocks bot.',
+      json: {
+        'en_US': {
+          'texts': ['Moderator finished chat!']
+        }
+      },
+      group_id: 1,
+      type: 'text'
+    }, {
+      name: 'user_data_remove',
+      friendly_name: 'User data remove question',
+      description: 'Sended when user click "Data remove" button',
+      json: {
+        'en_US': {
+          'texts': ['You are about to remove your data from bot. Are you sure?'],
+          'quick_replies': [{
+            'content_type': 'text',
+            'title': 'Delete my data',
+            'payload': 'REMOVE_USER_DATA'
+          }, {
+            'content_type': 'text',
+            'title': 'Cancel',
+            'payload': 'CLEAR_USER_DATA_CANCEL'
+          }]
+        }
+      },
+      group_id: 1,
+      type: 'quick_replies'
+    }, {
+      name: 'user_data_remove_canceled',
+      friendly_name: 'User data remove cancel',
+      description: 'Sended when user cancel data removal',
+      json: {
+        'en_US': {
+          'texts': ['User data remove canceled!']
+        }
+      },
+      group_id: 1,
+      type: 'text'
+    }, {
+      name: 'user_data_removed',
+      friendly_name: 'User data removed',
+      description: 'Sended when user removed data',
+      json: {
+        'en_US': {
+          'texts': ['Your data has been removed. If you start new conversation you will be treated as a new user.'],
+          'quick_replies': [{
+            'content_type': 'text',
+            'title': 'Start',
+            'payload': 'GET_STARTED'
+          }]
+        }
+      },
+      group_id: 1,
+      type: 'quick_replies'
+    }])
+
     process.exit(0)
   } catch (e) {
     console.error(e)
