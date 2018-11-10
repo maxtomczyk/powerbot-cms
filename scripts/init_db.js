@@ -222,8 +222,8 @@ async function start () {
             }]
           }, {
             title: 'Powered by Incredbot',
-            type: 'postback',
-            payload: 'CONTACT'
+            type: 'web_url',
+            url: 'https://github.com/maxtomczyk/incredbot-cms'
           }]
         }]
       }
