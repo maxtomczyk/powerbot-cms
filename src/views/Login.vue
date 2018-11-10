@@ -7,7 +7,7 @@
 
   <md-card class="md-layout-item md-size-30 md-xsmall-size-100  loginscreen__box">
     <md-card-header class="loginbox__header">
-      <img class="loginbox__logo" alt="logo" src="../assets/logo.jpg">
+
     </md-card-header>
     <md-card-content>
       <md-field>
