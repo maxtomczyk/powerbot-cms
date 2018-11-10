@@ -25,6 +25,25 @@ async function getFromDbOrCache (name, getById) {
   }
 }
 
+async function getDefaultLanguage () {
+  try {
+    let lang = await redis.getAsync(`default-lang`)
+    if (lang) {
+      lang = JSON.parse(lang)
+      logger.debug('Loaded default language from cache memory')
+      return lang
+    }
+
+    lang = await knex('languages').where('default', true).first()
+    logger.debug('Loaded default language from database')
+    redis.set('default-lang', JSON.stringify(lang), 'EX', config.redis.timeouts.defaultLanguage)
+    logger.debug('Saved default language to cache memory')
+    return lang
+  } catch (e) {
+    throw e
+  }
+}
+
 function getRandom (array) {
   return array[Math.floor(Math.random() * (array.length))]
 }
@@ -33,7 +52,7 @@ async function getCoreMessage (name, user) {
   try {
     const getByIdMode = !isNaN(parseInt(name))
     const messages = await getFromDbOrCache(name, getByIdMode)
-    const defaultLanguage = await knex('languages').where('default', true).first()
+    const defaultLanguage = await getDefaultLanguage()
 
     let message = null
     if (user && messages.json[user.locale]) message = messages.json[user.locale]

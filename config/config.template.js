@@ -24,7 +24,8 @@ config.redis.prefix = process.env.REDIS_PREFIX || 'incredbot-cms::'
 config.redis.timeouts = {
   messages: process.env.RT_MESSAGES || 15,
   regexTable: process.env.RT_REGEX || 15,
-  postbacksTable: process.env.RT_POSTBACKS || 15
+  postbacksTable: process.env.RT_POSTBACKS || 15,
+  defaultLanguage: process.env.RT_DEF_LANG || 15
 }
 
 config.features.registerUnknownPhrases = true || process.env.FEATURE_REGISTER_UNKNOWN_PHRASES
