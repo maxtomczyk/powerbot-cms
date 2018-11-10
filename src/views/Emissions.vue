@@ -58,7 +58,7 @@
   <md-dialog :md-active.sync="warnDialog.show">
     <md-dialog-title>Warning!</md-dialog-title>
     <md-dialog-content>
-      You are about pushing to Faceebook broadcast withous schedule date. Message will broadcast instantly! Continue?
+      You are about pushing to Faceebook broadcast without schedule date. Message will broadcast instantly! Continue?
     </md-dialog-content>
 
     <md-dialog-actions>

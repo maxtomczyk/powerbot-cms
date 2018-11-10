@@ -96,6 +96,10 @@ router.put('/api/messages/plug', auth.authenticate(), async (req, res) => {
   api.messages.createPlug(req, res)
 })
 
+router.put('/api/postbacks', auth.authenticate(), async (req, res) => {
+  api.postbacks.create(req, res)
+})
+
 router.post('/api/admins', auth.authenticate(), async (req, res) => {
   api.admins.changePassword(req, res)
 })

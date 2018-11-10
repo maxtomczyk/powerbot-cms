@@ -72,6 +72,8 @@ async function getCoreMessage (name, user) {
 
 async function get (name, user) {
   try {
+    user = user || {}
+
     const message = await getCoreMessage(name, user)
     return new incredbot.Frame(message, user.messenger_id)
   } catch (e) {
