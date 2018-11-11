@@ -71,7 +71,7 @@ First parameter passed to event function is custom object created by incredbot s
 -   payload (if message contain any payload)
 -   reply (Incredbot sender object with setted user_id to use it without user_id parameter)
 -   location (if location event)
--   url (if media sended)
+-   url (if media sent)
 
 #### Sending message
 
