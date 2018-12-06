@@ -17,6 +17,8 @@ if (!initialized) {
   fs.copyFileSync('./scripts/files/api.template.js', '../../cms/api.js')
 
   fs.writeFileSync('../../.gitignore', 'node_modules/', 'utf8')
+  fs.writeFileSync('../../cms/components/.gitkeep', '', 'utf8')
+  fs.writeFileSync('../../cms/views/.gitkeep', '', 'utf8')
 } else {
   const views = fs.readdirSync('../../cms/views')
   const components = fs.readdirSync('../../cms/components')
