@@ -17,6 +17,7 @@ const incredbot = require('./modules/incredbot')
 const knex = require('./modules/knex')
 const redis = require('./modules/redis')
 const messages = require('./modules/messages')
+const attachments = require('./modules/attachments')
 
 staticElements()
 startup()
@@ -134,5 +135,6 @@ module.exports = {
   redis: redis,
   logger: logger,
   User: User,
-  messages: messages
+  messages: messages,
+  attachments: attachments
 }
