@@ -4,6 +4,7 @@ node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+changelog.txt
 
 # Files that are symlinked during installation
 /config/config.js
@@ -12,6 +13,7 @@ src/main.js
 src/App.vue
 modules/custom_routes.js
 modules/api/custom_api.js
+
 
 # Editor directories and files
 .idea

@@ -4,8 +4,8 @@ const logger = require('../logger')
 async function listPlugs (req, res) {
   try {
     let messages = null
-    if (req.query.id) messages = await knex('messages as m').select('m.id', 'm.name', 'm.friendly_name', 'm.description', 'm.json', 'm.group_id', 'm.type').join('messages_groups as mg', 'mg.id', 'm.group_id').where('mg.id', req.query.id)
-    else messages = await knex('messages')
+    if (req.query.id) messages = await knex('messages as m').select('m.id', 'm.name', 'm.friendly_name', 'm.description', 'm.json', 'm.group_id', 'm.type').join('messages_groups as mg', 'mg.id', 'm.group_id').where('mg.id', req.query.id).orderBy('m.friendly_name', 'asc')
+    else messages = await knex('messages').orderBy('friendly_name', 'asc')
     res.json(messages)
   } catch (e) {
     logger.error(e)
