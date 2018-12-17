@@ -4,6 +4,7 @@ const redis = require('./redis')
 const logger = require('./logger')
 const incredbot = require('./incredbot')
 const config = require('../config/config')
+const utilities = require('./utilities')
 
 async function getFromDbOrCache (name, getById) {
   try {
@@ -59,7 +60,17 @@ async function getCoreMessage (name, user) {
     else message = messages.json[defaultLanguage.locale]
 
     if (message.texts) {
+      const defaultGender = config.settings.defaultGender || 'male'
+      user.gender = user.gender || defaultGender
+      const genderInt = (user.gender === 'male') ? 0 : 1
       message.text = format(getRandom(message.texts), user)
+      const genderMatches = utilities.matchAll(/\(\(\(([^\x00-\x7F]+|\w+|\s+)+\|([^\x00-\x7F]+|\w+|\s+)+\)\)\)/gi, message.text)
+
+      for(const toReplace of genderMatches){
+        const targetWord = toReplace.replace(/\(|\)/g, '').split('|')[genderInt]
+        message.text = message.text.replace(toReplace, targetWord)
+      }
+
       delete message.texts
     }
 

@@ -6,6 +6,7 @@ config.jwt = {}
 config.app = {}
 config.redis = {}
 config.features = {}
+config.settings = {}
 
 config.facebook.access_token = process.env.FB_ACCESS || ''
 
@@ -30,5 +31,7 @@ config.redis.timeouts = {
 }
 
 config.features.registerUnknownPhrases = true || process.env.FEATURE_REGISTER_UNKNOWN_PHRASES
+
+config.settings.defaultGender = process.env.DEFAULT_GENDER || 'male'
 
 module.exports = config
