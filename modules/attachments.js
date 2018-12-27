@@ -10,11 +10,11 @@ async function get (id) {
   if (aId) return aId
 
   let row = await knex('attachments').where('name', id).first()
-  logger.debug(`Attachment '${id}' fetched from database`)
   if (!row) return null
+  logger.debug(`Attachment '${id}' fetched from database`)
   aId = row.attachment_id
   logger.debug(`Saving attachment '${id}' to cache memory`)
-  await redis.set(`attachment-id:${id}`, aId, 'EX', config.redis.timeouts.attachments)
+  redis.set(`attachment-id:${id}`, aId, 'EX', config.redis.timeouts.attachments)
 
   return aId
 }
