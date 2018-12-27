@@ -143,6 +143,7 @@ export default {
   methods: {
     addButton() {
       for (let lang in this.message) {
+        console.log(this.message[lang].buttons);
         this.message[lang].buttons.push(Object.assign({}, this.elements.button))
       }
 

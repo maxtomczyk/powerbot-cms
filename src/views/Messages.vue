@@ -184,9 +184,19 @@ export default {
       this.groups = groups.data
       this.plugs.map(plug => {
         this.messagesDialogs[plug.id] = false
+        for(let lang in plug.json){
+          let msg = plug.json[lang]
+          if(msg.buttons){
+            msg.buttons.map(btn => {
+              if(!btn.payload) btn.payload = btn.url
+              delete btn.url
+            })
+          }
+        }
       })
     } catch (e) {
       this.loadError = true
+      console.error(e)
     }
   }
 }
