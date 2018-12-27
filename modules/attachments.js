@@ -1,11 +1,11 @@
 const knex = require('./knex.js')
-const redis = require('./redis.js')
+const redisHandler = require('./redis_handler.js')
 const logger = require('./logger.js')
 const config = require('../config/config.js')
 
 async function get (id) {
   try {
-    let aId = await redis.getAsync(`attachment-id:${id}`)
+    let aId = await redisHandler.get(`attachment-id:${id}`)
     logger.debug(`Attachment '${id}' found in cache memory!`)
 
     if (aId) return aId
@@ -15,11 +15,11 @@ async function get (id) {
     logger.debug(`Attachment '${id}' fetched from database`)
     aId = row.attachment_id
     logger.debug(`Saving attachment '${id}' to cache memory`)
-    redis.set(`attachment-id:${id}`, aId, 'EX', config.redis.timeouts.attachments)
+    redisHandler.set(`attachment-id:${id}`, aId, config.redis.timeouts.attachments)
 
     return aId
   } catch (e) {
-      throw e
+    throw e
   }
 }
 

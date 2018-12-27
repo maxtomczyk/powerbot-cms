@@ -7,14 +7,12 @@ bluebird.promisifyAll(redis.RedisClient.prototype)
 bluebird.promisifyAll(redis.Multi.prototype)
 
 let client = require('redis').createClient(config.redis.url, {
-  prefix: config.redis.prefix
+  prefix: config.redis.prefix,
+  enable_offline_queue: false
 })
 
 client.on('error', (err) => {
-    logger.error(err)
+    logger.warn(err)
 })
 
-client.on('connect', async () => {
-    logger.info('Connected to Redis store')
-})
-module.exports = client;
+module.exports = client

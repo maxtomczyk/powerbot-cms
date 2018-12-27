@@ -1,6 +1,6 @@
 const format = require('string-template')
 const knex = require('./knex')
-const redis = require('./redis')
+const redisHandler = require('./redis_handler')
 const logger = require('./logger')
 const incredbot = require('./incredbot')
 const config = require('../config/config')
@@ -8,7 +8,7 @@ const utilities = require('./utilities')
 
 async function getFromDbOrCache (name, getById) {
   try {
-    let message = await redis.getAsync(`message:${name}`)
+    let message = await redisHandler.get(`message:${name}`)
     if (message) {
       message = JSON.parse(message)
       logger.debug(`Loaded message '${name}' (${message.id}) from cache memory.`)
@@ -18,7 +18,7 @@ async function getFromDbOrCache (name, getById) {
     if (!getById) message = await knex('messages').where('name', name).first()
     else message = await knex('messages').where('id', name).first()
     logger.debug(`Loaded message '${name}' (${message.id}) from database.`)
-    redis.set(`message:${name}`, JSON.stringify(message), 'EX', config.redis.timeouts.messages)
+    redisHandler.set(`message:${name}`, JSON.stringify(message), config.redis.timeouts.messages)
     logger.debug(`Saved message '${name}' (${message.id}) to cache memory.`)
     return message
   } catch (e) {
@@ -28,7 +28,7 @@ async function getFromDbOrCache (name, getById) {
 
 async function getDefaultLanguage () {
   try {
-    let lang = await redis.getAsync(`default-lang`)
+    let lang = await redisHandler.get(`default-lang`)
     if (lang) {
       lang = JSON.parse(lang)
       logger.debug('Loaded default language from cache memory')
@@ -37,7 +37,7 @@ async function getDefaultLanguage () {
 
     lang = await knex('languages').where('default', true).first()
     logger.debug('Loaded default language from database')
-    redis.set('default-lang', JSON.stringify(lang), 'EX', config.redis.timeouts.defaultLanguage)
+    redisHandler.set('default-lang', JSON.stringify(lang), config.redis.timeouts.defaultLanguage)
     logger.debug('Saved default language to cache memory')
     return lang
   } catch (e) {

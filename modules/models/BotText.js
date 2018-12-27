@@ -1,6 +1,6 @@
 const lodash = require('lodash')
 const knex = require('../knex.js')
-const redis = require('../redis.js')
+const redisHandler = require('../redis_handler.js')
 const logger = require('../logger.js')
 const config = require('../../config/config.js')
 
@@ -46,7 +46,7 @@ class BotText {
         let texts = []
         try {
             await this.setDefaults(locale)
-            texts = await redis.getAsync(`bot-texts:${id}-${locale}`)
+            texts = await redisHandler.get(`bot-texts:${id}-${locale}`)
             if (texts) {
                 logger.silly(`Loaded text '${id}' from cache.`)
                 return this.choose(JSON.parse(texts))
@@ -56,7 +56,7 @@ class BotText {
 
             logger.silly(`Didn't found text with name '${id}' in cache. Getting from database.`)
             texts = await knex('texts_plugs as tp').join('texts as t', 'tp.id', 't.plug_id').where('tp.name', id).andWhere('t.language_id', loc)
-            redis.set(`bot-texts:${id}-${locale}`, JSON.stringify(texts), 'EX', config.redis.timeouts.botTexts)
+            redisHandler.set(`bot-texts:${id}-${locale}`, JSON.stringify(texts), config.redis.timeouts.botTexts)
 
             return this.choose(texts)
         } catch (e) {
@@ -68,7 +68,7 @@ class BotText {
         let buttons = []
         try {
             await this.setDefaults(locale)
-            buttons = await redis.getAsync(`bot-buttons:${id}-${locale}`)
+            buttons = await redisHandler.get(`bot-buttons:${id}-${locale}`)
             if (buttons) {
                 logger.silly(`Loaded button '${id}' in ${locale} from cache.`)
                 return this.choose(JSON.parse(buttons))
@@ -78,7 +78,7 @@ class BotText {
 
             logger.silly(`Didn't found button with name '${id}' in locale ${locale} in cache. Getting from database.`)
             buttons = await knex('buttons_plugs as bp').join('buttons as b', 'bp.id', 'b.plug_id').where('bp.name', id).andWhere('b.language_id', loc)
-            redis.set(`bot-buttons:${id}-${locale}`, JSON.stringify(buttons), 'EX', config.redis.timeouts.botTexts)
+            redisHandler.set(`bot-buttons:${id}-${locale}`, JSON.stringify(buttons), config.redis.timeouts.botTexts)
 
             return this.choose(buttons)
         } catch (e) {

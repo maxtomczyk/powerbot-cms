@@ -1,19 +1,19 @@
 const knex = require('../knex')
-const redis = require('../redis')
+const redisHandler = require('../redis_handler')
 const logger = require('../logger')
 const messages = require('../messages')
 const config = require('../../config/config')
 
 async function loadCustomPostbacks () {
   try {
-    let payloads = await redis.getAsync('custom-postbacks')
+    let payloads = await redisHandler.get('custom-postbacks')
     if (payloads) {
       logger.silly('Loaded custom postbacks list from cache memory')
       return JSON.parse(payloads)
     }
 
     payloads = await knex('custom_postbacks as cp').join('messages as m', 'cp.message_id', 'm.id')
-    redis.set('custom-postbacks', JSON.stringify(payloads), 'EX', config.redis.timeouts.postbacksTable)
+    redisHandler.set('custom-postbacks', JSON.stringify(payloads), config.redis.timeouts.postbacksTable)
     logger.silly('Loaded custom postbacks from database and saved in cache memory')
 
     return payloads
