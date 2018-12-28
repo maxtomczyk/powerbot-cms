@@ -69,6 +69,7 @@
               <span class="md-list-item-text drawer__link">Administrators</span>
             </md-list-item>
           </router-link>
+          <custom-links></custom-links>
           <router-link to="/logout">
             <md-list-item class="drawer__item" @click="closeDrawer()">
               <md-icon class="drawer__icon">exit_to_app</md-icon>
@@ -132,7 +133,7 @@ export default {
 .drawer {
     &__toolbar {
         height: 20vh;
-        background: url("../node_modules/incredbot-cms/src/assets/drawer_bg.png");
+        background: url("./assets/drawer_bg.png");
         background-size: cover;
     }
 

@@ -3,7 +3,7 @@
 import Vue from 'vue'
 // eslint-disable-next-line
 import regeneratorRuntime from 'babel-regenerator-runtime'
-import App from './App'
+import App from '../node_modules/incredbot-cms/src/App.vue'
 import router from './vue_router'
 import {
     MdField,
@@ -33,6 +33,7 @@ import BotTextRow from '@/components/BotTextRow'
 import BotTextField from '@/components/BotTextField'
 import BotTextLine from '@/components/BotTextLine'
 import CustomMessageCreator from '@/components/CustomMessageCreator'
+import UserDefinedViewsLinks from '@/components/UserDefinedViewsLinks'
 
 Vue.use(MdButton)
 Vue.use(MdContent)
@@ -59,6 +60,7 @@ Vue.component('bot-text-row', BotTextRow)
 Vue.component('bot-text-field', BotTextField)
 Vue.component('bot-text-line', BotTextLine)
 Vue.component('message-creator', CustomMessageCreator)
+Vue.component('custom-links', UserDefinedViewsLinks)
 
 Vue.config.productionTip = false
 

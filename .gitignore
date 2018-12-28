@@ -10,7 +10,7 @@ changelog.txt
 /config/config.js
 src/router/index.js
 src/main.js
-src/App.vue
+src/components/UserDefinedViewsLinks.vue
 modules/custom_routes.js
 modules/api/custom_api.js
 
