@@ -8,7 +8,7 @@
     "start": "node index.js",
     "lint": "eslint --ext .js,.vue src",
     "build": "node build/build.js",
-    "postinstall": "node scripts/init.js && npm run build"
+    "postinstall": "node scripts/init.js && npm run build && node node_modules/knex/bin/cli.js migrate:latest"
   },
   "dependencies": {
     "argon2": "^0.17.3",
