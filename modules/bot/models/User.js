@@ -5,6 +5,7 @@ const BotText = require('../../models/BotText.js')
 const logger = require('../../logger.js')
 const incredbot = require('../../incredbot.js')
 const messages = require('../../messages.js')
+const redis = require('../../redis.js')
 
 const texts = new BotText()
 
@@ -257,7 +258,7 @@ class User {
       }
 
       const row = await knex('users_data').where('user_id', this.id).andWhere('name', key).first()
-      if(!detailed) return row.data.value
+      if (!detailed) return row.data.value
       else return row
     } catch (e) {
       throw e
@@ -273,14 +274,18 @@ class User {
 
       let up = {
         last_update: new Date(),
-        data: {value}
+        data: {
+          value
+        }
       }
 
       const updated = await knex('users_data').update(up).where('name', key).andWhere('user_id', this.id)
       if (updated) return
 
       let ins = {
-        data: {value},
+        data: {
+          value
+        },
         name: key,
         user_id: this.id
       }
@@ -299,6 +304,55 @@ class User {
       }
 
       const del = await knex('users_data').where('name', key).andWhere('user_id', this.id).del()
+      return !!del
+    } catch (e) {
+      throw e
+    }
+  }
+
+  createRedisKeyName (key) {
+    return `user-data:${this.id}:${key}`
+  }
+
+  async getCacheKey (key) {
+    try {
+      if (!this.id) {
+        logger.warn(`Trying to get key '${key}' from cache users data for user without id!`)
+        return undefined
+      }
+
+      const data = await redis.getAsync(this.createRedisKeyName(key))
+      if (data) return JSON.parse(data).value
+      return undefined
+    } catch (e) {
+      throw e
+    }
+  }
+
+  setCacheKey (key, value, expiration) {
+    try {
+      if (!this.id) {
+        logger.warn(`Trying to set key '${key}' to cache users data for user without id!`)
+        return null
+      }
+
+      let o = JSON.stringify({value})
+      if (!expiration) redis.set(this.createRedisKeyName(key), o)
+      else redis.set(this.createRedisKeyName(key), o, 'EX', expiration)
+      return
+    } catch (e) {
+      throw e
+    }
+  }
+
+  async removeCacheKey (key) {
+    try {
+      if (!this.id) {
+        logger.warn(`Trying to remove key '${key}' from cache users data for user without id!`)
+        return null
+      }
+
+      const del = await redis.delAsync(this.createRedisKeyName(key))
       return !!del
     } catch (e) {
       throw e
