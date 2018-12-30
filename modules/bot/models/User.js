@@ -139,7 +139,6 @@ class User {
           logger.error(e)
           throw e
         })
-        this.data = createdUser
         Object.assign(this, createdUser)
         return this
       }
@@ -245,6 +244,62 @@ class User {
       }
 
       logger.debug(`Channels sync for user ${this.id} finished.`)
+    } catch (e) {
+      throw e
+    }
+  }
+
+  async getDbKey (key, detailed) {
+    try {
+      if (!this.id) {
+        logger.warn(`Trying to get key '${key}' from database users data for user without id!`)
+        return null
+      }
+
+      const row = await knex('users_data').where('user_id', this.id).andWhere('name', key).first()
+      if(!detailed) return row.data.value
+      else return row
+    } catch (e) {
+      throw e
+    }
+  }
+
+  async setDbKey (key, value) {
+    try {
+      if (!this.id) {
+        logger.warn(`Trying to set key '${key}' to database users data for user without id!`)
+        return null
+      }
+
+      let up = {
+        last_update: new Date(),
+        data: {value}
+      }
+
+      const updated = await knex('users_data').update(up).where('name', key).andWhere('user_id', this.id)
+      if (updated) return
+
+      let ins = {
+        data: {value},
+        name: key,
+        user_id: this.id
+      }
+      const created = await knex('users_data').insert(ins)
+      return
+    } catch (e) {
+      throw e
+    }
+  }
+
+  async removeDbKey (key) {
+    try {
+      if (!this.id) {
+        logger.warn(`Trying to remove key '${key}' from database users data for user without id!`)
+        return null
+      }
+
+      const del = await knex('users_data').where('name', key).andWhere('user_id', this.id).del()
+      return !!del
     } catch (e) {
       throw e
     }
