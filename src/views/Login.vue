@@ -1,6 +1,16 @@
 <template>
-<div class="md-layout md-gutter md-alignment-center-center loginscreen">
-  <md-snackbar md-position="center" :md-duration="3000" :md-active.sync="login_incorrect">
+<div class="login">
+  <div class="login__container container">
+    <div class="row login__boxwrapper center-xs middle-xs">
+      <div class="login__loginbox col-md-3 col-xs-12">
+        <h1 class="login__logo">incredibot</h1>
+        <input class="login__input input" placeholder="Login" type="text" v-model="user.login" @keyup="loginKeyUp($event)">
+        <input class="login__input input" placeholder="Password" type="password" v-model="user.password" @keyup="loginKeyUp($event)">
+        <div class="button login__button center" @click="auth()">Enter</div>
+      </div>
+    </div>
+  </div>
+  <!-- <md-snackbar md-position="center" :md-duration="3000" :md-active.sync="login_incorrect">
     <span>User credentials incorrect! Please, try again.</span>
     <md-button class="md-primary" @click="login_incorrect = false">close</md-button>
   </md-snackbar>
@@ -22,7 +32,8 @@
     <md-card-actions>
       <md-button class="md-raised md-primary" @click="auth()">Log in</md-button>
     </md-card-actions>
-  </md-card>
+  </md-card> -->
+
 </div>
 </template>
 
@@ -71,69 +82,47 @@ export default {
 </script>
 
 <style lang="scss">
-.loginscreen {
-    width: 97vw;
-    height: calc(100vh - 64px);
-    // overflow: hidden;
+@import '../styles/variables';
 
-    &__box {
-        padding-bottom: 1%;
-        margin: 0;
-    }
-}
+.login {
+    background-image: $dark-gradient;
+    width: 100vw;
+    height: 100vh;
 
-.loginbox {
-    &__logo {
-        width: 60%;
-        display: block;
-        transition: all 0.3s ease-out;
+    &__container {
+        height: 100vh !important;
+        width: 100%;
+        padding: 0 !important;
     }
 
-    &__header {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding-bottom: 0;
-    }
-}
-
-.e401 {
-    position: relative;
-    animation-name: logo401;
-    animation-duration: 0.8s;
-}
-
-@keyframes logo401 {
-    41%,
-    8% {
-        -webkit-transform: translateX(-10px);
-    }
-    25%,
-    58% {
-        -webkit-transform: translateX(10px);
-    }
-    75% {
-        -webkit-transform: translateX(-5px);
-    }
-    92% {
-        -webkit-transform: translateX(5px);
-    }
-    0%,
-    100% {
-        -webkit-transform: translateX(0);
-    }
-}
-
-@media only screen and (max-width: 600px) {
-    .md-layout.md-gutter {
+    &__boxwrapper {
+        height: 100%;
+        width: 100vw;
         margin: 0;
     }
 
-    .loginscreen {
-        width: 95vw;
-        &__box {
-            box-shadow: none;
-        }
+
+    &__input {
+        width: 72%;
+        margin: 8px 0;
+        font-size: 1.2em;
+    }
+
+    &__logo{
+      font-family: 'Major Mono Display', monospace;
+      color: white;
+    }
+
+    &__button{
+      width: 72%;
+      margin-top: 25px;
+      background-color: $green;
+      color: #FFF;
+      font-weight: bold;
+
+      &:hover{
+        background-color: $green-hover;
+      }
     }
 }
 </style>

@@ -1,15 +1,15 @@
 <template>
 <div id="app">
-  <div class="page-container">
-    <md-app md-mode="fixed">
-      <md-app-toolbar class="md-primary" v-if="['/login'].indexOf($route.path) === -1">
+  <!-- <div class="page-container"> -->
+  <!-- <md-app md-mode="fixed"> -->
+  <!-- <md-app-toolbar class="md-primary" v-if="['/login'].indexOf($route.path) === -1">
         <md-button class="md-icon-button" @click="menu.visible = !menu.visible">
           <md-icon>menu</md-icon>
         </md-button>
         <span class="md-title">{{ $route.name }}</span>
-      </md-app-toolbar>
+      </md-app-toolbar> -->
 
-      <md-app-drawer :md-active.sync="menu.visible">
+  <!-- <md-app-drawer :md-active.sync="menu.visible">
         <md-toolbar class="md-transparent drawer__toolbar" md-elevation="0">
           <md-avatar class="md-avatar-icon md-large md-accent drawer__toolbar-avatar">
             <md-ripple>{{ createRipple(user.name) }}</md-ripple>
@@ -77,13 +77,14 @@
             </md-list-item>
           </router-link>
         </md-list>
-      </md-app-drawer>
+      </md-app-drawer> -->
 
-      <md-app-content>
+  <!-- <md-app-content>
         <router-view @logged="userLogIn()" @loggedOut="userLogOut()" />
       </md-app-content>
-    </md-app>
-  </div>
+    </md-app> -->
+  <!-- </div> -->
+  <router-view @logged="userLogIn()" @loggedOut="userLogOut()" />
 </div>
 </template>
 
@@ -121,54 +122,41 @@ export default {
 </script>
 
 <style lang="scss">
+@import './assets/css/normalize.css';
+@import '../node_modules/flexboxgrid/dist/flexboxgrid.min.css';
+@import './styles/variables';
+
+body {
+    background-color: $bg-primary;
+}
+
 #app {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    background-color: $bg-primary;
 }
 
-.md-app {
-    height: 100vh;
+.input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid $borders-primary;
+    padding: 4px 3px;
+    color: $font-primary;
+    font-family: 'Lato', sans-serif;
+    font-weight: bold;
 }
 
-.drawer {
-    &__toolbar {
-        height: 20vh;
-        background: url("./assets/drawer_bg.png");
-        background-size: cover;
-    }
-
-    &__toolbar-avatar {
-        margin: 0 !important;
-    }
-
-    &__toolbar-text {
-        text-align: left;
-        margin-left: 7px;
-        color: #FFF !important;
-    }
-
-    &__toolbar-subtitle {
-        margin-left: 8px;
-    }
-
-    &__link {
-        color: rgb(95, 124, 138) !important;
-        font-size: 15px;
-    }
-
-    &__item {
-        transition: 0;
-        :hover {
-            background-color: #f5f5f5;
-        }
-    }
-
-    &__icon {
-        font-size: 27px !important;
-    }
+.button {
+    margin-top: 8px;
+    font-size: 1.3em;
+    padding: 8px;
+    transition: background-color 0.25s;
+    cursor: pointer;
+    border-radius: 25px;
+    font-family: 'Lato', sans-serif;
 }
 
-.md-select-menu {
-    z-index: 9999;
+.center {
+    margin: 0 auto;
 }
 </style>
