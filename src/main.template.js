@@ -34,6 +34,7 @@ import BotTextField from '@/components/BotTextField'
 import BotTextLine from '@/components/BotTextLine'
 import CustomMessageCreator from '@/components/CustomMessageCreator'
 import UserDefinedViewsLinks from '@/components/UserDefinedViewsLinks'
+import Notifier from '@/components/Notifier'
 
 Vue.use(MdButton)
 Vue.use(MdContent)
@@ -61,6 +62,7 @@ Vue.component('bot-text-field', BotTextField)
 Vue.component('bot-text-line', BotTextLine)
 Vue.component('message-creator', CustomMessageCreator)
 Vue.component('custom-links', UserDefinedViewsLinks)
+Vue.component('notifier', Notifier)
 
 Vue.config.productionTip = false
 

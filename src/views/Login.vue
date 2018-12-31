@@ -1,5 +1,6 @@
 <template>
 <div class="login">
+  <notifier ref="notifier"></notifier>
   <div class="login__container container">
     <div class="row login__boxwrapper center-xs middle-xs">
       <div class="login__loginbox col-md-3 col-xs-12">
@@ -10,30 +11,6 @@
       </div>
     </div>
   </div>
-  <!-- <md-snackbar md-position="center" :md-duration="3000" :md-active.sync="login_incorrect">
-    <span>User credentials incorrect! Please, try again.</span>
-    <md-button class="md-primary" @click="login_incorrect = false">close</md-button>
-  </md-snackbar>
-
-  <md-card class="md-layout-item md-size-30 md-xsmall-size-100  loginscreen__box">
-    <md-card-header class="loginbox__header">
-
-    </md-card-header>
-    <md-card-content>
-      <md-field>
-        <label>Login</label>
-        <md-input v-model="user.login" @keyup="loginKeyUp($event)"></md-input>
-      </md-field>
-      <md-field>
-        <label>Password</label>
-        <md-input type="password" v-model="user.password" @keyup="loginKeyUp($event)"></md-input>
-      </md-field>
-    </md-card-content>
-    <md-card-actions>
-      <md-button class="md-raised md-primary" @click="auth()">Log in</md-button>
-    </md-card-actions>
-  </md-card> -->
-
 </div>
 </template>
 
@@ -66,9 +43,10 @@ export default {
       } catch (e) {
         if (e.response.status === 401) {
           this.login_incorrect = true
-          document.querySelector('.loginbox__logo').classList.add('e401')
+          this.$refs.notifier.pushNotification('unable to login', 'Blah blah blah', 'error', 15000)
+          document.querySelector('.login__logo').classList.add('e401')
           setTimeout(() => {
-            document.querySelector('.loginbox__logo').classList.remove('e401')
+            document.querySelector('.login__logo').classList.remove('e401')
           }, 850)
         }
       }
@@ -123,6 +101,33 @@ export default {
       &:hover{
         background-color: $green-hover;
       }
+    }
+}
+
+.e401 {
+    position: relative;
+    animation-name: logo401;
+    animation-duration: 0.8s;
+}
+
+@keyframes logo401 {
+    41%,
+    8% {
+        -webkit-transform: translateX(-10px);
+    }
+    25%,
+    58% {
+        -webkit-transform: translateX(10px);
+    }
+    75% {
+        -webkit-transform: translateX(-5px);
+    }
+    92% {
+        -webkit-transform: translateX(5px);
+    }
+    0%,
+    100% {
+        -webkit-transform: translateX(0);
     }
 }
 </style>

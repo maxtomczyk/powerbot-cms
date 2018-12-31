@@ -128,6 +128,7 @@ export default {
 
 body {
     background-color: $bg-primary;
+    overflow-x: hidden;
 }
 
 #app {
@@ -144,6 +145,10 @@ body {
     color: $font-primary;
     font-family: 'Lato', sans-serif;
     font-weight: bold;
+
+    &:focus{
+      border-bottom: 1.5px solid $borders-focus
+    }
 }
 
 .button {
@@ -158,5 +163,9 @@ body {
 
 .center {
     margin: 0 auto;
+}
+
+*:focus {
+    outline: none;
 }
 </style>
