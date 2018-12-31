@@ -125,8 +125,8 @@ export default {
     }
 
     &--fresh {
-        margin-top: -100px;
-        margin-bottom: 14px;
+        margin-top: -130px;
+        margin-bottom: 20px;
     }
 
     &--error{

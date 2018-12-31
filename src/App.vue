@@ -84,6 +84,7 @@
       </md-app-content>
     </md-app> -->
   <!-- </div> -->
+  <navbar v-if="['/login'].indexOf($route.path) === -1" ref="navbar"></navbar>
   <router-view @logged="userLogIn()" @loggedOut="userLogOut()" />
 </div>
 </template>
@@ -129,6 +130,12 @@ export default {
 body {
     background-color: $bg-primary;
     overflow-x: hidden;
+    font-family: 'Lato', sans-serif;
+}
+
+a {
+    color: inherit !important;
+    text-decoration: none !important;
 }
 
 #app {
@@ -146,8 +153,8 @@ body {
     font-family: 'Lato', sans-serif;
     font-weight: bold;
 
-    &:focus{
-      border-bottom: 1.5px solid $borders-focus
+    &:focus {
+        border-bottom: 1.5px solid $borders-focus;
     }
 }
 
