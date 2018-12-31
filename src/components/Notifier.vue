@@ -128,6 +128,22 @@ export default {
         margin-top: -100px;
         margin-bottom: 14px;
     }
+
+    &--error{
+      background-color: $error;
+    }
+
+    &--warning{
+      background-color: $warning;
+    }
+
+    &--info{
+      background-color: $info;
+    }
+
+    &--success{
+      background-color: $success;
+    }
 }
 
 @media only screen and (max-width: 768px) {

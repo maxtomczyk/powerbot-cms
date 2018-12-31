@@ -43,11 +43,13 @@ export default {
       } catch (e) {
         if (e.response.status === 401) {
           this.login_incorrect = true
-          this.$refs.notifier.pushNotification('unable to login', 'Blah blah blah', 'error', 15000)
+          this.$refs.notifier.pushNotification('cannot login', 'Username and password combination is incorrect, please try again', 'warning')
           document.querySelector('.login__logo').classList.add('e401')
           setTimeout(() => {
             document.querySelector('.login__logo').classList.remove('e401')
           }, 850)
+        } else {
+          this.$refs.notifier.pushNotification('internal error', 'Internal error occured. Check dev console and/or contact maintainer.', 'error')
         }
       }
     },
