@@ -40,8 +40,8 @@ export default {
 
   &__title{
     margin: 8px 0 0 0;
-    font-family: 'Major Mono Display', monospace;
     font-weight: bold;
+    letter-spacing: .06em;
   }
 
   &--active{

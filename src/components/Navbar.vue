@@ -66,6 +66,7 @@ export default {
     &__container {
         width: calc(100vw - 16px);
         z-index: 20;
+        margin-bottom: 1%;
     }
 
     &__view-title{
@@ -95,7 +96,6 @@ export default {
       font-size: 1.1em;
       font-weight: bold;
       color: $green;
-      cursor: pointer;
     }
 }
 

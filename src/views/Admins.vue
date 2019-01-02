@@ -1,6 +1,8 @@
 <template>
-<div>
-  <md-snackbar md-position="center" :md-duration="10000" :md-active.sync="error_snackbar">
+<div class="view-with-navbar">
+
+
+  <!-- <md-snackbar md-position="center" :md-duration="10000" :md-active.sync="error_snackbar">
     <span>Error occured during data load. Please refresh site or contact an administrator.</span>
     <md-button class="md-primary" @click="error_snackbar = false">close</md-button>
   </md-snackbar>
@@ -85,33 +87,29 @@
       <md-button class="md-primary" @click="delete_dialog.show = false">No</md-button>
       <md-button class="md-primary" @click="deleteAdmin()">Yes</md-button>
     </md-dialog-actions>
-  </md-dialog>
+  </md-dialog> -->
 
-  <md-table>
-    <md-table-row>
-      <md-table-head>Name</md-table-head>
-      <md-table-head>Login</md-table-head>
-      <md-table-head>Actions</md-table-head>
-    </md-table-row>
-    <md-table-row v-for="admin in admins" :key="admin.id">
-      <md-table-cell>{{ admin.name }}</md-table-cell>
-      <md-table-cell>{{ admin.login }}</md-table-cell>
-      <md-table-cell>
-        <md-button class="md-icon-button" v-if="admin.id === logged_admin.id" @click="password_dialog.show = true">
-          <md-icon>lock</md-icon>
-        </md-button>
-        <md-button class="md-icon-button" v-if="admin.id !== logged_admin.id && logged_admin.owner && !admin.owner" @click="delete_dialog.id = admin.id; delete_dialog.name = admin.name; delete_dialog.show = true">
-          <md-icon>delete</md-icon>
-        </md-button>
-      </md-table-cell>
-    </md-table-row>
-  </md-table>
+  <table class="table admins__table">
+    <tr class="table__row">
+      <th class="table__head">Name</th>
+      <th class="table__head">Login</th>
+      <th class="table__head">Actions</th>
+    </tr>
+    <tr class="table__row" v-for="admin in admins" :key="admin.id">
+      <td class="table__cell">{{ admin.name }}</td>
+      <td class="table__cell">{{ admin.login }}</td>
+      <td class="table__cell">
+        <font-awesome-icon icon="key" size="lg" class="table__icon" v-tooltip.top-center="'Change password'"/>
+        <font-awesome-icon v-tooltip.top-center="'Remove administrator'" v-if="admin.id !== logged_admin.id && logged_admin.owner && !admin.owner" icon="trash-alt" size="lg" class="table__icon" />
+      </td>
+    </tr>
+  </table>
 
-  <md-speed-dial class="md-bottom-right">
+  <!-- <md-speed-dial class="md-bottom-right">
     <md-speed-dial-target @click="creation_dialog.show = true">
       <md-icon>add</md-icon>
     </md-speed-dial-target>
-  </md-speed-dial>
+  </md-speed-dial> -->
 </div>
 </template>
 
@@ -122,6 +120,7 @@ export default {
   data: () => {
     return {
       error_snackbar: false,
+      msg: 'xDD',
       delete_dialog: {
         show: false,
         name: '',
@@ -217,7 +216,12 @@ export default {
 </script>
 
 <style lang="scss">
-.top-index {
-    z-index: 9999;
+.admins {
+
+    &__table {
+        width: calc(100vw - 6%);
+        padding: 0 3%;
+        margin: 0 auto;
+    }
 }
 </style>

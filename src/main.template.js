@@ -18,6 +18,8 @@ import {
 
 import App from '../node_modules/incredbot-cms/src/App.vue'
 import router from './vue_router'
+import VTooltip from '../node_modules/incredbot-cms/node_modules/v-tooltip'
+
 import {
   MdField,
   MdButton,
@@ -55,6 +57,7 @@ import DrawerListItem from '@/components/DrawerListItem'
 
 library.add(fas)
 
+Vue.use(VTooltip)
 Vue.use(MdButton)
 Vue.use(MdContent)
 Vue.use(MdTabs)

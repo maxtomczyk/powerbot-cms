@@ -44,8 +44,8 @@ export default {
   }
 
   &__title{
-    font-family: 'Major Mono Display', monospace;
     font-weight: bold;
+    letter-spacing: .06em;
     font-size: 1em;
     display: block;
     margin: 0;

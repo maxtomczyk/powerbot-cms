@@ -126,6 +126,8 @@ export default {
 @import './assets/css/normalize.css';
 @import '../node_modules/flexboxgrid/dist/flexboxgrid.min.css';
 @import './styles/variables';
+@import './styles/table';
+@import './styles/tooltip';
 
 body {
     background-color: $bg-primary;
@@ -168,11 +170,21 @@ a {
     font-family: 'Lato', sans-serif;
 }
 
+.view-with-navbar {
+    padding-top: 55px;
+}
+
 .center {
     margin: 0 auto;
 }
 
 *:focus {
     outline: none;
+}
+
+@media only screen and (max-width: 768px) {
+    .view-with-navbar {
+        padding-top: 9vh;
+    }
 }
 </style>

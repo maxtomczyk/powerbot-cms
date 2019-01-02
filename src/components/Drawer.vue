@@ -4,27 +4,27 @@
     <div class="row">
       <div class="drawer col-md-4 col-lg-3 col-xs-9" :class="{'drawer--closed': !opened}">
         <div class="drawer__items">
-          <drawer-item icon="home" target="/" @clicked="close()">dashboard</drawer-item>
-          <drawer-item icon="comments" target="/messages" @clicked="close()">content</drawer-item>
-          <drawer-item icon="user-clock" target="/chats" @clicked="close()">chat requests</drawer-item>
-          <drawer-item icon="atlas" target="/keywords" @clicked="close()">keywords</drawer-item>
-          <drawer-item icon="expand-arrows-alt" target="/postbacks" @clicked="close()">postbacks</drawer-item>
-          <drawer-item icon="question" target="/unknown_phrases" @clicked="close()">new phrases</drawer-item>
-          <drawer-item icon="broadcast-tower" target="/emissions" @clicked="close()">emissions</drawer-item>
-          <drawer-item icon="user-shield" target="/admins" @clicked="close()">admins</drawer-item>
-          <drawer-item icon="sign-out-alt" target="/logout" @clicked="close()">log out</drawer-item>
+          <drawer-item icon="home" target="/" @clicked="close()">Dashboard</drawer-item>
+          <drawer-item icon="comments" target="/messages" @clicked="close()">Content</drawer-item>
+          <drawer-item icon="user-clock" target="/chats" @clicked="close()">Chat requests</drawer-item>
+          <drawer-item icon="atlas" target="/keywords" @clicked="close()">Keywords</drawer-item>
+          <drawer-item icon="expand-arrows-alt" target="/postbacks" @clicked="close()">Postbacks</drawer-item>
+          <drawer-item icon="question" target="/unknown_phrases" @clicked="close()">New phrases</drawer-item>
+          <drawer-item icon="broadcast-tower" target="/emissions" @clicked="close()">Emissions</drawer-item>
+          <drawer-item icon="user-shield" target="/admins" @clicked="close()">Admins</drawer-item>
+          <drawer-item icon="sign-out-alt" target="/logout" @clicked="close()">Log out</drawer-item>
         </div>
 
         <div class="drawer__list">
-          <drawer-list-item icon="home" target="/" @clicked="close()">dashboard</drawer-list-item>
-          <drawer-list-item icon="comments" target="/messages" @clicked="close()">content</drawer-list-item>
-          <drawer-list-item icon="user-clock" target="/chats" @clicked="close()">chat requests</drawer-list-item>
-          <drawer-list-item icon="atlas" target="/keywords" @clicked="close()">keywords</drawer-list-item>
-          <drawer-list-item icon="expand-arrows-alt" target="/postbacks" @clicked="close()">postbacks</drawer-list-item>
-          <drawer-list-item icon="question" target="/unknown_phrases" @clicked="close()">new phrases</drawer-list-item>
-          <drawer-list-item icon="broadcast-tower" target="/emissions" @clicked="close()">emissions</drawer-list-item>
-          <drawer-list-item icon="user-shield" target="/admins" @clicked="close()">admins</drawer-list-item>
-          <drawer-list-item icon="sign-out-alt" target="/logout" @clicked="close()">log out</drawer-list-item>
+          <drawer-list-item icon="home" target="/" @clicked="close()">Dashboard</drawer-list-item>
+          <drawer-list-item icon="comments" target="/messages" @clicked="close()">Content</drawer-list-item>
+          <drawer-list-item icon="user-clock" target="/chats" @clicked="close()">Chat requests</drawer-list-item>
+          <drawer-list-item icon="atlas" target="/keywords" @clicked="close()">Keywords</drawer-list-item>
+          <drawer-list-item icon="expand-arrows-alt" target="/postbacks" @clicked="close()">Postbacks</drawer-list-item>
+          <drawer-list-item icon="question" target="/unknown_phrases" @clicked="close()">New phrases</drawer-list-item>
+          <drawer-list-item icon="broadcast-tower" target="/emissions" @clicked="close()">Emissions</drawer-list-item>
+          <drawer-list-item icon="user-shield" target="/admins" @clicked="close()">Admins</drawer-list-item>
+          <drawer-list-item icon="sign-out-alt" target="/logout" @clicked="close()">Log out</drawer-list-item>
         </div>
 
         <div class="drawer__footer">
