@@ -55,6 +55,8 @@ import Drawer from '@/components/Drawer'
 import DrawerItem from '@/components/DrawerItem'
 import DrawerListItem from '@/components/DrawerListItem'
 import Dialog from '@/components/Dialog'
+import CreationButton from '@/components/CreationButton'
+import EmptyState from '@/components/EmptyState'
 
 library.add(fas)
 
@@ -92,6 +94,8 @@ Vue.component('drawer', Drawer)
 Vue.component('drawer-item', DrawerItem)
 Vue.component('drawer-list-item', DrawerListItem)
 Vue.component('custom-dialog', Dialog)
+Vue.component('creation-button', CreationButton)
+Vue.component('empty-state', EmptyState)
 
 Vue.config.productionTip = false
 
