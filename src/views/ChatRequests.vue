@@ -1,45 +1,6 @@
 <template>
 <div class="view-with-navbar">
   <notifier ref="notifier"></notifier>
-  <!-- <md-snackbar md-position="center" :md-duration="10000" :md-active.sync="error_snackbar">
-    <span>Error, please try again or contact an administrator.</span>
-    <md-button class="md-primary" @click="error_snackbar = false">close</md-button>
-  </md-snackbar>
-
-  <md-snackbar md-position="center" :md-duration="10000" :md-active.sync="lockedDialog">
-    <span>Bot has been paused for user</span>
-    <md-button class="md-primary" @click="lockedDialog = false">close</md-button>
-  </md-snackbar>
-
-  <md-snackbar md-position="center" :md-duration="10000" :md-active.sync="successDialog">
-    <span>Chat request closed.</span>
-    <md-button class="md-primary" @click="successDialog = false">close</md-button>
-  </md-snackbar>
-
-  <md-dialog :md-active.sync="unlockDialog">
-    <md-dialog-title>End moderator chat</md-dialog-title>
-    <md-dialog-content>
-      Are you sure you want to end moderator chat for {{ end.name }}?
-    </md-dialog-content>
-
-    <md-dialog-actions>
-      <md-button class="md-primary" @click="unlockDialog = false">Close</md-button>
-      <md-button class="md-primary" @click="unlockUser(end.id)">Unlock</md-button>
-    </md-dialog-actions>
-  </md-dialog>
-
-  <md-dialog :md-active.sync="lockDialog">
-    <md-dialog-title>Pause bot</md-dialog-title>
-    <md-dialog-content>
-      Are you sure you want to pause bot for {{ end.name }}?
-    </md-dialog-content>
-
-    <md-dialog-actions>
-      <md-button class="md-primary" @click="lockDialog = false">Close</md-button>
-      <md-button class="md-primary" @click="lockUser(end.id)">Pause</md-button>
-    </md-dialog-actions>
-  </md-dialog> -->
-
   <custom-dialog ref="unlockDialog">
     <div slot="custom-dialog-header">
       <h1>Finish chat</h1>
@@ -80,12 +41,6 @@
       <td>{{ user.locale || 'N/A'}}</td>
       <td style="width: 45%;">{{ user.chat_reason || 'N/A'}}</td>
       <td>
-        <!-- <md-button v-if="!user.bot_lock" class="md-icon-button" @click="lockDialog = true; end.name = `${user.first_name} ${user.last_name}`; end.id = user.id">
-          <md-icon>lock</md-icon>
-        </md-button>
-        <md-button class="md-icon-button" @click="unlockDialog = true; end.name = `${user.first_name} ${user.last_name}`; end.id = user.id">
-          <md-icon>clear</md-icon>
-        </md-button> -->
         <font-awesome-icon @click="openLockDialog(user)" v-tooltip.top-center="'Pause bot responses for this user to start own conversation.'" v-if="!user.bot_lock" icon="pause" size="lg" class="table__icon" fixed-width/>
         <font-awesome-icon @click="openUnlockDialog(user)" v-tooltip.top-center="'Finish chat request and take down all locks.'" icon="user-times" size="lg" class="table__icon" fixed-width/>
 
@@ -93,8 +48,6 @@
     </tr>
   </table>
   <empty-state v-else icon="coffee" title="No chat requests!" text="Relax time! Get some coffee!"></empty-state>
-  <!-- <md-empty-state v-show="requests.length === 0" md-icon="done" md-label="Great!" md-description="Nobody is waiting for moderator chat!">
-  </md-empty-state> -->
 </div>
 </template>
 

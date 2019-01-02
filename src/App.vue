@@ -133,6 +133,15 @@ body {
     background-color: $bg-primary;
     overflow-x: hidden;
     font-family: 'Lato', sans-serif;
+
+    &::-webkit-scrollbar {
+        width: 2px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: $font-primary;
+        border-radius: 2px;
+    }
 }
 
 a {

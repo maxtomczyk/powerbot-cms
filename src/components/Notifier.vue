@@ -71,6 +71,7 @@ export default {
     position: absolute;
     max-height: 0;
     width: 100vw;
+    z-index: 200;
 
     &__row{
       position: fixed;
