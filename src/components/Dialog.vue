@@ -1,6 +1,6 @@
 <template>
 <div class="dialog__wrapper" v-show="active">
-  <div class="dialog__overlay" :class="{'dialog__overlay--hiding': hiding, 'dialog__overlay--showing': showing}" @click="closeDialog()">
+  <div class="dialog__overlay" :class="{'dialog__overlay--hiding': hiding}" @click="closeDialog()">
     <div class="dialog" @click="$event.stopPropagation()">
       <div class="dialog__header">
         <slot name="custom-dialog-header" class="dialog__header"></slot>
@@ -24,8 +24,7 @@ export default {
   data() {
     return {
       active: false,
-      hiding: false,
-      showing: false
+      hiding: true
     }
   },
 
@@ -43,7 +42,7 @@ export default {
 
     async openDialog() {
       this.active = true
-      await this.delay(10)
+      await this.delay(20)
       this.hiding = false
       this.$emit('opened')
     }
