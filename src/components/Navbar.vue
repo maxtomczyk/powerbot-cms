@@ -14,9 +14,6 @@
           <div class="navbar__username">
             {{ user.name.toLowerCase() }}
           </div>
-          <div class="navbar__username-tooltip">
-
-          </div>
         </div>
       </div>
     </div>

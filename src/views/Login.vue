@@ -84,7 +84,7 @@ export default {
 
     &__input {
         width: 72%;
-        margin: 8px 0;
+        margin: 8px auto;
         font-size: 1.2em;
     }
 

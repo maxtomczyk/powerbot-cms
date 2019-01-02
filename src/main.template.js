@@ -54,6 +54,7 @@ import Navbar from '@/components/Navbar'
 import Drawer from '@/components/Drawer'
 import DrawerItem from '@/components/DrawerItem'
 import DrawerListItem from '@/components/DrawerListItem'
+import Dialog from '@/components/Dialog'
 
 library.add(fas)
 
@@ -90,6 +91,7 @@ Vue.component('navbar', Navbar)
 Vue.component('drawer', Drawer)
 Vue.component('drawer-item', DrawerItem)
 Vue.component('drawer-list-item', DrawerListItem)
+Vue.component('custom-dialog', Dialog)
 
 Vue.config.productionTip = false
 

@@ -154,6 +154,7 @@ a {
     color: $font-primary;
     font-family: 'Lato', sans-serif;
     font-weight: bold;
+    display: block;
 
     &:focus {
         border-bottom: 1.5px solid $borders-focus;
@@ -168,6 +169,24 @@ a {
     cursor: pointer;
     border-radius: 25px;
     font-family: 'Lato', sans-serif;
+}
+
+.label {
+    font-weight: 700;
+    display: block;
+    font-size: 1.1em;
+    margin-bottom: 14px;
+
+    & input {
+        margin: 0;
+        font-size: 1em;
+        width: 100%;
+    }
+
+    &--centered{
+      width: 90%;
+      margin: 0 auto 14px auto;
+    }
 }
 
 .view-with-navbar {
