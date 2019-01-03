@@ -84,6 +84,10 @@ a {
     &:focus {
         border-bottom: 1.5px solid $borders-focus;
     }
+
+    &.select {
+        width: 100%;
+    }
 }
 
 .button {
@@ -108,9 +112,9 @@ a {
         width: 100%;
     }
 
-    &--centered{
-      width: 90%;
-      margin: 0 auto 14px auto;
+    &--centered {
+        width: 90%;
+        margin: 0 auto 14px;
     }
 }
 
