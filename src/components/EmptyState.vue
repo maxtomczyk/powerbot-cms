@@ -34,9 +34,11 @@ export default {
     width: 100vw;
     height: 88vh;
     color: $font-primary;
+    text-align: center;
 
     &__title {
         font-size: 1.5em;
+        line-height: 210%;
         h1 {
           margin-top: 15px;
         }
