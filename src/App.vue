@@ -78,7 +78,7 @@ a {
     padding: 4px 3px;
     color: $font-primary;
     font-family: 'Lato', sans-serif;
-    font-weight: bold;
+    font-weight: 400;
     display: block;
 
     &:focus {
@@ -116,6 +116,19 @@ a {
         width: 90%;
         margin: 0 auto 14px;
     }
+}
+
+.textarea{
+  width: 100%;
+
+  &--bordered{
+    border: 1px solid $borders-primary;
+    border-radius: 4px;
+
+    &:focus {
+        border: 1.5px solid $borders-focus;
+    }
+  }
 }
 
 .view-with-navbar {

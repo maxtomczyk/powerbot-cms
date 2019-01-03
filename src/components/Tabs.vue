@@ -8,7 +8,8 @@
 export default {
   data() {
     return {
-      last: null
+      last: null,
+      hash: null
     }
   },
 
@@ -18,36 +19,36 @@ export default {
     },
 
     clickHandler(e) {
-      let tabs = document.querySelectorAll('.tabs>div')
+      let tabs = this.$slots.default
       if (!e.target.id || e.target.id === this.last) return
       tabs.forEach(tab => {
-        tab.classList.remove('active-tab')
-        if (tab.id === e.target.id) tab.classList.add('active-tab')
+        tab.elm.classList.remove('active-tab')
+        if (tab.elm.id === e.target.id) tab.elm.classList.add('active-tab')
       })
       this.last = e.target.id
       this.$emit('change', e.target.id)
     },
 
-    setActiveTab(id){
-      let tabs = document.querySelectorAll('.tabs>div')
+    setActiveTab(id) {
+      let tabs = this.$slots.default
       tabs.forEach(tab => {
-        tab.classList.remove('active-tab')
-        if(tab.id === id) {
-          tab.classList.add('active-tab')
-          this.last = tab.id
+        tab.elm.classList.remove('active-tab')
+        if (tab.elm.id === id) {
+          tab.elm.classList.add('active-tab')
+          this.last = tab.elm.id
+          this.$emit('change', tab.elm.id)
         }
       })
     }
   },
-  mounted(){
+  mounted() {
     let that = this
-    const checker = setInterval(function () {
-      let first = document.querySelector('.tabs>div')
-      if(!first) return
-      first.classList.add('active-tab')
-      that.last = first.id
+
+    const checker = setInterval(function() {
+      if (!that.$slots.default) return
+      that.$slots.default[0].elm.classList.add('active-tab')
       clearInterval(checker)
-    }, 100);
+    }, 1000);
   }
 }
 </script>

@@ -1,65 +1,41 @@
 <template>
 <div class="custom-messages view-with-navbar">
-  <md-snackbar md-position="center" :md-duration="10000" :md-active.sync="loadError">
-    <span>Error occured during data load. Please refresh site or contact an administrator.</span>
-    <md-button class="md-primary" @click="loadError = false">close</md-button>
-  </md-snackbar>
-
-  <md-snackbar md-position="center" :md-duration="3000" :md-active.sync="success">
-    <span>Request success!</span>
-    <md-button class="md-primary" @click="password_dialog.success = false">close</md-button>
-  </md-snackbar>
-
-  <md-snackbar md-position="center" :md-duration="3000" :md-active.sync="error">
-    <span>Request ended with error!</span>
-    <md-button class="md-primary" @click="password_dialog.success = false">close</md-button>
-  </md-snackbar>
-
-  <md-dialog :md-active.sync="removeDialog.show">
-    <md-dialog-title>Delete message</md-dialog-title>
-    <md-dialog-content>
-      You are about to delete <b>{{ removeDialog.name }}</b> message. Continue?
-    </md-dialog-content>
-
-    <md-dialog-actions>
-      <md-button class="md-primary" @click="removeDialog.show = false">No</md-button>
-      <md-button class="md-primary" @click="removeMessage(removeDialog.id)">Yes</md-button>
-    </md-dialog-actions>
-  </md-dialog>
-
-  <md-dialog :md-active.sync="plugDialog.show" style="min-width: 500px; min-height: 520px;">
-    <md-dialog-title>Create new message</md-dialog-title>
-    <md-dialog-content>
-      <md-field>
-        <label>Group</label>
-        <md-select v-model="plugDialog.data.group_id">
-          <md-option v-for="group in groups" :key="group.id" :value="group.id">{{ group.name }}</md-option>
-        </md-select>
-      </md-field>
-      <md-field>
-        <label>API access name</label>
-        <md-input v-model="plugDialog.data.name"></md-input>
-      </md-field>
-      <md-field>
-        <label>Friendly name</label>
-        <md-input v-model="plugDialog.data.friendly_name"></md-input>
-      </md-field>
-      <md-field>
-        <label>Description</label>
-        <md-textarea v-model="plugDialog.data.description"></md-textarea>
-      </md-field>
-    </md-dialog-content>
-
-    <md-dialog-actions>
-      <md-button class="md-primary" @click="plugDialog.show = false">Close</md-button>
-      <md-button class="md-primary" @click="createPlug">Create</md-button>
-    </md-dialog-actions>
-  </md-dialog>
-
-  <!-- <md-tabs :md-active-tab="activeGroup" @md-changed="tabChange">
-    <md-tab v-for="group in groups" :id="`${group.id}`" :md-label="group.name" :key="group.id">
-    </md-tab>
-  </md-tabs> -->
+  <notifier ref="notifier"></notifier>
+  <creation-button @click="$refs.creationDialog.openDialog()"></creation-button>
+  <custom-dialog ref="creationDialog">
+    <div slot="custom-dialog-header">
+      <h1>New message</h1>
+    </div>
+    <div slot="custom-dialog-content">
+      <div class="container" style="width: 100%; min-width: 700px;">
+        <div class="row">
+          <div class="col-xs-12 col-lg-6">
+            <label class="label label--centered">Group
+              <select class="input select" v-model="plugDialog.data.group_id">
+                <option v-for="group in groups" :key="group.id" :value="group.id">{{ group.name }}</option>
+              </select>
+            </label>
+            <label class="label label--centered">API access name
+              <input class="input" type="text" v-model="plugDialog.data.name" />
+            </label>
+          </div>
+          <div class="col-xs-12 col-lg-6">
+            <label class="label label--centered">Friendly name
+              <input class="input" type="text" v-model="plugDialog.data.friendly_name" />
+            </label>
+            <label class="label label--centered">Description
+              <textarea class="textarea textarea--minimal input" rows="1" type="text" v-model="plugDialog.data.description" />
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div slot="custom-dialog-buttons">
+      <div class="dialog__button dialog__button--blue" @click="createPlug">
+        CREATE
+      </div>
+    </div>
+  </custom-dialog>
 
   <tabs @change="tabChange" ref="tabs">
     <div v-for="group in groups" :id="`${group.id}`" :key="group.id">{{ group.name.toUpperCase() }}</div>
@@ -71,26 +47,16 @@
       <th>Description</th>
       <th>Actions</th>
     </tr>
-    <tr v-for="plug in plugs" v-show="plug.group_id == activeGroup" :key="plug.id">
+    <tr v-for="(plug, i) in plugs" v-show="plug.group_id == activeGroup" :key="plug.id">
       <td>{{ plug.friendly_name }}</td>
       <td>{{ plug.description }}</td>
       <td>
-        <md-button class="md-icon-button" @click="messagesDialogs[plug.id] = true; $forceUpdate()">
-          <md-icon>chat</md-icon>
-        </md-button>
+        <font-awesome-icon @click="messagesDialogs[plug.id] = true; $forceUpdate()" v-tooltip.top-center="'Opens message editor'" icon="comment-alt" size="lg" class="table__icon" fixed-width />
+        <font-awesome-icon @click="$refs.messageCreator[i].openDialog()" v-tooltip.top-center="'Opens message editor'" icon="comment-alt" size="lg" class="table__icon" fixed-width />
       </td>
       <message-creator ref="messageCreator" :mType="plug.type" :name="`${plug.friendly_name} (${plug.name})` || plug.name" :id="plug.id" :message="plug.json" :active="messagesDialogs[plug.id]" :langs="langs" @saved="saved($event, plug.id)" @close="messagesDialogs[plug.id] = false; $forceUpdate()"></message-creator>
     </tr>
   </table>
-
-  <!-- <md-speed-dial class="md-bottom-right">
-    <md-speed-dial-target @click="plugDialog.data.group_id = parseInt(activeGroup); plugDialog.show = true">
-      <md-icon>add</md-icon>
-    </md-speed-dial-target>
-  </md-speed-dial> -->
-
-  <creation-button></creation-button>
-
 </div>
 </template>
 
@@ -130,7 +96,7 @@ export default {
   methods: {
     tabChange(e) {
       this.activeGroup = e
-      console.log(e);
+      this.$forceUpdate()
     },
 
     showRemoveDialog(message) {
@@ -143,8 +109,9 @@ export default {
       try {
         const created = await axios.put('/api/messages/plug', this.plugDialog.data)
         this.plugs.push(created.data)
-        this.plugDialog.show = false
-        this.success = true
+        this.$refs.tabs.setActiveTab(this.plugDialog.data.group_id.toString())
+        this.$refs.creationDialog.closeDialog()
+        this.$refs.notifier.pushNotification('created!', `Message plug has been created. You can edit it now.`, 'success', 6000)
         this.plugDialog.data = {
           group_id: null,
           name: '',
@@ -152,7 +119,9 @@ export default {
           friendly_name: ''
         }
       } catch (e) {
-        this.error = true
+        console.error(e);
+        this.$refs.creationDialog.closeDialog()
+        this.$refs.notifier.pushNotification('cannot create!', `An error occured during creation request. Error code: ${e.response.status}`, 'error', 10000)
       }
     },
 
@@ -202,9 +171,9 @@ export default {
           }
         }
       })
+      console.log(this.$refs);
     } catch (e) {
-      this.loadError = true
-      console.error(e)
+      this.$refs.notifier.pushNotification('cannot load!', `An error occured during data load. Error code: ${e.response.status}`, 'error', 10000)
     }
   }
 }

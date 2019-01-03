@@ -61,12 +61,24 @@ export default {
     -moz-box-shadow: 3px 3px 12px -7px rgba(0,0,0,0.75);
     box-shadow: 3px 3px 12px -7px rgba(0,0,0,0.75);
 
+    &--no-header-margin {
+        .dialog__header {
+            margin-bottom: 0;
+        }
+    }
+
+    &--no-overflow {
+        .dialog__content {
+            overflow-y: hidden;
+        }
+    }
+
     &__header {
         margin-bottom: 32px;
     }
 
     &__wrapper {
-        position: absolute;
+        position: fixed;
         width: 100vw;
         height: 100vh;
         top: 0;
