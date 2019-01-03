@@ -52,7 +52,6 @@
     </div>
   </custom-dialog>
 
-
   <table class="keywords__table table" v-if="keywords.length">
     <tr>
       <th>Name</th>

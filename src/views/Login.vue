@@ -81,7 +81,6 @@ export default {
         margin: 0;
     }
 
-
     &__input {
         width: 72%;
         margin: 8px auto;

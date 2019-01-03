@@ -30,7 +30,7 @@ export default {
 
   methods: {
     delay(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
+      return new Promise(resolve => setTimeout(resolve, ms))
     },
 
     async closeDialog() {
@@ -86,12 +86,12 @@ export default {
         width: 100%;
         height: 100%;
         background-color: rgba(0, 0, 0, .45);
-        transition: opacity .2s ease;
+        transition: opacity 0.2s ease;
         will-change: opacity;
         opacity: 1;
 
-        &--hiding{
-          opacity: 0;
+        &--hiding {
+            opacity: 0;
         }
     }
 
@@ -125,15 +125,15 @@ export default {
         cursor: pointer;
 
         &--blue {
-            color: $blue
+            color: $blue;
         }
 
-        &--orange{
-            color: $orange
+        &--orange {
+            color: $orange;
         }
 
-        &--green{
-          color: $green
+        &--green {
+            color: $green;
         }
     }
 }

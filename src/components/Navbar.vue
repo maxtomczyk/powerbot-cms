@@ -59,7 +59,6 @@ export default {
   box-shadow: 0px 1px 14px -2px rgba(0,0,0,0.75);
   z-index: 20;
 
-
     &__container {
         width: calc(100vw - 16px);
         z-index: 20;

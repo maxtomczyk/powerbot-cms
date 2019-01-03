@@ -25,7 +25,7 @@ export default {
 
   methods: {
     delay(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
+      return new Promise(resolve => setTimeout(resolve, ms))
     },
 
     async pushNotification(title, text, type, time) {
