@@ -6,7 +6,7 @@
       <span class="md-body-1" style="display: block">{{ name }}</span>
     </div>
     <div slot="custom-dialog-content">
-      <div class="container" style="width: 90vw; min-width: 1100px">
+      <div class="container message-creator__dialog-container">
         <tabs style="width: 100%; margin-bottom: 0;" @change="tabsChange($event)">
           <div v-for="(langMessage, lang) in message" :id="lang" :key="lang">{{ langNames[lang].toUpperCase() }}</div>
         </tabs>
@@ -375,6 +375,26 @@ export default {
 
     &:hover{
       color: $blue-hover;
+    }
+  }
+
+  &__dialog-container{
+    width: 90vw;
+    min-width: 1100px;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .message-creator{
+    &__dialog-container{
+      width: 100vw;
+      min-width: 0;
+    }
+
+    &__column{
+      max-height: 65vh;
+      width: 95vw;
+      margin-bottom: 40px;
     }
   }
 }

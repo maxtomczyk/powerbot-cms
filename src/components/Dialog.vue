@@ -34,6 +34,7 @@ export default {
     },
 
     async closeDialog() {
+      document.querySelector('body').classList.remove('noscroll')
       this.hiding = true
       await this.delay(300)
       this.active = false
@@ -41,6 +42,7 @@ export default {
     },
 
     async openDialog() {
+      document.querySelector('body').classList.add('noscroll')
       this.active = true
       await this.delay(20)
       this.hiding = false
@@ -154,6 +156,12 @@ export default {
     .dialog {
         height: 100vh;
         width: 100vw;
+
+        &--no-overflow{
+          .dialog__content {
+              overflow-y: scroll;
+          }
+        }
 
         &__buttons {
             position: absolute;

@@ -71,6 +71,10 @@ a {
     background-color: $bg-primary;
 }
 
+.noscroll {
+  overflow: hidden;
+}
+
 .input {
     background: transparent;
     border: none;

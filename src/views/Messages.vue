@@ -51,7 +51,6 @@
       <td>{{ plug.friendly_name }}</td>
       <td>{{ plug.description }}</td>
       <td>
-        <font-awesome-icon @click="messagesDialogs[plug.id] = true; $forceUpdate()" v-tooltip.top-center="'Opens message editor'" icon="comment-alt" size="lg" class="table__icon" fixed-width />
         <font-awesome-icon @click="$refs.messageCreator[i].openDialog()" v-tooltip.top-center="'Opens message editor'" icon="comment-alt" size="lg" class="table__icon" fixed-width />
       </td>
       <message-creator ref="messageCreator" :mType="plug.type" :name="`${plug.friendly_name} (${plug.name})` || plug.name" :id="plug.id" :message="plug.json" :active="messagesDialogs[plug.id]" :langs="langs" @saved="saved($event, plug.id)" @close="messagesDialogs[plug.id] = false; $forceUpdate()"></message-creator>
