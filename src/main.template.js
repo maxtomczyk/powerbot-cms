@@ -57,6 +57,7 @@ import DrawerListItem from '@/components/DrawerListItem'
 import Dialog from '@/components/Dialog'
 import CreationButton from '@/components/CreationButton'
 import EmptyState from '@/components/EmptyState'
+import Tabs from '@/components/Tabs'
 
 library.add(fas)
 
@@ -96,6 +97,7 @@ Vue.component('drawer-list-item', DrawerListItem)
 Vue.component('custom-dialog', Dialog)
 Vue.component('creation-button', CreationButton)
 Vue.component('empty-state', EmptyState)
+Vue.component('tabs', Tabs)
 
 Vue.config.productionTip = false
 

@@ -1,5 +1,5 @@
 <template>
-<div class="custom-messages">
+<div class="custom-messages view-with-navbar">
   <md-snackbar md-position="center" :md-duration="10000" :md-active.sync="loadError">
     <span>Error occured during data load. Please refresh site or contact an administrator.</span>
     <md-button class="md-primary" @click="loadError = false">close</md-button>
@@ -56,34 +56,41 @@
     </md-dialog-actions>
   </md-dialog>
 
-  <md-tabs :md-active-tab="activeGroup" @md-changed="tabChange">
+  <!-- <md-tabs :md-active-tab="activeGroup" @md-changed="tabChange">
     <md-tab v-for="group in groups" :id="`${group.id}`" :md-label="group.name" :key="group.id">
     </md-tab>
-  </md-tabs>
+  </md-tabs> -->
 
-  <md-table class="custom-messages__table">
-    <md-table-row>
-      <md-table-head>Name</md-table-head>
-      <md-table-head>Description</md-table-head>
-      <md-table-head>Actions</md-table-head>
-    </md-table-row>
-    <md-table-row v-for="plug in plugs" v-show="plug.group_id == activeGroup" :key="plug.id">
-      <md-table-cell>{{ plug.friendly_name }}</md-table-cell>
-      <md-table-cell>{{ plug.description }}</md-table-cell>
-      <md-table-cell>
+  <tabs @change="tabChange" ref="tabs">
+    <div v-for="group in groups" :id="`${group.id}`" :key="group.id">{{ group.name.toUpperCase() }}</div>
+  </tabs>
+
+  <table class="custom-messages__table table">
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Actions</th>
+    </tr>
+    <tr v-for="plug in plugs" v-show="plug.group_id == activeGroup" :key="plug.id">
+      <td>{{ plug.friendly_name }}</td>
+      <td>{{ plug.description }}</td>
+      <td>
         <md-button class="md-icon-button" @click="messagesDialogs[plug.id] = true; $forceUpdate()">
           <md-icon>chat</md-icon>
         </md-button>
-      </md-table-cell>
+      </td>
       <message-creator ref="messageCreator" :mType="plug.type" :name="`${plug.friendly_name} (${plug.name})` || plug.name" :id="plug.id" :message="plug.json" :active="messagesDialogs[plug.id]" :langs="langs" @saved="saved($event, plug.id)" @close="messagesDialogs[plug.id] = false; $forceUpdate()"></message-creator>
-    </md-table-row>
-  </md-table>
+    </tr>
+  </table>
 
-  <md-speed-dial class="md-bottom-right">
+  <!-- <md-speed-dial class="md-bottom-right">
     <md-speed-dial-target @click="plugDialog.data.group_id = parseInt(activeGroup); plugDialog.show = true">
       <md-icon>add</md-icon>
     </md-speed-dial-target>
-  </md-speed-dial>
+  </md-speed-dial> -->
+
+  <creation-button></creation-button>
+
 </div>
 </template>
 
@@ -123,6 +130,7 @@ export default {
   methods: {
     tabChange(e) {
       this.activeGroup = e
+      console.log(e);
     },
 
     showRemoveDialog(message) {
@@ -205,7 +213,8 @@ export default {
 <style lang="scss">
 .custom-messages {
     &__table {
-        margin-top: 2vh;
+        width: 90%;
+        margin: 0 auto;
     }
 }
 </style>
