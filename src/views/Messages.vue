@@ -41,19 +41,19 @@
     <div v-for="group in groups" :id="`${group.id}`" :key="group.id">{{ group.name.toUpperCase() }}</div>
   </tabs>
 
-  <table class="custom-messages__table table">
+  <table class="custom-messages__table table" v-for="group in groups" :id="`${group.id}`" :key="`TAB-${group.id}`" v-show="group.id == activeGroup">
     <tr>
       <th>Name</th>
       <th>Description</th>
       <th>Actions</th>
     </tr>
-    <tr v-for="(plug, i) in plugs" v-show="plug.group_id == activeGroup" :key="plug.id">
+    <tr v-for="(plug, i) in plugs" :key="plug.id" v-if="plug.group_id == group.id">
       <td>{{ plug.friendly_name }}</td>
       <td>{{ plug.description }}</td>
       <td>
-        <font-awesome-icon @click="$refs.messageCreator[i].openDialog()" v-tooltip.top-center="'Opens message editor'" icon="comment-alt" size="lg" class="table__icon" fixed-width />
+        <font-awesome-icon @click="$refs[`messageCreator_${plug.id}`][0].openDialog()" v-tooltip.top-center="'Opens message editor'" icon="comment-alt" size="lg" class="table__icon" fixed-width />
       </td>
-      <message-creator ref="messageCreator" :mType="plug.type" :name="`${plug.friendly_name} (${plug.name})` || plug.name" :id="plug.id" :message="plug.json" :active="messagesDialogs[plug.id]" :langs="langs" @saved="saved($event, plug.id)" @close="messagesDialogs[plug.id] = false; $forceUpdate()"></message-creator>
+      <message-creator :ref="`messageCreator_${plug.id}`" :mType="plug.type" :name="`${plug.friendly_name} (${plug.name})` || plug.name" :id="plug.id" :message="plug.json" :active="messagesDialogs[plug.id]" :langs="langs" @saved="saved($event, plug.id)" @close="messagesDialogs[plug.id] = false; $forceUpdate()"></message-creator>
     </tr>
   </table>
 </div>
@@ -142,7 +142,7 @@ export default {
         }
       })
       this.$forceUpdate()
-      this.$refs.messageCreator[0].setProps()
+      this.$refs[`messageCreator_${plugId}`][0].setProps()
       this.$refs.notifier.pushNotification('saved!', 'Message data changes saved.', 'success')
     }
   },
@@ -153,6 +153,7 @@ export default {
       const plugs = await axios.get('/api/messages/plugs')
       const groups = await axios.get('/api/messages/groups')
       const langs = await axios.get('/api/languages')
+      console.log(this.$refs);
 
       this.langs = langs.data
       this.plugs = plugs.data
