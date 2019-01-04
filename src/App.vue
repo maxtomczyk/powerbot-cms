@@ -120,6 +120,12 @@ a {
         width: 90%;
         margin: 0 auto 14px;
     }
+
+    &--checkbox{
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+    }
 }
 
 .textarea{

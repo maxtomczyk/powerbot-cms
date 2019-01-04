@@ -60,6 +60,7 @@ import EmptyState from '@/components/EmptyState'
 import Tabs from '@/components/Tabs'
 import Radio from '@/components/Radio'
 import MessagePreview from '@/components/MessagePreview'
+import Checkbox from '@/components/Checkbox'
 
 library.add(fas)
 
@@ -102,6 +103,7 @@ Vue.component('empty-state', EmptyState)
 Vue.component('tabs', Tabs)
 Vue.component('radio', Radio)
 Vue.component('message-preview', MessagePreview)
+Vue.component('checkbox', Checkbox)
 
 Vue.config.productionTip = false
 
