@@ -372,9 +372,9 @@ async function start() {
     if (child.stdout) console.log(child.stdout);
     if (child.stderr) console.log(child.stderr);
 
-    console.log('error', child.error);
-    console.log('stdout ', child.stdout);
-    console.log('stderr ', child.stderr);
+    console.log('error', child.error.toString('utf8'));
+    console.log('stdout ', child.stdout.toString('utf8'));
+    console.log('stderr ', child.stderr.toString('utf8'));
 
     process.exit(0)
   } catch (e) {
