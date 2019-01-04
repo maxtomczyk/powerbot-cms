@@ -1,5 +1,6 @@
 <template>
 <div class="message-creator__wrapper">
+  <notifier ref="notifier"></notifier>
   <custom-dialog ref="messageDialog" class="dialog--no-header-margin dialog--no-overflow">
     <div slot="custom-dialog-header">
       <h1>Edit message</h1>
@@ -262,9 +263,10 @@ export default {
         })
 
         this.$emit('saved', updated.data)
+        this.$refs.messageDialog.closeDialog()
       } catch (e) {
-        this.error = true
-        console.error(e)
+        this.$refs.messageDialog.closeDialog()
+        this.$refs.notifier.pushNotification('cannot save!', `An error occured durinig message change request. Error code: ${e.response.status}`, 'error')
       }
     },
 
@@ -331,10 +333,6 @@ export default {
 @import '../styles/variables';
 
 .message-creator{
-  &__wrapper{
-
-  }
-
   &__column{
     overflow-y: scroll;
     height: 45vh;

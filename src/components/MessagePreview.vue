@@ -69,6 +69,7 @@ export default {
     }
 
     &__bubble {
+        position: relative;
         background-color: #F1F0F0;
         padding: 6px 12px;
         max-width: 100%;
@@ -84,7 +85,7 @@ export default {
     }
 
     &__buttons {
-        max-width: 100%;
+        min-width: 250px;
     }
 
     &__button {

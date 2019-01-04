@@ -118,7 +118,6 @@ export default {
           friendly_name: ''
         }
       } catch (e) {
-        console.error(e);
         this.$refs.creationDialog.closeDialog()
         this.$refs.notifier.pushNotification('cannot create!', `An error occured during creation request. Error code: ${e.response.status}`, 'error', 10000)
       }
@@ -144,7 +143,7 @@ export default {
       })
       this.$forceUpdate()
       this.$refs.messageCreator[0].setProps()
-      this.success = true
+      this.$refs.notifier.pushNotification('saved!', 'Message data changes saved.', 'success')
     }
   },
 
@@ -170,7 +169,6 @@ export default {
           }
         }
       })
-      console.log(this.$refs);
     } catch (e) {
       this.$refs.notifier.pushNotification('cannot load!', `An error occured during data load. Error code: ${e.response.status}`, 'error', 10000)
     }
