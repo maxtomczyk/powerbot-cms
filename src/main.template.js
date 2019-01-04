@@ -59,6 +59,7 @@ import CreationButton from '@/components/CreationButton'
 import EmptyState from '@/components/EmptyState'
 import Tabs from '@/components/Tabs'
 import Radio from '@/components/Radio'
+import MessagePreview from '@/components/MessagePreview'
 
 library.add(fas)
 
@@ -100,6 +101,7 @@ Vue.component('creation-button', CreationButton)
 Vue.component('empty-state', EmptyState)
 Vue.component('tabs', Tabs)
 Vue.component('radio', Radio)
+Vue.component('message-preview', MessagePreview)
 
 Vue.config.productionTip = false
 

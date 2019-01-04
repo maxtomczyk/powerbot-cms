@@ -32,7 +32,9 @@
               </div>
             </div>
             <div class="col-xs-12 col-lg-4">
-
+              <div class="message-creator__column">
+                <message-preview :message="langMessage" :type="type"></message-preview>
+              </div>
             </div>
           </div>
           <div class="row" v-if="type === 'buttons' || type === 'quick_replies'" style="width: 100%;">
@@ -58,7 +60,7 @@
                   </div>
                   <div class="message-creator__qr-row">
                     <label class="label label--centered">Title
-                      <input type="text" v-model="qr.title" class="input">
+                      <input type="text" v-model="qr.title" class="input" @input="refreshPreview">
                     </label>
                     <label class="label label--centered">Payload
                       <input type="text" v-model="qr.payload" class="input">
@@ -77,7 +79,7 @@
                   </div>
                   <div class="message-creator__qr-row">
                     <label class="label label--centered">Title
-                      <input type="text" v-model="btn.title" class="input">
+                      <input type="text" v-model="btn.title" class="input" @input="refreshPreview">
                     </label>
                     <label class="label label--centered">Payload / URL
                       <input type="text" v-model="btn.payload" class="input">
@@ -90,7 +92,9 @@
               </div>
             </div>
             <div class="col-xs-12 col-lg-4">
-
+              <div class="message-creator__column">
+                <message-preview ref="mPreview2" :message="langMessage" :type="type"></message-preview>
+              </div>
             </div>
           </div>
           <div v-if="type === 'raw'" style="width: 100%;">
@@ -135,11 +139,11 @@ export default {
         button: {
           type: 'postback',
           payload: '',
-          title: ''
+          title: 'Button'
         },
         quick_reply: {
           content_type: 'text',
-          title: '',
+          title: 'QR',
           payload: ''
         }
       }
@@ -161,6 +165,7 @@ export default {
       }
 
       this.$forceUpdate()
+      this.refreshPreview()
     },
 
     deleteBtn(i) {
@@ -168,6 +173,7 @@ export default {
         this.message[lang].buttons.splice(i, 1)
       }
       this.$forceUpdate()
+      this.refreshPreview()
     },
 
     addQr() {
@@ -176,6 +182,7 @@ export default {
       }
 
       this.$forceUpdate()
+      this.refreshPreview()
     },
 
     deleteQr(i) {
@@ -183,6 +190,11 @@ export default {
         this.message[lang].quick_replies.splice(i, 1)
       }
       this.$forceUpdate()
+      this.refreshPreview()
+    },
+
+    refreshPreview(){
+      this.$refs.mPreview2[0].refresh()
     },
 
     addText() {
@@ -282,6 +294,15 @@ export default {
         if (!this.message[lang].buttons) this.message[lang].buttons = [Object.assign({}, this.elements.button)]
         if (!this.message[lang].raw) this.message[lang].raw = ''
         if (!this.message[lang].texts) this.message[lang].texts = ['']
+      }
+    }
+  },
+
+  computed: {
+    previewData(){
+      return {
+        type: this.type,
+        elements: this.elements
       }
     }
   },
