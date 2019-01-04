@@ -33,7 +33,7 @@ if (!initialized) {
 }
 
 // Fix PostCSS config lack in vue-material module
-if (fs.existsSync('../vue-material/')) fs.copyFileSync('./scripts/files/postcss.config.js', '../vue-material/postcss.config.js')
+if (fs.existsSync('../flexboxgrid/')) fs.copyFileSync('./scripts/files/postcss.config.js', '../flexboxgrid/dist/postcss.config.js')
 
 // Fix webpack watchpack not wathing symlinks
 if (fs.existsSync('../watchpack/')) fs.copyFileSync('./scripts/files/DirectoryWatcher.js', '../watchpack/lib/DirectoryWatcher.js')
