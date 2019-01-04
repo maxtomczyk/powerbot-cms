@@ -34,7 +34,7 @@
             </div>
             <div class="col-xs-12 col-lg-4">
               <div class="message-creator__column">
-                <message-preview :message="langMessage" :type="type"></message-preview>
+                <message-preview :message="langMessage" ref="mPreview1" :type="type"></message-preview>
               </div>
             </div>
           </div>

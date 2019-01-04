@@ -48,7 +48,7 @@ export default {
       if (!that.$slots.default) return
       that.$slots.default[0].elm.classList.add('active-tab')
       clearInterval(checker)
-    }, 1000);
+    }, 1000)
   }
 }
 </script>

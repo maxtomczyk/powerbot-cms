@@ -47,7 +47,7 @@
       <th>Description</th>
       <th>Actions</th>
     </tr>
-    <tr v-for="(plug, i) in plugs" :key="plug.id" v-if="plug.group_id == group.id">
+    <tr v-for="plug in plugs" :key="plug.id" v-if="plug.group_id == group.id">
       <td>{{ plug.friendly_name }}</td>
       <td>{{ plug.description }}</td>
       <td>
@@ -153,7 +153,6 @@ export default {
       const plugs = await axios.get('/api/messages/plugs')
       const groups = await axios.get('/api/messages/groups')
       const langs = await axios.get('/api/languages')
-      console.log(this.$refs);
 
       this.langs = langs.data
       this.plugs = plugs.data
