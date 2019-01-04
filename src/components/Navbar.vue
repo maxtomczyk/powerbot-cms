@@ -17,7 +17,7 @@
             </div>
             <template slot="popover">
               <div class="navbar__username-popover-content">
-                <drawer-item icon="sign-out-alt" target="/logout" @clicked="close()">Log out</drawer-item>
+                <drawer-item icon="sign-out-alt" target="/logout">Log out</drawer-item>
               </div>
             </template>
           </v-popover>
