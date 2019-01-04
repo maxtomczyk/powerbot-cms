@@ -68,7 +68,8 @@ export default {
 @import '../styles/variables';
 
 .notifier {
-    position: absolute;
+    position: fixed;
+    top: 0;
     max-height: 0;
     width: 100vw;
     z-index: 200;
