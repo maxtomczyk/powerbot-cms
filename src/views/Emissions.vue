@@ -281,7 +281,6 @@ export default {
 
 <style lang="scss">
 .emissions {
-
     &__table {
         width: 90%;
         margin: 0 auto;

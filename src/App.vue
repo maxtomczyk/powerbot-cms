@@ -72,7 +72,7 @@ a {
 }
 
 .noscroll {
-  overflow: hidden;
+    overflow: hidden;
 }
 
 .input {
@@ -121,24 +121,24 @@ a {
         margin: 0 auto 14px;
     }
 
-    &--checkbox{
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
+    &--checkbox {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
     }
 }
 
-.textarea{
-  width: 100%;
+.textarea {
+    width: 100%;
 
-  &--bordered{
-    border: 1px solid $borders-primary;
-    border-radius: 4px;
+    &--bordered {
+        border: 1px solid $borders-primary;
+        border-radius: 4px;
 
-    &:focus {
-        border: 1.5px solid $borders-focus;
+        &:focus {
+            border: 1.5px solid $borders-focus;
+        }
     }
-  }
 }
 
 .view-with-navbar {

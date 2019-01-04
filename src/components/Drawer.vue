@@ -12,7 +12,6 @@
           <drawer-item icon="question" target="/unknown_phrases" @clicked="close()">New phrases</drawer-item>
           <drawer-item icon="broadcast-tower" target="/emissions" @clicked="close()">Emissions</drawer-item>
           <drawer-item icon="user-shield" target="/admins" @clicked="close()">Admins</drawer-item>
-          <drawer-item icon="sign-out-alt" target="/logout" @clicked="close()">Log out</drawer-item>
         </div>
 
         <div class="drawer__list">
@@ -24,7 +23,6 @@
           <drawer-list-item icon="question" target="/unknown_phrases" @clicked="close()">New phrases</drawer-list-item>
           <drawer-list-item icon="broadcast-tower" target="/emissions" @clicked="close()">Emissions</drawer-list-item>
           <drawer-list-item icon="user-shield" target="/admins" @clicked="close()">Admins</drawer-list-item>
-          <drawer-list-item icon="sign-out-alt" target="/logout" @clicked="close()">Log out</drawer-list-item>
         </div>
 
         <div class="drawer__footer">
