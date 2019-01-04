@@ -11,6 +11,9 @@
     "postinstall": "node scripts/init.js && npm run build && node node_modules/knex/bin/cli.js migrate:latest"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.12",
+    "@fortawesome/free-solid-svg-icons": "^5.6.3",
+    "@fortawesome/vue-fontawesome": "^0.1.4",
     "argon2": "^0.17.3",
     "autoprefixer": "^7.1.2",
     "axios": "^0.18.0",
@@ -41,6 +44,7 @@
     "express": "^4.16.3",
     "extract-text-webpack-plugin": "^3.0.0",
     "file-loader": "^1.1.4",
+    "flexboxgrid": "^6.3.1",
     "friendly-errors-webpack-plugin": "^1.6.1",
     "html-webpack-plugin": "^2.30.1",
     "incredbot": "github:maxtomczyk/incredbot#1.2.0",
@@ -69,9 +73,9 @@
     "string-template": "^1.0.0",
     "uglifyjs-webpack-plugin": "^1.1.1",
     "url-loader": "^0.5.8",
+    "v-tooltip": "^2.0.0-rc.33",
     "vue": "^2.5.2",
     "vue-loader": "^13.3.0",
-    "vue-material": "1.0.0-beta-7",
     "vue-router": "^3.0.1",
     "vue-style-loader": "^3.0.1",
     "vue-template-compiler": "^2.5.2",

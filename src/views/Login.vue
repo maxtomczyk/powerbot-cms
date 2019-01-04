@@ -1,28 +1,16 @@
 <template>
-<div class="md-layout md-gutter md-alignment-center-center loginscreen">
-  <md-snackbar md-position="center" :md-duration="3000" :md-active.sync="login_incorrect">
-    <span>User credentials incorrect! Please, try again.</span>
-    <md-button class="md-primary" @click="login_incorrect = false">close</md-button>
-  </md-snackbar>
-
-  <md-card class="md-layout-item md-size-30 md-xsmall-size-100  loginscreen__box">
-    <md-card-header class="loginbox__header">
-
-    </md-card-header>
-    <md-card-content>
-      <md-field>
-        <label>Login</label>
-        <md-input v-model="user.login" @keyup="loginKeyUp($event)"></md-input>
-      </md-field>
-      <md-field>
-        <label>Password</label>
-        <md-input type="password" v-model="user.password" @keyup="loginKeyUp($event)"></md-input>
-      </md-field>
-    </md-card-content>
-    <md-card-actions>
-      <md-button class="md-raised md-primary" @click="auth()">Log in</md-button>
-    </md-card-actions>
-  </md-card>
+<div class="login">
+  <notifier ref="notifier"></notifier>
+  <div class="login__container container">
+    <div class="row login__boxwrapper center-xs middle-xs">
+      <div class="login__loginbox col-md-3 col-xs-12">
+        <h1 class="login__logo">incredbot</h1>
+        <input class="login__input input" placeholder="Login" type="text" v-model="user.login" @keyup="loginKeyUp($event)">
+        <input class="login__input input" placeholder="Password" type="password" v-model="user.password" @keyup="loginKeyUp($event)">
+        <div class="button login__button center" @click="auth()">Enter</div>
+      </div>
+    </div>
+  </div>
 </div>
 </template>
 
@@ -55,10 +43,13 @@ export default {
       } catch (e) {
         if (e.response.status === 401) {
           this.login_incorrect = true
-          document.querySelector('.loginbox__logo').classList.add('e401')
+          this.$refs.notifier.pushNotification('cannot login', 'Username and password combination is incorrect, please try again', 'warning')
+          document.querySelector('.login__logo').classList.add('e401')
           setTimeout(() => {
-            document.querySelector('.loginbox__logo').classList.remove('e401')
+            document.querySelector('.login__logo').classList.remove('e401')
           }, 850)
+        } else {
+          this.$refs.notifier.pushNotification('internal error', 'Internal error occured. Check dev console and/or contact maintainer.', 'error')
         }
       }
     },
@@ -71,29 +62,46 @@ export default {
 </script>
 
 <style lang="scss">
-.loginscreen {
-    width: 97vw;
-    height: calc(100vh - 64px);
-    // overflow: hidden;
+@import '../styles/variables';
 
-    &__box {
-        padding-bottom: 1%;
+.login {
+    background-image: $dark-gradient;
+    width: 100vw;
+    height: 100vh;
+
+    &__container {
+        height: 100vh !important;
+        width: 100%;
+        padding: 0 !important;
+    }
+
+    &__boxwrapper {
+        height: 100%;
+        width: 100vw;
         margin: 0;
     }
-}
 
-.loginbox {
-    &__logo {
-        width: 60%;
-        display: block;
-        transition: all 0.3s ease-out;
+    &__input {
+        width: 72%;
+        margin: 8px auto;
+        font-size: 1.2em;
     }
 
-    &__header {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding-bottom: 0;
+    &__logo{
+      font-family: 'Major Mono Display', monospace;
+      color: white;
+    }
+
+    &__button{
+      width: 72%;
+      margin-top: 25px;
+      background-color: $green;
+      color: #FFF;
+      font-weight: bold;
+
+      &:hover{
+        background-color: $green-hover;
+      }
     }
 }
 
@@ -121,19 +129,6 @@ export default {
     0%,
     100% {
         -webkit-transform: translateX(0);
-    }
-}
-
-@media only screen and (max-width: 600px) {
-    .md-layout.md-gutter {
-        margin: 0;
-    }
-
-    .loginscreen {
-        width: 95vw;
-        &__box {
-            box-shadow: none;
-        }
     }
 }
 </style>

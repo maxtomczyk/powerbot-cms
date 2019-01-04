@@ -1,73 +1,74 @@
 <template>
-<div class="keywords">
-  <md-snackbar md-position="center" :md-duration="10000" :md-active.sync="loadError">
-    <span>Error occured during data load. Please refresh site or contact an administrator.</span>
-    <md-button class="md-primary" @click="loadError = false">close</md-button>
-  </md-snackbar>
+<div class="keywords view-with-navbar">
+  <notifier ref="notifier"></notifier>
+  <creation-button @click="$refs.creationDialog.openDialog()"></creation-button>
 
-  <md-snackbar md-position="center" :md-duration="3000" :md-active.sync="success">
-    <span>Request success!</span>
-    <md-button class="md-primary" @click="password_dialog.success = false">close</md-button>
-  </md-snackbar>
+  <custom-dialog ref="creationDialog">
+    <div slot="custom-dialog-header">
+      <h1>Create reaction</h1>
+    </div>
+    <div slot="custom-dialog-content">
+      <div class="container" style="width: 100%; min-width: 700px;">
+        <div class="row">
+          <div class="col-xs-12 col-lg-6">
+            <label class="label label--centered">Name
+              <input class="input" type="text" v-model="keyword.friendly_name" />
+            </label>
+            <label class="label label--centered">Message
+              <select class="input select" v-model="keyword.message_id">
+                <option v-for="message in messages" :key="message.id" :value="message.id">{{ message.friendly_name }}</option>
+              </select>
+            </label>
+          </div>
+          <div class="col-xs-12 col-lg-6">
+            <label class="label label--centered">Regex body
+              <input class="input" type="text" v-model="keyword.regex_body" />
+            </label>
+            <label class="label label--centered">Regex flags
+              <input class="input" type="text" v-model="keyword.regex_flags" />
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div slot="custom-dialog-buttons">
+      <div class="dialog__button dialog__button--blue" @click="create">
+        CREATE
+      </div>
+    </div>
+  </custom-dialog>
 
-  <md-snackbar md-position="center" :md-duration="3000" :md-active.sync="error">
-    <span>Request ended with error!</span>
-    <md-button class="md-primary" @click="password_dialog.success = false">close</md-button>
-  </md-snackbar>
+  <custom-dialog ref="deleteDialog">
+    <div slot="custom-dialog-header">
+      <h1>Remove reaction</h1>
+    </div>
+    <div slot="custom-dialog-content">
+      You are about to remove bot reaction named <i><b>{{ toDelete.name }}</b></i>. Continue?
+    </div>
+    <div slot="custom-dialog-buttons">
+      <div class="dialog__button dialog__button--orange" @click="remove(toDelete.id)">
+        DELETE
+      </div>
+    </div>
+  </custom-dialog>
 
-  <md-dialog :md-active.sync="creationDialog">
-    <md-dialog-title>Create keyword</md-dialog-title>
-    <md-dialog-content>
-      <md-field>
-        <label>Friendly name</label>
-        <md-input v-model="keyword.friendly_name"></md-input>
-      </md-field>
-      <md-field>
-        <label>Regex body</label>
-        <md-input v-model="keyword.regex_body"></md-input>
-      </md-field>
-      <md-field>
-        <label>Regex flags</label>
-        <md-input v-model="keyword.regex_flags"></md-input>
-      </md-field>
-      <md-field>
-        <label>Message</label>
-        <md-select v-model="keyword.message_id">
-          <md-option v-for="message in messages" :key="message.id" :value="message.id">{{ message.friendly_name }}</md-option>
-        </md-select>
-      </md-field>
-    </md-dialog-content>
-
-    <md-dialog-actions>
-      <md-button class="md-primary" @click="creationDialog = false">Cancel</md-button>
-      <md-button class="md-primary" @click="create()">Create</md-button>
-    </md-dialog-actions>
-  </md-dialog>
-
-  <md-table class="keywords__table">
-    <md-table-row>
-      <md-table-head>Name</md-table-head>
-      <md-table-head>Regex</md-table-head>
-      <md-table-head>Message</md-table-head>
-      <md-table-head>Actions</md-table-head>
-    </md-table-row>
-    <md-table-row v-for="keyword in keywords" :key="keyword.id">
-      <md-table-cell>{{ keyword.friendly_name }}</md-table-cell>
-      <md-table-cell>{{ `/${keyword.regex_body}/${keyword.regex_flags}` }}</md-table-cell>
-      <md-table-cell>{{ keyword.message_name }}</md-table-cell>
-      <md-table-cell>
-        <md-button class="md-icon-button" @click="remove(keyword.id)">
-          <md-icon>delete</md-icon>
-        </md-button>
-      </md-table-cell>
-    </md-table-row>
-  </md-table>
-
-  <md-speed-dial class="md-bottom-right">
-    <md-speed-dial-target @click="creationDialog = true">
-      <md-icon>add</md-icon>
-    </md-speed-dial-target>
-  </md-speed-dial>
+  <table class="keywords__table table" v-if="keywords.length">
+    <tr>
+      <th>Name</th>
+      <th>Regex</th>
+      <th>Message</th>
+      <th>Actions</th>
+    </tr>
+    <tr v-for="keyword in keywords" :key="keyword.id">
+      <td>{{ keyword.friendly_name }}</td>
+      <td>{{ `/${keyword.regex_body}/${keyword.regex_flags}` }}</td>
+      <td>{{ keyword.message_name }}</td>
+      <td>
+        <font-awesome-icon @click="openDeleteDialog(keyword)" v-tooltip.top-center="'Remove bot reaction on this pattern'" icon="trash-alt" size="lg" class="table__icon" fixed-width />
+      </td>
+    </tr>
+  </table>
+  <empty-state v-else icon="clipboard-list" title="Responses for keywords list is empty..." text="Show your bot how to response for messages with regular expressions!"></empty-state>
 </div>
 </template>
 
@@ -88,6 +89,10 @@ export default {
         regex_flags: '',
         message_id: null,
         friendly_name: ''
+      },
+      toDelete: {
+        name: '',
+        id: null
       }
     }
   },
@@ -105,21 +110,30 @@ export default {
           if (k.id === id) this.keywords.splice(i, 1)
         })
 
-        this.success = true
+        this.$refs.notifier.pushNotification('deleted!', `Selected keyword reaction has been removed.`, 'success', 6000)
+        this.$refs.deleteDialog.closeDialog()
       } catch (e) {
-        this.error = true
+        this.$refs.deleteDialog.closeDialog()
+        this.$refs.notifier.pushNotification('cannot remove!', `An error occured during delete request. Error code: ${e.response.status}`, 'error', 10000)
       }
     },
 
-    async create(id) {
+    async create() {
       try {
         const created = await axios.put('/api/keyword', this.keyword)
         this.keywords.push(created.data)
-        this.creationDialog = false
-        this.success = true
+        this.$refs.creationDialog.closeDialog()
+        this.$refs.notifier.pushNotification('created!', `Keyword reaction has been created.`, 'success', 6000)
       } catch (e) {
-        this.error = true
+        this.$refs.creationDialog.closeDialog()
+        this.$refs.notifier.pushNotification('cannot create!', `An error occured during creation request. Error code: ${e.response.status}`, 'error', 10000)
       }
+    },
+
+    openDeleteDialog(keyword){
+      this.toDelete.name = keyword.friendly_name
+      this.toDelete.id = keyword.id
+      this.$refs.deleteDialog.openDialog()
     }
   },
 
@@ -131,14 +145,18 @@ export default {
       this.keywords = keywords.data
       this.messages = messages.data
     } catch (e) {
-      this.loadError = true
+      this.$refs.notifier.pushNotification('cannot load!', `An error occured during data load. Error code: ${e.response.status}`, 'error', 10000)
     }
   }
 }
 </script>
 
 <style lang="scss">
-.md-select-menu {
-    z-index: 9999;
+.keywords {
+
+    &__table {
+        width: 90%;
+        margin: 0 auto;
+    }
 }
 </style>

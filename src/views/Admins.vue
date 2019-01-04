@@ -1,117 +1,98 @@
 <template>
-<div>
-  <md-snackbar md-position="center" :md-duration="10000" :md-active.sync="error_snackbar">
-    <span>Error occured during data load. Please refresh site or contact an administrator.</span>
-    <md-button class="md-primary" @click="error_snackbar = false">close</md-button>
-  </md-snackbar>
+<div class="view-with-navbar">
+  <creation-button @click="$refs.creationDialog.openDialog()"></creation-button>
+  <notifier ref="notifier"></notifier>
 
-  <md-snackbar class="top-index" md-position="center" :md-duration="3000" :md-active.sync="creation_dialog.error">
-    <span>Error occured during account creating.</span>
-    <md-button class="md-primary" @click="creation_dialog.error = false">close</md-button>
-  </md-snackbar>
+  <custom-dialog ref="removeDialog">
+    <div slot="custom-dialog-header">
+      <h1>Remove administrator</h1>
+    </div>
+    <div slot="custom-dialog-content">
+      You are about to remove administrator account of <i><b>{{ delete_dialog.name }}</b></i> with login <i><b>{{ delete_dialog.login }}</b></i>. Continue?
+    </div>
+    <div slot="custom-dialog-buttons">
+      <div class="dialog__button dialog__button--orange" @click="deleteAdmin">
+        DELETE
+      </div>
+    </div>
+  </custom-dialog>
 
-  <md-snackbar class="top-index" md-position="center" :md-duration="3000" :md-active.sync="password_dialog.error">
-    <span>Error occured during password change.</span>
-    <md-button class="md-primary" @click="password_dialog.error = false">close</md-button>
-  </md-snackbar>
+  <custom-dialog ref="passwordDialog">
+    <div slot="custom-dialog-header">
+      <h1>Password change</h1>
+    </div>
+    <div slot="custom-dialog-content">
+      <div class="container" style="width: 100%">
+        <div class="row">
+          <div class="col-xs-12">
+            <label class="label label--centered">Current password
+              <input class="input" type="password" name="password" v-model="password_dialog.password" />
+            </label>
+            <label class="label label--centered">New password
+              <input class="input" type="password" name="newPassword" v-model="password_dialog.new_password" />
+            </label>
+            <label class="label label--centered" for="newPasswordRepeat">New password repeat
+              <input class="input" type="password" name="login" v-model="password_dialog.new_password_repeat" />
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div slot="custom-dialog-buttons">
+      <div class="dialog__button dialog__button--blue" @click="changePassword">
+        CHANGE
+      </div>
+    </div>
+  </custom-dialog>
 
-  <md-snackbar md-position="center" :md-duration="3000" :md-active.sync="password_dialog.success">
-    <span>Password has been changed.</span>
-    <md-button class="md-primary" @click="password_dialog.success = false">close</md-button>
-  </md-snackbar>
+  <custom-dialog ref="creationDialog">
+    <div slot="custom-dialog-header">
+      <h1>New administrator</h1>
+    </div>
+    <div slot="custom-dialog-content">
+      <div class="container" style="width: 100%; max-width: 800px;">
+        <div class="row">
+          <div class="col-xs-12 col-md-6">
+            <label class="label label--centered" for="name">Name
+              <input class="input" type="text" name="name" v-model="creation_dialog.user.name" />
+            </label>
+            <label class="label label--centered" for="login">Login
+              <input class="input" type="text" name="login" v-model="creation_dialog.user.login" />
+            </label>
+          </div>
+          <div class="col-xs-12 col-md-6">
+            <label class="label label--centered" for="password">Password
+              <input class="input" type="password" name="password" v-model="creation_dialog.user.password" />
+            </label>
+            <label class="label label--centered" for="password_repeat">Password again
+              <input class="input" type="password" name="password_repeat" v-model="creation_dialog.user.password_repeat" />
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div slot="custom-dialog-buttons">
+      <div class="dialog__button dialog__button--blue" @click="createAdmin">
+        CREATE
+      </div>
+    </div>
+  </custom-dialog>
 
-  <md-snackbar class="top-index" md-position="center" :md-duration="3000" :md-active.sync="delete_dialog.error">
-    <span>Error occured during account deleting.</span>
-    <md-button class="md-primary" @click="password_dialog.success = false">close</md-button>
-  </md-snackbar>
-
-  <md-dialog :md-active.sync="creation_dialog.show">
-    <md-dialog-title>New administrator</md-dialog-title>
-    <md-dialog-content>
-      <md-field>
-        <label>Login</label>
-        <md-input v-model="creation_dialog.user.login"></md-input>
-      </md-field>
-      <md-field>
-        <label>Name</label>
-        <md-input v-model="creation_dialog.user.name"></md-input>
-      </md-field>
-      <md-field>
-        <label>Password</label>
-        <md-input type="password" v-model="creation_dialog.user.password"></md-input>
-      </md-field>
-      <md-field>
-        <label>Password repeat</label>
-        <md-input type="password" v-model="creation_dialog.user.password_repeat"></md-input>
-      </md-field>
-    </md-dialog-content>
-
-    <md-dialog-actions>
-      <md-button class="md-primary" @click="creation_dialog.show = false">Close</md-button>
-      <md-button class="md-primary" @click="createAdmin()">Save</md-button>
-    </md-dialog-actions>
-  </md-dialog>
-
-  <md-dialog :md-active.sync="password_dialog.show">
-    <md-dialog-title>Change password</md-dialog-title>
-    <md-dialog-content>
-      <md-field>
-        <label>Password</label>
-        <md-input type="password" v-model="password_dialog.user.password"></md-input>
-      </md-field>
-      <md-field>
-        <label>New password</label>
-        <md-input type="password" v-model="password_dialog.user.new_password"></md-input>
-      </md-field>
-      <md-field>
-        <label>New password repeat</label>
-        <md-input type="password" v-model="password_dialog.user.new_password_repeat"></md-input>
-      </md-field>
-    </md-dialog-content>
-
-    <md-dialog-actions>
-      <md-button class="md-primary" @click="password_dialog.show = false">Close</md-button>
-      <md-button class="md-primary" @click="changePassword()">Save</md-button>
-    </md-dialog-actions>
-  </md-dialog>
-
-  <md-dialog :md-active.sync="delete_dialog.show">
-    <md-dialog-title>Delete administrator</md-dialog-title>
-    <md-dialog-content>
-      You are about to delete <b>{{ delete_dialog.name }}</b> account. Continue?
-    </md-dialog-content>
-
-    <md-dialog-actions>
-      <md-button class="md-primary" @click="delete_dialog.show = false">No</md-button>
-      <md-button class="md-primary" @click="deleteAdmin()">Yes</md-button>
-    </md-dialog-actions>
-  </md-dialog>
-
-  <md-table>
-    <md-table-row>
-      <md-table-head>Name</md-table-head>
-      <md-table-head>Login</md-table-head>
-      <md-table-head>Actions</md-table-head>
-    </md-table-row>
-    <md-table-row v-for="admin in admins" :key="admin.id">
-      <md-table-cell>{{ admin.name }}</md-table-cell>
-      <md-table-cell>{{ admin.login }}</md-table-cell>
-      <md-table-cell>
-        <md-button class="md-icon-button" v-if="admin.id === logged_admin.id" @click="password_dialog.show = true">
-          <md-icon>lock</md-icon>
-        </md-button>
-        <md-button class="md-icon-button" v-if="admin.id !== logged_admin.id && logged_admin.owner && !admin.owner" @click="delete_dialog.id = admin.id; delete_dialog.name = admin.name; delete_dialog.show = true">
-          <md-icon>delete</md-icon>
-        </md-button>
-      </md-table-cell>
-    </md-table-row>
-  </md-table>
-
-  <md-speed-dial class="md-bottom-right">
-    <md-speed-dial-target @click="creation_dialog.show = true">
-      <md-icon>add</md-icon>
-    </md-speed-dial-target>
-  </md-speed-dial>
+  <table class="table admins__table">
+    <tr class="table__row">
+      <th class="table__head">Name</th>
+      <th class="table__head">Login</th>
+      <th class="table__head">Actions</th>
+    </tr>
+    <tr class="table__row" v-for="admin in admins" :key="admin.id">
+      <td class="table__cell">{{ admin.name }}</td>
+      <td class="table__cell">{{ admin.login }}</td>
+      <td class="table__cell">
+        <font-awesome-icon @click="$refs.passwordDialog.openDialog()" icon="key" size="lg" class="table__icon" v-tooltip.top-center="'Change password'" />
+        <font-awesome-icon @click="openDeleteDialog(admin)" v-tooltip.top-center="'Remove administrator'" v-if="admin.id !== logged_admin.id && logged_admin.owner && !admin.owner" icon="trash-alt" size="lg" class="table__icon" />
+      </td>
+    </tr>
+  </table>
 </div>
 </template>
 
@@ -124,6 +105,7 @@ export default {
       error_snackbar: false,
       delete_dialog: {
         show: false,
+        login: '',
         name: '',
         id: null,
         error: false
@@ -159,6 +141,8 @@ export default {
         let new_admin = await axios.put('/api/admins', this.creation_dialog.user)
         this.admins.push(new_admin.data)
         this.creation_dialog.show = false
+        this.$refs.notifier.pushNotification('success!', `${this.creation_dialog.user.name} account with login '${this.creation_dialog.user.login} has been created!'`, 'success')
+        this.$refs.creationDialog.closeDialog()
         this.creation_dialog.user = {
           login: '',
           name: '',
@@ -166,7 +150,8 @@ export default {
           password_repeat: ''
         }
       } catch (e) {
-        this.creation_dialog.error = true
+        this.$refs.creationDialog.closeDialog()
+        this.$refs.notifier.pushNotification('cannot create!', `There was an error during admin creation request. Error code: ${e.response.status}`, 'error', 10000)
       }
     },
 
@@ -180,8 +165,11 @@ export default {
           new_password: '',
           new_password_repeat: ''
         }
+        this.$refs.passwordDialog.closeDialog()
+        this.$refs.notifier.pushNotification('changed!', 'Password has beed changed.', 'success', 4000)
       } catch (e) {
-        this.password_dialog.error = true
+        this.$refs.passwordDialog.closeDialog()
+        this.$refs.notifier.pushNotification('cannot change!', `There was an error during password change request. Error code: ${e.response.status}`, 'error', 10000)
       }
     },
 
@@ -197,10 +185,19 @@ export default {
           if (a.id === this.delete_dialog.id) this.admins.splice(i, 1)
         })
 
-        this.delete_dialog.show = false
+        this.$refs.notifier.pushNotification('done!', `Account with login '${this.delete_dialog.login}' has beed removed.`, 'success')
+        this.$refs.removeDialog.closeDialog()
       } catch (e) {
-        this.delete_dialog.error = true
+        this.$refs.removeDialog.closeDialog()
+        this.$refs.notifier.pushNotification('cannot delete!', `There was an error during admin remove request. Error code: ${e.response.status}`, 'error', 10000)
       }
+    },
+
+    openDeleteDialog(admin) {
+      this.delete_dialog.login = admin.login
+      this.delete_dialog.name = admin.name
+      this.delete_dialog.id = admin.id
+      this.$refs.removeDialog.openDialog()
     }
   },
 
@@ -210,14 +207,18 @@ export default {
       let admins = await axios.get('/api/admins')
       this.admins = admins.data
     } catch (e) {
-      this.error_snackbar = true
+      this.$refs.notifier.pushNotification('cannot load!', `There was an error during data load. Error code: ${e.response.status}`, 'error', 10000)
     }
   }
 }
 </script>
 
 <style lang="scss">
-.top-index {
-    z-index: 9999;
+.admins {
+    &__table {
+        width: calc(100vw - 6%);
+        padding: 0 3%;
+        margin: 0 auto;
+    }
 }
 </style>

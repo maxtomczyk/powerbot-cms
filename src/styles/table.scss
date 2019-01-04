@@ -1,0 +1,80 @@
+@import './variables';
+
+.table th h1 {
+    font-weight: bold;
+    font-size: 1em;
+    text-align: left;
+    color: #185875;
+}
+
+.table{
+  -webkit-box-shadow: 3px 3px 12px -7px rgba(0,0,0,0.75);
+  -moz-box-shadow: 3px 3px 12px -7px rgba(0,0,0,0.75);
+  box-shadow: 3px 3px 12px -7px rgba(0,0,0,0.75);
+}
+
+.table__icon{
+  color: $blue;
+  transition: all .25s ease;
+  cursor: pointer;
+  margin-right: 3%;
+  font-size: 1.5em;
+
+  &:hover{
+    color: $blue-hover;
+  }
+}
+
+.table td {
+    font-weight: normal;
+    font-size: 1em;
+    -webkit-box-shadow: 0 2px 2px -2px #0E1119;
+    -moz-box-shadow: 0 2px 2px -2px #0E1119;
+    box-shadow: 0 2px 2px -2px #0E1119;
+}
+
+.table {
+    text-align: left;
+    overflow: hidden;
+    width: 80%;
+    margin: 0 auto;
+    display: table;
+    padding: 0 0 8em;
+    color: $font-primary;
+}
+
+.table td,
+.table th {
+    padding-bottom: 1.5%;
+    padding-top: 1.5%;
+    padding-left: 1.5%;
+}
+
+.table tr:nth-child(odd) {
+    background-color: #242A2D;
+}
+
+.table tr:nth-child(even) {
+    background-color: #282F33;
+}
+
+.table th {
+    background-color: $bg-accent;
+    color: $font-primary;
+}
+
+.table td:first-child {
+  font-weight: bold;
+}
+
+.table tr:hover {
+    background-color: #22282B;
+}
+
+@media (max-width: 768px) {
+    .table td,
+    .table th{
+      padding-top: 5%;
+      padding-bottom: 5%;
+    }
+}

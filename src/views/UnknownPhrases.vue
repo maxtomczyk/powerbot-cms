@@ -1,18 +1,15 @@
 <template>
-<div class="unknown-words">
-  <md-snackbar md-position="center" :md-duration="10000" :md-active.sync="loadError">
-    <span>Error occured during data load. Please refresh site or contact an administrator.</span>
-    <md-button class="md-primary" @click="loadError = false">close</md-button>
-  </md-snackbar>
+<div class="unknown-words view-with-navbar">
+  <notifier ref="notifier"></notifier>
 
-  <md-table class="unknown-words__table">
-    <md-table-row>
-      <md-table-head>Phrase</md-table-head>
-    </md-table-row>
-    <md-table-row v-for="phrase in phrases" :key="phrase.id">
-      <md-table-cell>{{ phrase.phrase }}</md-table-cell>
-    </md-table-row>
-  </md-table>
+  <table class="unknown-words__table table">
+    <tr>
+      <th>Phrase</th>
+    </tr>
+    <tr v-for="phrase in phrases" :key="phrase.id">
+      <td>{{ phrase.phrase }}</td>
+    </tr>
+  </table>
 </div>
 </template>
 
@@ -37,12 +34,19 @@ export default {
       const phrases = await axios.get('/api/phrases')
       this.phrases = phrases.data
     } catch (e) {
-      this.loadError = true
+      this.$refs.notifier.pushNotification('cannot load', `Error occured during data load. Error code: ${e.response.status}`)
     }
   }
 }
 </script>
 
 <style lang="scss">
+@import '../styles/variables';
 
+  .unknown-words{
+    &__table{
+      width: 90%;
+      margin: 0 auto;
+    }
+  }
 </style>
