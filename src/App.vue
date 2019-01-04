@@ -74,7 +74,6 @@ export default {
 
 <style lang="scss">
 @import './assets/css/normalize.css';
-@import '../node_modules/flexboxgrid/dist/flexboxgrid.min.css';
 @import './styles/variables';
 @import './styles/table';
 @import './styles/tooltip';

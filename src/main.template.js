@@ -4,13 +4,15 @@ import Vue from 'vue'
 // eslint-disable-next-line
 import regeneratorRuntime from 'babel-regenerator-runtime'
 
-import {library} from '../node_modules/incredbot-cms/node_modules/@fortawesome/fontawesome-svg-core'
-import {fas} from '../node_modules/incredbot-cms/node_modules/@fortawesome/free-solid-svg-icons'
-import {FontAwesomeIcon} from '../node_modules/incredbot-cms/node_modules/@fortawesome/vue-fontawesome'
+import {library} from '@fortawesome/fontawesome-svg-core'
+import {fas} from '@fortawesome/free-solid-svg-icons'
+import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
+
+import 'flexboxgrid/dist/flexboxgrid.min.css'
 
 import App from '../node_modules/incredbot-cms/src/App.vue'
 import router from './vue_router'
-import VTooltip from '../node_modules/incredbot-cms/node_modules/v-tooltip'
+import VTooltip from 'v-tooltip'
 
 import CustomMessageCreator from '@/components/CustomMessageCreator'
 import UserDefinedViewsLinks from '@/components/UserDefinedViewsLinks'
