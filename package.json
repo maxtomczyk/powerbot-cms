@@ -8,7 +8,8 @@
     "start": "node index.js",
     "lint": "eslint --ext .js,.vue src",
     "build": "node build/build.js",
-    "postinstall": "node scripts/init.js && npm run build && npm i knex -g && knex migrate:latest"
+    "postinstall": "node scripts/init.js && npm run build && npm i knex -g",
+    "migrate": "knex migrate:latest"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.12",
