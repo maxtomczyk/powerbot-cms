@@ -68,7 +68,7 @@
                   </div>
                 </div>
                 <div style="text-align: center">
-                  <font-awesome-icon @click="addQr()" icon="plus" size="lg" class="message-creator__icon" v-tooltip.top-center="'Add quick reply.'" />
+                  <font-awesome-icon v-if="langMessage.quick_replies.length < 10" @click="addQr()" icon="plus" size="lg" class="message-creator__icon" v-tooltip.top-center="'Add quick reply.'" />
                 </div>
               </div>
               <div v-if="type === 'buttons'" class="message-creator__column">
@@ -87,7 +87,7 @@
                   </div>
                 </div>
                 <div style="text-align: center">
-                  <font-awesome-icon @click="addButton()" icon="plus" size="lg" class="message-creator__icon" v-tooltip.top-center="'Add button.'" />
+                  <font-awesome-icon v-if="langMessage.buttons.length < 3" @click="addButton()" icon="plus" size="lg" class="message-creator__icon" v-tooltip.top-center="'Add button.'" />
                 </div>
               </div>
             </div>
