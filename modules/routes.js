@@ -15,7 +15,7 @@ router.post('/api/auth', async (req, res) => {
         let payload = {
           id: user.id
         }
-        let token = jwt.sign(payload, config.jwt.secret)
+        let token = jwt.sign(payload, config.jwt.secret, {expiresIn: '2h'})
         res.json({
           token: token,
           user: JSON.stringify(user)
@@ -26,6 +26,16 @@ router.post('/api/auth', async (req, res) => {
     logger.error(e)
     res.status(500).end()
   }
+})
+
+router.get('/api/token_refresh', auth.authenticate(), async (req, res) => {
+  let payload = {
+    id: req.user.id
+  }
+  let token = jwt.sign(payload, config.jwt.secret, {expiresIn: '2h'})
+  res.json({
+    token: token
+  })
 })
 
 router.get('/api/admins', auth.authenticate(), async (req, res) => {

@@ -41,7 +41,7 @@ export default {
         this.$emit('logged')
         router.push('/')
       } catch (e) {
-        if (e.response.status === 401) {
+        if (e.response && e.response.status === 401) {
           this.login_incorrect = true
           this.$refs.notifier.pushNotification('cannot login', 'Username and password combination is incorrect, please try again', 'warning')
           document.querySelector('.login__logo').classList.add('e401')
@@ -50,6 +50,7 @@ export default {
           }, 850)
         } else {
           this.$refs.notifier.pushNotification('internal error', 'Internal error occured. Check dev console and/or contact maintainer.', 'error')
+          console.error(e)
         }
       }
     },

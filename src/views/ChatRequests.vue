@@ -41,8 +41,8 @@
       <td>{{ user.locale || 'N/A'}}</td>
       <td style="width: 45%;">{{ user.chat_reason || 'N/A'}}</td>
       <td>
-        <font-awesome-icon @click="openLockDialog(user)" v-tooltip.top-center="'Pause bot responses for this user to start own conversation.'" v-if="!user.bot_lock" icon="pause" size="lg" class="table__icon" fixed-width/>
-        <font-awesome-icon @click="openUnlockDialog(user)" v-tooltip.top-center="'Finish chat request and take down all locks.'" icon="user-times" size="lg" class="table__icon" fixed-width/>
+        <font-awesome-icon @click="openLockDialog(user)" v-tooltip.top-center="'Pause bot responses for this user to start own conversation.'" v-if="!user.bot_lock" icon="pause" size="lg" class="table__icon" fixed-width />
+        <font-awesome-icon @click="openUnlockDialog(user)" v-tooltip.top-center="'Finish chat request and take down all locks.'" icon="user-times" size="lg" class="table__icon" fixed-width />
 
       </td>
     </tr>
@@ -53,6 +53,10 @@
 
 <script>
 import axios from 'axios'
+import {
+  EventBus
+} from '../event-bus'
+
 export default {
   data() {
     return {
@@ -120,26 +124,34 @@ export default {
       }
     },
 
-    openUnlockDialog(user){
+    openUnlockDialog(user) {
       this.end.id = user.id
       this.end.name = `${user.first_name} ${user.last_name}`
       this.$refs.unlockDialog.openDialog()
     },
 
-    openLockDialog(user){
+    openLockDialog(user) {
       this.start.id = user.id
       this.start.name = `${user.first_name} ${user.last_name}`
       this.$refs.lockDialog.openDialog()
     }
+  },
+  mounted() {
+    EventBus.$on('token_refresh', token => {
+      axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
+    })
+  },
+  destroyed() {
+    EventBus.$off('token_refresh')
   }
 }
 </script>
 
 <style lang="scss">
-.chats{
-  &__table{
-    width: 90%;
-    margin: 0 auto;
-  }
+.chats {
+    &__table {
+        width: 90%;
+        margin: 0 auto;
+    }
 }
 </style>

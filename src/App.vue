@@ -6,6 +6,12 @@
 </template>
 
 <script>
+import axios from 'axios'
+import router from '@/router'
+import {
+  EventBus
+} from './event-bus'
+
 export default {
   name: 'App',
   data: () => {
@@ -33,7 +39,35 @@ export default {
     createRipple(name) {
       let parts = (name) ? name.split(' ') : 'X X'
       return `${parts[0][0]}${parts[1][0]}`.toUpperCase()
+    },
+
+    async refreshToken() {
+      try {
+        const userData = JSON.parse(localStorage.getItem('user'))
+        if (!userData) return
+        const token = localStorage.getItem('token')
+
+        const request = await axios.get('/api/token_refresh', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+
+        localStorage.setItem('token', request.data.token)
+        EventBus.$emit('token_refresh', request.data.token)
+      } catch (e) {
+        if (e.response.status === 401) return router.push('logout')
+        console.error(e)
+      }
     }
+  },
+
+  mounted() {
+    this.refreshToken()
+    let that = this
+    setInterval(function() {
+      that.refreshToken()
+    }, 15 * 60 * 1000)
   }
 }
 </script>

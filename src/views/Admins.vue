@@ -98,6 +98,9 @@
 
 <script>
 import axios from 'axios'
+import {
+  EventBus
+} from '../event-bus'
 
 export default {
   data: () => {
@@ -141,7 +144,7 @@ export default {
         let new_admin = await axios.put('/api/admins', this.creation_dialog.user)
         this.admins.push(new_admin.data)
         this.creation_dialog.show = false
-        this.$refs.notifier.pushNotification('success!', `${this.creation_dialog.user.name} account with login '${this.creation_dialog.user.login} has been created!'`, 'success')
+        this.$refs.notifier.pushNotification('success!', `${this.creation_dialog.user.name} account with login '${this.creation_dialog.user.login}' has been created!`, 'success')
         this.$refs.creationDialog.closeDialog()
         this.creation_dialog.user = {
           login: '',
@@ -209,6 +212,14 @@ export default {
     } catch (e) {
       this.$refs.notifier.pushNotification('cannot load!', `There was an error during data load. Error code: ${e.response.status}`, 'error', 10000)
     }
+  },
+  mounted() {
+    EventBus.$on('token_refresh', token => {
+      axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
+    })
+  },
+  destroyed() {
+    EventBus.$off('token_refresh')
   }
 }
 </script>
