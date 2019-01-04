@@ -5,7 +5,7 @@
       <div class="notifier__wrapper col-md-12 col-xs-12">
         <div @click="removeNotification(n.timestamp)" class="notification" :class="[`notification--${n.type}`, (n.removing) ? 'notification--removing' : '', (n.justCreated) ? 'notification--fresh' : '']" v-for="n in notifications" :key="n.timestamp">
           <div class="notification__content">
-            <h3 class="notification__title">{{ n.title }}</h3>
+            <h3 class="notification__title">{{ n.title.toUpperCase() }}</h3>
             <p class="notification__text">{{ n.text }}</p>
           </div>
         </div>
@@ -51,7 +51,7 @@ export default {
       this.removeNotification(timestamp)
     },
 
-    async removeNotification(ts){
+    async removeNotification(ts) {
       this.notifications.map((not, i) => {
         if (not.timestamp === ts) not.removing = true
       })
@@ -74,10 +74,10 @@ export default {
     width: 100vw;
     z-index: 200;
 
-    &__row{
-      position: fixed;
-      right: 8px;
-      width: 20%;
+    &__row {
+        position: fixed;
+        right: 40px;
+        width: 20%;
     }
 
     &__container {
@@ -116,7 +116,8 @@ export default {
     }
 
     &__title {
-        font-family: 'Major Mono Display', monospace;
+        // font-family: 'Major Mono Display', monospace;
+        font-size: 1.4em;
         margin-bottom: 0;
     }
 
@@ -131,26 +132,29 @@ export default {
         margin-bottom: 20px;
     }
 
-    &--error{
-      background-color: $error;
+    &--error {
+        background-color: $error;
     }
 
-    &--warning{
-      background-color: $warning;
+    &--warning {
+        background-color: $warning;
     }
 
-    &--info{
-      background-color: $info;
+    &--info {
+        background-color: $info;
     }
 
-    &--success{
-      background-color: $success;
+    &--success {
+        background-color: $success;
     }
 }
 
 @media only screen and (max-width: 768px) {
-  .notifier__row{
-    width: 100%;
-  }
+    .notifier {
+        &__row{
+          width: calc(100% - 16px);
+          position: static;
+        }
+    }
 }
 </style>
