@@ -7,14 +7,16 @@
       </div>
     </div>
   </div>
-  <label class="label label--checkbox checkbox__label" @click="val = !val; $emit('input', val); $emit('click', val)"><slot></slot></label>
+  <label class="label label--checkbox checkbox__label" @click="val = !val; $emit('input', val); $emit('click', val)">
+    <slot></slot>
+  </label>
 </div>
 </template>
 
 <script>
 export default {
-  data(){
-    return{
+  data() {
+    return {
       val: this.$attrs.val
     }
   }
@@ -49,7 +51,7 @@ export default {
         top: calc(25% - 1px);
         left: calc(25% - 1px);
         border-radius: 2px;
-        transition: border 0.1s ease, background-color 0.1s ease, opacity .1s ease;
+        transition: border 0.1s ease, background-color 0.1s ease, opacity 0.1s ease;
     }
 
     &__row {
@@ -61,13 +63,13 @@ export default {
         margin-bottom: 12px;
         padding-top: 5px;
 
-        label{
-          margin: 0 0 0 10px;
+        label {
+            margin: 0 0 0 10px;
         }
     }
 
-    &__label{
-      cursor: pointer;
+    &__label {
+        cursor: pointer;
     }
 
     &:hover {
@@ -77,8 +79,7 @@ export default {
             }
 
             &__inside {
-
-            }
+                }
         }
     }
 

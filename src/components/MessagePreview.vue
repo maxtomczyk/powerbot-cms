@@ -85,7 +85,7 @@ export default {
     }
 
     &__buttons {
-        min-width: 250px;
+        min-width: 210px;
     }
 
     &__button {
