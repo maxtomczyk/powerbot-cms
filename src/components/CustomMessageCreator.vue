@@ -4,7 +4,7 @@
   <custom-dialog ref="messageDialog" class="dialog--no-header-margin dialog--no-overflow">
     <div slot="custom-dialog-header">
       <h1>Edit message</h1>
-      <span class="md-body-1" style="display: block">{{ name }}</span>
+      <span style="display: block">{{ name }}</span>
     </div>
     <div slot="custom-dialog-content">
       <div class="container message-creator__dialog-container">

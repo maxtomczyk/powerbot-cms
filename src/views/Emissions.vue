@@ -280,10 +280,6 @@ export default {
 </script>
 
 <style lang="scss">
-.md-select-menu {
-    z-index: 9999;
-}
-
 .emissions {
 
     &__table {
