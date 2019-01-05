@@ -11,6 +11,7 @@ import CustomPostbacks from '@/views/CustomPostbacks'
 import UnknownPhrases from '@/views/UnknownPhrases'
 import Emissions from '@/views/Emissions'
 import Keywords from '@/views/Keywords'
+import Attachments from '@/views/Attachments'
 
 Vue.use(Router)
 
@@ -58,6 +59,11 @@ export default new Router({
     path: '/keywords',
     name: 'Custom keywords',
     component: Keywords,
+    beforeEnter: Guard.auth
+  }, {
+    path: '/attachments',
+    name: 'Attachments',
+    component: Attachments,
     beforeEnter: Guard.auth
   }, {
     path: '*',

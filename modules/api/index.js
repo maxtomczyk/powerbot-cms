@@ -5,6 +5,7 @@ const messages = require('./messages_api')
 const postbacks = require('./postbacks_api')
 const broadcast = require('./broadcast_api')
 const keywords = require('./keywords_api')
+const attachments = require('./attachments_api')
 
 module.exports = {
   admins,
@@ -13,5 +14,6 @@ module.exports = {
   messages,
   postbacks,
   broadcast,
-  keywords
+  keywords,
+  attachments
 }

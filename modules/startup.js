@@ -113,7 +113,7 @@ async function checkChannelsSync() {
 
 async function start() {
     try {
-        await checkAttachments()
+        // await checkAttachments()
         await checkChannels()
         await checkChannelsSync()
     } catch (e) {

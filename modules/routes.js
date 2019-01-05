@@ -86,6 +86,10 @@ router.get('/api/messages/groups', auth.authenticate(), async (req, res) => {
   api.messages.listGroups(req, res)
 })
 
+router.get('/api/attachments', auth.authenticate(), async (req, res) => {
+  api.attachments.list(req, res)
+})
+
 router.put('/api/admins', auth.authenticate(), async (req, res) => {
   api.admins.create(req, res)
 })
@@ -110,6 +114,14 @@ router.put('/api/postbacks', auth.authenticate(), async (req, res) => {
   api.postbacks.create(req, res)
 })
 
+router.post('/api/attachment', auth.authenticate(), async (req, res) => {
+  api.attachments.edit(req, res)
+})
+
+router.post('/api/sync_attachment', auth.authenticate(), async (req, res) => {
+  api.attachments.sync(req, res)
+})
+
 router.post('/api/admins', auth.authenticate(), async (req, res) => {
   api.admins.changePassword(req, res)
 })
@@ -120,6 +132,10 @@ router.post('/api/broadcast', auth.authenticate(), async (req, res) => {
 
 router.post('/api/chat_request', auth.authenticate(), async (req, res) => {
   api.chats.unlock(req, res)
+})
+
+router.post('/api/sync_attachments', auth.authenticate(), async (req, res) => {
+  api.attachments.syncAll(req, res)
 })
 
 router.post('/api/broadcast-cancel', auth.authenticate(), async (req, res) => {

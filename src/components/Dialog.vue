@@ -157,10 +157,10 @@ export default {
         height: 100vh;
         width: 100vw;
 
-        &--no-overflow{
-          .dialog__content {
-              overflow-y: scroll;
-          }
+        &--no-overflow {
+            .dialog__content {
+                overflow-y: scroll;
+            }
         }
 
         &__buttons {

@@ -125,16 +125,70 @@ a {
     &.select {
         width: 100%;
     }
+
+    &:disabled{
+      color: $borders-focus;
+    }
+}
+
+.view-actions{
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 90%;
+  margin: 0 auto 18px auto;
+
+  .button{
+    margin-right: 12px;
+  }
 }
 
 .button {
     margin-top: 8px;
-    font-size: 1.3em;
+    font-size: 1.2em;
     padding: 8px;
     transition: background-color 0.25s;
     cursor: pointer;
     border-radius: 25px;
     font-family: 'Lato', sans-serif;
+    color: #fff;
+    font-weight: bold;
+    text-align: center;
+    padding: 7px 15px;
+    min-width: 100px;
+
+    &__icon{
+      margin-left: 5px;
+    }
+
+    &--blue {
+        background-color: $blue;
+
+        &:hover {
+            background-color: $blue-hover;
+        }
+    }
+
+    &--green {
+        background-color: $green;
+
+        &:hover {
+            background-color: $green-hover;
+        }
+    }
+
+    &--orange {
+        background-color: $orange;
+
+        &:hover {
+            background-color: $orange-hover;
+        }
+    }
+
+    &--disabled {
+      background-color: $borders-focus !important;
+      pointer-events: none;
+    }
 }
 
 .label {

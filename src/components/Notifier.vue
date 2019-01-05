@@ -105,6 +105,7 @@ export default {
     border-radius: 8px;
     opacity: 0.6;
     width: 100%;
+    cursor: pointer;
 
     &:hover {
         opacity: 0.9;
