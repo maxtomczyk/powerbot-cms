@@ -1,6 +1,6 @@
 {
   "name": "incredbot-cms",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "CMS for Facebook Messenger bots packed into NPM package",
   "author": "Maksymilian Tomczyk <m.tomczyk.dev@gmail.com>",
   "scripts": {
