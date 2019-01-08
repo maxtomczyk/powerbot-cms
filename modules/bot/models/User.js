@@ -6,8 +6,11 @@ const logger = require('../../logger.js')
 const incredbot = require('../../incredbot.js')
 const messages = require('../../messages.js')
 const redis = require('../../redis.js')
+const Stats = require('../../models/Stats')
 
 const texts = new BotText()
+
+const stats = new Stats()
 
 class User {
   constructor (messenger_id) {
@@ -108,6 +111,7 @@ class User {
         await knex.transaction((trx) => {
           return trx('users').insert(user).returning('*')
             .then((created) => {
+              stats.newUser(created)
               createdUser = created[0]
               let channels = defaultChannels.map((c, i) => {
                 return {

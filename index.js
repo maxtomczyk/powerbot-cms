@@ -18,9 +18,14 @@ const knex = require('./modules/knex')
 const redis = require('./modules/redis')
 const messages = require('./modules/messages')
 const attachments = require('./modules/attachments')
+const jobs = require('./modules/jobs')
+const Stats = require('./modules/models/Stats')
+
+const stats = new Stats()
 
 staticElements()
 startup()
+jobs.start()
 
 class Emitter extends EventEmitter {}
 const emitter = new Emitter()
@@ -96,6 +101,7 @@ bot.on('entry', async (entry) => {
 bot.on('message', async (message, raw) => {
   try {
     emitter.emit('message', message, raw)
+    stats.incomingMessage(message)
   } catch (e) {
     logger.error(e)
   }
@@ -118,6 +124,14 @@ bot.on('image', async (message, raw) => {
     if (user.bot_lock) return
 
     emitter.emit('image', message, user, raw)
+  } catch (e) {
+    logger.error(e)
+  }
+})
+
+bot.on('message_sent', async (message, raw) => {
+  try {
+    stats.outgoingMessage(message)
   } catch (e) {
     logger.error(e)
   }
