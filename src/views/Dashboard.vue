@@ -13,17 +13,32 @@
                   <font-awesome-icon icon="server" size="lg" fixed-width />
                   <h5>System</h5>
                 </div>
+                <div class="status-panel__content">
+                  <div class="status-panel__data-row">
+                    Status: <span class="status-panel__state" :class="assignStatusClass(status.system)">{{ (status.system.live === true) ? 'Running' : (status.system.live === false) ? 'Down' : 'Unknown' }}</span>
+                  </div>
+                </div>
               </div>
               <div class="status-panel__box">
                 <div class="dashboard__panel-header" v-tooltip.bottom-start="'Status of connected Postgres database status.'">
                   <font-awesome-icon icon="database" size="lg" fixed-width />
                   <h5>Database</h5>
                 </div>
+                <div class="status-panel__content">
+                  <div class="status-panel__data-row">
+                    Status: <span class="status-panel__state" :class="assignStatusClass(status.database)">{{ (status.database.live === true) ? 'Running' : (status.database.live === false) ? 'Down' : 'Unknown' }}</span>
+                  </div>
+                </div>
               </div>
               <div class="status-panel__box">
                 <div class="dashboard__panel-header" v-tooltip.bottom-start="'Status of Redis cache service.'">
                   <font-awesome-icon icon="memory" size="lg" fixed-width />
                   <h5>Cache</h5>
+                </div>
+                <div class="status-panel__content">
+                  <div class="status-panel__data-row">
+                    Status: <span class="status-panel__state" :class="assignStatusClass(status.cache)">{{ (status.cache.live === true) ? 'Running' : (status.cache.live === false) ? 'Down' : 'Unknown' }}</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -94,18 +109,61 @@ import {
 } from '../event-bus'
 
 export default {
+  data() {
+    return {
+      statusInterval: null,
+      status: {
+        system: {
+          live: null
+        },
+        database: {
+          live: null
+        },
+        cache: {
+          live: null
+        }
+      }
+    }
+  },
+
+  methods: {
+    assignStatusClass(status){
+      if(status.live === true) return 'status-panel__state--up'
+      else if(status.live === false) return 'status-panel__state--down'
+      else return 'status-panel__state--unknown'
+    },
+
+    async getSystemStatus(){
+      try {
+        const status = await axios.get('/api/stats/system')
+        this.status = status.data
+      } catch (e) {
+        this.status.system.live = false
+        this.status.database.live = null
+        this.status.cache.live = null
+      }
+    }
+  },
+
   async created() {
     try {
       axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token')
+      let that = this
+      await this.getSystemStatus()
+      setInterval(async function () {
+        await that.getSystemStatus()
+      }, 60 * 1000);
     } catch (e) {
       this.$refs.notifier.pushNotification('cannot load!', `An error occured during data load. Error code: ${e.response.status}`, 'error', 10000)
     }
   },
-  mounted() {
+
+  async mounted() {
     EventBus.$on('token_refresh', token => {
       axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
     })
   },
+
   destroyed() {
     EventBus.$off('token_refresh')
   }
@@ -156,14 +214,14 @@ export default {
     }
 
     &__panel-content {
-      width: calc(100% - 30px);
-      height: calc(65% - 5px);
+        width: calc(100% - 30px);
+        height: calc(65% - 5px);
     }
 
     &__panel-number {
-      font-size: 1.8em;
-      padding-left: 15px;
-      margin-top: 5px;
+        font-size: 1.8em;
+        padding-left: 15px;
+        margin-top: 5px;
     }
 }
 
@@ -177,6 +235,26 @@ export default {
         height: 100px;
         width: calc(32% - 6px);
         padding: 3px;
+    }
+
+    &__content {
+        margin-top: 6px;
+    }
+
+    &__state{
+      font-weight: 700;
+
+       &--unknown{
+         color: $warning;
+       }
+
+       &--up{
+         color: $green;
+       }
+
+       &--down{
+         color: $error
+       }
     }
 }
 

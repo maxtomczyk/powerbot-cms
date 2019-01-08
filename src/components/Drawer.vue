@@ -29,7 +29,7 @@
 
         <div class="drawer__footer">
           <h2 class="drawer__footer-logo">powerbot cms</h2>
-          <span class="drawer__footer-info">version 0.3.0</span>
+          <span class="drawer__footer-info">version 0.3.1</span>
         </div>
       </div>
       <div v-if="opened" class="drawer__overlay col-md-8 col-lg-9 col-xs-3" @click="close()"></div>

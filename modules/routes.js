@@ -90,6 +90,10 @@ router.get('/api/attachments', auth.authenticate(), async (req, res) => {
   api.attachments.list(req, res)
 })
 
+router.get('/api/stats/system', auth.authenticate(), async (req, res) => {
+  api.stats.systemStatus(req, res)
+})
+
 router.put('/api/admins', auth.authenticate(), async (req, res) => {
   api.admins.create(req, res)
 })
