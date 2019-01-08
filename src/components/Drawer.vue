@@ -28,7 +28,7 @@
         </div>
 
         <div class="drawer__footer">
-          <h2 class="drawer__footer-logo">incredbot cms</h2>
+          <h2 class="drawer__footer-logo">powerbot cms</h2>
           <span class="drawer__footer-info">version 0.3.0</span>
         </div>
       </div>

@@ -76,6 +76,7 @@
     "url-loader": "^0.5.8",
     "v-tooltip": "^2.0.0-rc.33",
     "vue": "^2.5.2",
+    "vue-apexcharts": "^1.2.8",
     "vue-loader": "^13.3.0",
     "vue-router": "^3.0.1",
     "vue-style-loader": "^3.0.1",

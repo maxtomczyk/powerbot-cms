@@ -4,7 +4,7 @@
   <div class="login__container container">
     <div class="row login__boxwrapper center-xs middle-xs">
       <div class="login__loginbox col-md-3 col-xs-12">
-        <h1 class="login__logo">incredbot</h1>
+        <h1 class="login__logo">powerbot cms</h1>
         <input class="login__input input" placeholder="Login" type="text" v-model="user.login" @keyup="loginKeyUp($event)">
         <input class="login__input input" placeholder="Password" type="password" v-model="user.password" @keyup="loginKeyUp($event)">
         <div class="button login__button center" @click="auth()">Enter</div>
