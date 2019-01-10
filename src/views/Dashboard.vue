@@ -55,7 +55,7 @@
                 </div>
                 <div class="dashboard__panel-content">
                   <div class="messages-panel__number dashboard__panel-number">
-                    0
+                    {{ messages.incoming }}
                   </div>
                 </div>
               </div>
@@ -66,7 +66,7 @@
                 </div>
                 <div class="dashboard__panel-content">
                   <div class="messages-panel__number dashboard__panel-number">
-                    0
+                    {{ messages.outgoing }}
                   </div>
                 </div>
               </div>
@@ -77,18 +77,18 @@
                 </div>
                 <div class="dashboard__panel-content">
                   <div class="messages-panel__number dashboard__panel-number">
-                    0
+                    {{ messages.total }}
                   </div>
                 </div>
               </div>
               <div class="messages-panel__box">
                 <div class="dashboard__panel-header">
                   <font-awesome-icon icon="percentage" size="lg" fixed-width />
-                  <h5>I/O Ratio</h5>
+                  <h5>O/I Ratio</h5>
                 </div>
                 <div class="dashboard__panel-content">
                   <div class="messages-panel__number dashboard__panel-number">
-                    0
+                    {{ messages.ratio }}
                   </div>
                 </div>
               </div>
@@ -96,11 +96,22 @@
           </div>
         </div>
       </div>
+      <div class="row" style="">
+        <div class="col-xs-12">
+          <div class="dashboard__panel chart-panel">
+            <h3>MESSAGES IN TIME</h3>
+            <div class="dashboard__panel-content">
+              <apexchart ref="messagesChart" type="line" height="330" :options="messagesChart.options" :series="messagesChart.series" />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
-</div>
 </template>
+
+
 
 <script>
 import axios from 'axios'
@@ -122,18 +133,61 @@ export default {
         cache: {
           live: null
         }
+      },
+      messages: {
+        incoming: 0,
+        outgoing: 0,
+        total: 0,
+        ratio: 0
+      },
+
+      messagesChart: {
+        options: {
+          xaxis: {
+            categories: [],
+            labels: {
+              show: true,
+              offsetX: -30,
+              style: {
+                cssClass: 'messages-chart__label'
+              }
+            },
+            tooltip: {
+              enabled: false
+            }
+          },
+          tooltip: {
+            x: {
+              show: true,
+              formatter: undefined
+            }
+          },
+          markers: {
+            size: 0
+          },
+        },
+        series: [{
+          name: "Outgoing",
+          data: []
+        }, {
+          name: "Incoming",
+          data: []
+        }, {
+          name: "Total",
+          data: []
+        }]
       }
     }
   },
 
   methods: {
-    assignStatusClass(status){
-      if(status.live === true) return 'status-panel__state--up'
-      else if(status.live === false) return 'status-panel__state--down'
+    assignStatusClass(status) {
+      if (status.live === true) return 'status-panel__state--up'
+      else if (status.live === false) return 'status-panel__state--down'
       else return 'status-panel__state--unknown'
     },
 
-    async getSystemStatus(){
+    async getSystemStatus() {
       try {
         const status = await axios.get('/api/stats/system')
         this.status = status.data
@@ -141,6 +195,37 @@ export default {
         this.status.system.live = false
         this.status.database.live = null
         this.status.cache.live = null
+      }
+    },
+
+    async setMessagesChartData(hours) {
+      try {
+        const request = await axios.get(`/api/stats/messages_chart?hours=${hours}`)
+        this.messagesChart.options.xaxis.categories = request.data.xaxis.filter(function(value, index, Arr) {
+          return index % Math.round(request.data.xaxis.length / 6) == 0;
+        }).map(s => s.replace(/^.* - */, ''))
+
+        this.messagesChart.options.tooltip.x.formatter = (val, row) => {
+          return request.data.xaxis[row.dataPointIndex]
+        }
+
+        this.$refs.messagesChart.refresh()
+        for (const row of request.data.stats) {
+          this.messagesChart.series[0].data.push(row.messages_outgoing)
+          this.messagesChart.series[1].data.push(row.messages_incoming)
+          this.messagesChart.series[2].data.push(row.messages_total)
+        }
+      } catch (e) {
+        this.$refs.notifier.pushNotification('cannot load!', `An error occured during messages time chart data load. Error code: ${e.response.status}`, 'error', 10000)
+      }
+    },
+
+    async setMessagesData(hours){
+      try {
+        const request = await axios.get(`/api/stats/messages?hours=${hours}`)
+        this.messages = request.data
+      } catch (e) {
+        this.$refs.notifier.pushNotification('cannot load!', `An error occured during messages statistic data load. Error code: ${e.response.status}`, 'error', 10000)
       }
     }
   },
@@ -150,7 +235,9 @@ export default {
       axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token')
       let that = this
       await this.getSystemStatus()
-      setInterval(async function () {
+      await this.setMessagesChartData(24)
+      await this.setMessagesData(48)
+      setInterval(async function() {
         await that.getSystemStatus()
       }, 60 * 1000);
     } catch (e) {
@@ -165,7 +252,9 @@ export default {
   },
 
   destroyed() {
+    let that = this
     EventBus.$off('token_refresh')
+    clearInterval(this.statusInterval)
   }
 }
 </script>
@@ -214,12 +303,12 @@ export default {
     }
 
     &__panel-content {
-        width: calc(100% - 30px);
+        width: 100%;
         height: calc(65% - 5px);
     }
 
     &__panel-number {
-        font-size: 1.8em;
+        font-size: 1.5em;
         padding-left: 15px;
         margin-top: 5px;
     }
@@ -241,20 +330,20 @@ export default {
         margin-top: 6px;
     }
 
-    &__state{
-      font-weight: 700;
+    &__state {
+        font-weight: 700;
 
-       &--unknown{
-         color: $warning;
-       }
+        &--unknown {
+            color: $warning;
+        }
 
-       &--up{
-         color: $green;
-       }
+        &--up {
+            color: $green;
+        }
 
-       &--down{
-         color: $error
-       }
+        &--down {
+            color: $error;
+        }
     }
 }
 
@@ -269,5 +358,26 @@ export default {
         width: calc(24% - 6px);
         padding: 3px;
     }
+}
+
+.chart-panel {
+    padding-bottom: 0;
+}
+
+.messages-chart{
+  &__label{
+    position: relative;
+    left: 0;
+    width: 10%;
+    text-align: left;
+  }
+}
+
+.apexcharts-canvas {
+    margin: 0 auto;
+}
+
+.apexcharts-legend-text {
+    color: $font-primary !important;
 }
 </style>

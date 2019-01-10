@@ -10,6 +10,8 @@ import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
 
 import 'flexboxgrid/dist/flexboxgrid.min.css'
 
+import VueApexCharts from 'vue-apexcharts'
+
 import App from '../node_modules/incredbot-cms/src/App.vue'
 import router from './vue_router'
 import VTooltip from 'v-tooltip'
@@ -32,6 +34,7 @@ import Checkbox from '@/components/Checkbox'
 library.add(fas)
 
 Vue.use(VTooltip)
+Vue.use(VueApexCharts)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.component('message-creator', CustomMessageCreator)
@@ -48,6 +51,7 @@ Vue.component('tabs', Tabs)
 Vue.component('radio', Radio)
 Vue.component('message-preview', MessagePreview)
 Vue.component('checkbox', Checkbox)
+Vue.component('apexchart', VueApexCharts)
 
 Vue.config.productionTip = false
 

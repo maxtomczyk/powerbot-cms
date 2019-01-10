@@ -94,6 +94,14 @@ router.get('/api/stats/system', auth.authenticate(), async (req, res) => {
   api.stats.systemStatus(req, res)
 })
 
+router.get('/api/stats/messages_chart', auth.authenticate(), async (req, res) => {
+  api.stats.messagesChartData(req, res)
+})
+
+router.get('/api/stats/messages', auth.authenticate(), async (req, res) => {
+  api.stats.messagesData(req, res)
+})
+
 router.put('/api/admins', auth.authenticate(), async (req, res) => {
   api.admins.create(req, res)
 })
