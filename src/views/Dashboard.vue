@@ -111,8 +111,6 @@
 </div>
 </template>
 
-
-
 <script>
 import axios from 'axios'
 import {
@@ -164,16 +162,16 @@ export default {
           },
           markers: {
             size: 0
-          },
+          }
         },
         series: [{
-          name: "Outgoing",
+          name: 'Outgoing',
           data: []
         }, {
-          name: "Incoming",
+          name: 'Incoming',
           data: []
         }, {
-          name: "Total",
+          name: 'Total',
           data: []
         }]
       }
@@ -202,7 +200,7 @@ export default {
       try {
         const request = await axios.get(`/api/stats/messages_chart?hours=${hours}`)
         this.messagesChart.options.xaxis.categories = request.data.xaxis.filter(function(value, index, Arr) {
-          return index % Math.round(request.data.xaxis.length / 6) == 0;
+          return index % Math.round(request.data.xaxis.length / 6) === 0
         }).map(s => s.replace(/^.* - */, ''))
 
         this.messagesChart.options.tooltip.x.formatter = (val, row) => {
@@ -220,7 +218,7 @@ export default {
       }
     },
 
-    async setMessagesData(hours){
+    async setMessagesData(hours) {
       try {
         const request = await axios.get(`/api/stats/messages?hours=${hours}`)
         this.messages = request.data
@@ -236,10 +234,10 @@ export default {
       let that = this
       await this.getSystemStatus()
       await this.setMessagesChartData(24)
-      await this.setMessagesData(48)
+      await this.setMessagesData(24)
       setInterval(async function() {
         await that.getSystemStatus()
-      }, 60 * 1000);
+      }, 60 * 1000)
     } catch (e) {
       this.$refs.notifier.pushNotification('cannot load!', `An error occured during data load. Error code: ${e.response.status}`, 'error', 10000)
     }
@@ -252,7 +250,6 @@ export default {
   },
 
   destroyed() {
-    let that = this
     EventBus.$off('token_refresh')
     clearInterval(this.statusInterval)
   }
@@ -364,13 +361,13 @@ export default {
     padding-bottom: 0;
 }
 
-.messages-chart{
-  &__label{
-    position: relative;
-    left: 0;
-    width: 10%;
-    text-align: left;
-  }
+.messages-chart {
+    &__label {
+        position: relative;
+        left: 0;
+        width: 10%;
+        text-align: left;
+    }
 }
 
 .apexcharts-canvas {
