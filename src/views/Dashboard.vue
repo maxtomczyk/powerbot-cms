@@ -337,6 +337,16 @@ export default {
               enabled: false
             }
           },
+          tooltip: {
+            x: {
+              show: true,
+              formatter: (val) => {
+                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+                let start = new Date(val + 2 * 60 * 60 * 1000)
+                return `${start.getDate()} ${months[start.getMonth()]}`
+              }
+            }
+          },
           markers: {
             size: 0
           }
@@ -364,8 +374,8 @@ export default {
               show: true,
               formatter: (val) => {
                 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-                let start = new Date(val)
-                let end = new Date(+new Date(start) + 7 * 24 * 60 * 60 * 1000)
+                let start = new Date(val + 2 * 60 * 60 * 1000)
+                let end = new Date(+new Date(start) + (7 * 24 * 60 * 60 * 1000) - 2 * 60 * 60 * 1000)
                 return `${start.getDate()} ${months[start.getMonth()]} - ${end.getDate()} ${months[end.getMonth()]}`
               }
             }
@@ -406,16 +416,12 @@ export default {
     async setMessagesChartData(hours) {
       try {
         const request = await axios.get(`/api/stats/messages_chart?hours=${hours}`)
-        console.log(request.data);
 
         for (const row of request.data.stats) {
           this.messagesChart.series[0].data.push({x: row.start, y: row.messages_outgoing})
           this.messagesChart.series[1].data.push({x: row.start, y: row.messages_incoming})
           this.messagesChart.series[2].data.push({x: row.start, y: row.messages_total})
         }
-
-        console.log(request.data);
-        this.$refs.messagesChart.refresh()
       } catch (e) {
         this.$refs.notifier.pushNotification('cannot load!', `An error occured during messages time chart data load. Error code: ${e.response.status}`, 'error', 10000)
       }
@@ -451,10 +457,10 @@ export default {
     async setDailyUsersChart(days) {
       try {
         const request = await axios.get(`/api/stats/users_daily_chart?days=${days}`)
-        this.dailyUsersChart.options.xaxis.categories = request.data.xaxis
-        this.$refs.dailyUsersChart.refresh()
-        this.dailyUsersChart.series[0].data = request.data.allUsers
-        this.dailyUsersChart.series[1].data = request.data.uniqueUsers
+        for (const row of request.data.rows) {
+          this.dailyUsersChart.series[0].data.push({x: row.start, y: row.all_users})
+          this.dailyUsersChart.series[1].data.push({x: row.start, y: row.unique_users})
+        }
       } catch (e) {
         this.$refs.notifier.pushNotification('cannot load!', `An error occured during users daily chart data load. Error code: ${e.response.status}`, 'error', 10000)
       }
@@ -463,10 +469,10 @@ export default {
     async setWeeklyUsersChart(weeks) {
       try {
         const request = await axios.get(`/api/stats/users_weekly_chart?weeks=${weeks}`)
-        this.weeklyUsersChart.options.xaxis.categories = request.data.xaxis
-        this.$refs.weeklyUsersChart.refresh()
-        this.weeklyUsersChart.series[0].data = request.data.allUsers
-        this.weeklyUsersChart.series[1].data = request.data.uniqueUsers
+        for (const row of request.data.rows) {
+          this.weeklyUsersChart.series[0].data.push({x: row.start, y: row.all_users})
+          this.weeklyUsersChart.series[1].data.push({x: row.start, y: row.unique_users})
+        }
       } catch (e) {
         this.$refs.notifier.pushNotification('cannot load!', `An error occured during users weekly chart data load. Error code: ${e.response.status}`, 'error', 10000)
       }
