@@ -308,7 +308,7 @@ export default {
                 if (he.length !== 2) he = `0${he}`
                 if (me.length !== 2) me = `0${me}`
 
-                return `${hs}:${ms} - ${he}:${me}`
+                return `${hs}:${ms} - ${he}:${me} UTC`
               }
             }
           },
@@ -406,14 +406,16 @@ export default {
     async setMessagesChartData(hours) {
       try {
         const request = await axios.get(`/api/stats/messages_chart?hours=${hours}`)
-        this.messagesChart.options.xaxis.categories = request.data.xaxis
+        console.log(request.data);
 
-        this.$refs.messagesChart.refresh()
         for (const row of request.data.stats) {
-          this.messagesChart.series[0].data.push(row.messages_outgoing)
-          this.messagesChart.series[1].data.push(row.messages_incoming)
-          this.messagesChart.series[2].data.push(row.messages_total)
+          this.messagesChart.series[0].data.push({x: row.start, y: row.messages_outgoing})
+          this.messagesChart.series[1].data.push({x: row.start, y: row.messages_incoming})
+          this.messagesChart.series[2].data.push({x: row.start, y: row.messages_total})
         }
+
+        console.log(request.data);
+        this.$refs.messagesChart.refresh()
       } catch (e) {
         this.$refs.notifier.pushNotification('cannot load!', `An error occured during messages time chart data load. Error code: ${e.response.status}`, 'error', 10000)
       }

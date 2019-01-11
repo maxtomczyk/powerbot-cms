@@ -39,15 +39,38 @@ async function messagesChartData(req, res) {
   try {
     let data = await knex('stats_medium_resolution').select('*', knex.raw('(messages_incoming + messages_outgoing) as messages_total')).orderBy('id', 'desc').limit(6 * req.query.hours);
     data = data.reverse()
-    const startDate = new Date(new Date() - (parseInt(req.query.hours) * 60 * 60 * 1000))
-    let dates = []
 
-    for (let record of data) {
-      dates.push(record.start)
+    for (let i = 0; i < data.length; i++) {
+      let row = data[i]
+      let nextRow = data[i + 1]
+
+      if (nextRow) {
+        if (nextRow.start - row.start > (10 * 60 * 1000) + 10000) {
+          let startDate = row.end
+          let insertData = []
+          while (startDate < nextRow.start) {
+            insertData.push({
+              messages_incoming: null,
+              messages_outgoing: null,
+              messages_total: null,
+              new_users: null,
+              start: startDate,
+              end: new Date(+new Date(startDate) + 10 * 60 * 1000)
+            })
+            startDate = new Date(+new Date(startDate) + 10 * 60 * 1000)
+          }
+          insertData.pop()
+          insertData = insertData.reverse()
+          for (insert of insertData) {
+            let o = i + 1
+            data.splice(o, 0, insert)
+            o++
+          }
+        }
+      }
     }
 
     res.json({
-      xaxis: dates,
       stats: data
     })
 
