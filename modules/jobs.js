@@ -26,7 +26,7 @@ let dailyResolutionStatsSave = new CronJob(`0 0 0 * * *`, async function () {
   }
 }, null, true);
 
-let weeklyResolutionStatsSave = new CronJob(`0 0 0 * * 0`, async function () {
+let weeklyResolutionStatsSave = new CronJob(`0 0 0 * * 1`, async function () {
   try {
     logger.info('Starting weekly statistics data save job.')
     await stats.saveWeeklyResolutionData()

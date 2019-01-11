@@ -102,6 +102,22 @@ router.get('/api/stats/messages', auth.authenticate(), async (req, res) => {
   api.stats.messagesData(req, res)
 })
 
+router.get('/api/stats/users', auth.authenticate(), async (req, res) => {
+  api.stats.usersData(req, res)
+})
+
+router.get('/api/stats/bot', auth.authenticate(), async (req, res) => {
+  api.stats.botData(req, res)
+})
+
+router.get('/api/stats/users_daily_chart', auth.authenticate(), async (req, res) => {
+  api.stats.usersDailyChartData(req, res)
+})
+
+router.get('/api/stats/users_weekly_chart', auth.authenticate(), async (req, res) => {
+  api.stats.usersWeeklyChartData(req, res)
+})
+
 router.put('/api/admins', auth.authenticate(), async (req, res) => {
   api.admins.create(req, res)
 })

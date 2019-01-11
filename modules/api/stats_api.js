@@ -57,7 +57,7 @@ async function messagesChartData(req, res) {
 
     for (let record of data) {
       let str = `${createChartTimeString(record.start)} - ${createChartTimeString(record.end)}`
-      dates.push(str)
+      dates.push(record.start)
     }
 
     res.json({
@@ -91,8 +91,123 @@ async function messagesData(req, res) {
   }
 }
 
+async function usersData(req, res) {
+  try {
+    const gendersCount = await knex('users').select('gender').groupBy('gender').count()
+    const [awaitingCount] = await knex('users').where('moderator_chat', true).count()
+    const [topId] = await knex('users').max('id')
+
+    let total = 0
+    let genders = {}
+    let percents = {
+      male: null,
+      female: null
+    }
+
+    for (let row of gendersCount) {
+      let n = parseInt(row.count)
+      genders[row.gender] = n
+      total += n
+    }
+
+    percents.male = Math.round((genders.male / (genders.male + genders.female)) * 100)
+    percents.female = Math.round((genders.female / (genders.male + genders.female)) * 100)
+
+    let deleted = topId.max - total
+    let awaiting = awaitingCount.count
+
+    res.json({
+      total,
+      percents,
+      deleted,
+      awaiting
+    })
+  } catch (e) {
+    console.error(e)
+    res.sendStatus(500)
+  }
+}
+
+async function botData(req, res) {
+  try {
+    const [messagesCount] = await knex('messages').count()
+    const [attachmentsCount] = await knex('attachments').count()
+    const [broadcastsCount] = await knex('broadcasts').where('status', 'FINISHED').count()
+    const firstStart = await knex('bot_data').where('name', 'first_start').first()
+    const daysInWeb = (+new Date() - +new Date(firstStart.data.timestamp)) / (1000 * 60 * 60 * 24)
+
+    res.json({
+      messages: messagesCount.count,
+      attachments: attachmentsCount.count,
+      broadcasts: broadcastsCount.count,
+      daysUp: Math.floor(daysInWeb)
+    })
+  } catch (e) {
+    console.error(e)
+    res.sendStatus(500)
+  }
+}
+
+async function usersDailyChartData(req, res) {
+  try {
+    let rows = await knex('stats_daily_resolution').orderBy('id', 'desc').limit(req.query.days)
+    rows = rows.reverse()
+    let xaxis = []
+    let allUsers = []
+    let uniqueUsers = []
+
+    for (let record of rows) {
+      xaxis.push(record.start)
+      allUsers.push(record.all_users)
+      uniqueUsers.push(record.unique_users)
+    }
+
+
+    res.json({
+      xaxis,
+      allUsers,
+      uniqueUsers
+    })
+  } catch (e) {
+    console.error(e)
+    res.sendStatus(500)
+  }
+}
+
+async function usersWeeklyChartData(req, res) {
+  try {
+    let rows = await knex('stats_weekly_resolution').orderBy('id', 'desc').limit(req.query.weeks)
+    rows = rows.reverse()
+    let xaxis = []
+    let allUsers = []
+    let uniqueUsers = []
+
+    for (let record of rows) {
+      let label = createChartTimeString(record.start)
+      label = label.replace(/ \d\d:\d\d/, '')
+      xaxis.push(record.start)
+      allUsers.push(record.all_users)
+      uniqueUsers.push(record.unique_users)
+    }
+
+
+    res.json({
+      xaxis,
+      allUsers,
+      uniqueUsers
+    })
+  } catch (e) {
+    console.error(e)
+    res.sendStatus(500)
+  }
+}
+
 module.exports = {
   systemStatus,
   messagesChartData,
-  messagesData
+  messagesData,
+  usersData,
+  botData,
+  usersDailyChartData,
+  usersWeeklyChartData
 }

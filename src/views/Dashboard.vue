@@ -96,12 +96,138 @@
           </div>
         </div>
       </div>
+
+      <div class="row" style="height: 18vh; min-height: 150px">
+        <div class="col-xs-12 col-md-6">
+          <div class="dashboard__status-panel dashboard__panel">
+            <h3>BOT</h3>
+            <div class="messages-panel__boxes">
+              <div class="messages-panel__box">
+                <div class="dashboard__panel-header">
+                  <font-awesome-icon icon="comment-alt" size="lg" fixed-width />
+                  <h5>Messages</h5>
+                </div>
+                <div class="dashboard__panel-content">
+                  <div class="messages-panel__number dashboard__panel-number">
+                    {{ bot.messages }}
+                  </div>
+                </div>
+              </div>
+              <div class="messages-panel__box">
+                <div class="dashboard__panel-header">
+                  <font-awesome-icon icon="paperclip" size="lg" fixed-width />
+                  <h5>Attachments</h5>
+                </div>
+                <div class="dashboard__panel-content">
+                  <div class="messages-panel__number dashboard__panel-number">
+                    {{ bot.attachments }}
+                  </div>
+                </div>
+              </div>
+              <div class="messages-panel__box">
+                <div class="dashboard__panel-header">
+                  <font-awesome-icon icon="calendar-alt" size="lg" fixed-width />
+                  <h5>Days in web</h5>
+                </div>
+                <div class="dashboard__panel-content">
+                  <div class="messages-panel__number dashboard__panel-number">
+                    {{ bot.daysUp }}
+                  </div>
+                </div>
+              </div>
+              <div class="messages-panel__box">
+                <div class="dashboard__panel-header">
+                  <font-awesome-icon icon="bullhorn" size="lg" fixed-width />
+                  <h5>Broadcasts</h5>
+                </div>
+                <div class="dashboard__panel-content">
+                  <div class="messages-panel__number dashboard__panel-number">
+                    {{ bot.broadcasts }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xs-12 col-md-6">
+          <div class="dashboard__panel messages-panel">
+            <h3>USERS</h3>
+            <div class="messages-panel__boxes">
+              <div class="messages-panel__box">
+                <div class="dashboard__panel-header">
+                  <font-awesome-icon icon="percentage" size="lg" fixed-width />
+                  <h5>Gender</h5>
+                </div>
+                <div class="dashboard__panel-content">
+                  <div class="messages-panel__number dashboard__panel-number" style="font-size: 1.1em;">
+                    <div><span class="dashboard__panel-number-title">Males: </span>{{ users.percents.male }}%</div>
+                    <div><span class="dashboard__panel-number-title">Females: </span>{{ users.percents.female }}%</div>
+                  </div>
+                </div>
+              </div>
+              <div class="messages-panel__box">
+                <div class="dashboard__panel-header">
+                  <font-awesome-icon icon="users" size="lg" fixed-width />
+                  <h5>All</h5>
+                </div>
+                <div class="dashboard__panel-content">
+                  <div class="messages-panel__number dashboard__panel-number">
+                    {{ users.total }}
+                  </div>
+                </div>
+              </div>
+              <div class="messages-panel__box">
+                <div class="dashboard__panel-header">
+                  <font-awesome-icon icon="user-times" size="lg" fixed-width />
+                  <h5>Deleted</h5>
+                </div>
+                <div class="dashboard__panel-content">
+                  <div class="messages-panel__number dashboard__panel-number">
+                    {{ users.deleted }}
+                  </div>
+                </div>
+              </div>
+              <div class="messages-panel__box">
+                <div class="dashboard__panel-header">
+                  <font-awesome-icon icon="user-clock" size="lg" fixed-width />
+                  <h5>Awaiting</h5>
+                </div>
+                <div class="dashboard__panel-content">
+                  <div class="messages-panel__number dashboard__panel-number">
+                    {{ users.awaiting }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="row" style="">
         <div class="col-xs-12">
           <div class="dashboard__panel chart-panel">
             <h3>MESSAGES IN TIME</h3>
             <div class="dashboard__panel-content">
               <apexchart ref="messagesChart" type="line" height="330" :options="messagesChart.options" :series="messagesChart.series" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row" style="">
+        <div class="col-xs-12 col-lg-6">
+          <div class="dashboard__panel chart-panel">
+            <h3>DAILY USERS</h3>
+            <div class="dashboard__panel-content">
+              <apexchart type="area" height="350" ref="dailyUsersChart" :options="dailyUsersChart.options" :series="dailyUsersChart.series" />
+            </div>
+          </div>
+        </div>
+        <div class="col-xs-12 col-lg-6">
+          <div class="dashboard__panel chart-panel">
+            <h3>WEEKLY USERS</h3>
+            <div class="dashboard__panel-content">
+              <apexchart type="area" height="350" ref="weeklyUsersChart" :options="weeklyUsersChart.options" :series="weeklyUsersChart.series" />
             </div>
           </div>
         </div>
@@ -139,17 +265,28 @@ export default {
         ratio: 0
       },
 
+      bot: {
+        messages: 0,
+        attachments: 0,
+        broadcasts: 0,
+        daysUp: 0
+      },
+
+      users: {
+        total: 0,
+        deleted: 0,
+        awaiting: 0,
+        percents: {
+          male: 0,
+          female: 0
+        }
+      },
+
       messagesChart: {
         options: {
           xaxis: {
+            type: 'datetime',
             categories: [],
-            labels: {
-              show: true,
-              offsetX: -30,
-              style: {
-                cssClass: 'messages-chart__label'
-              }
-            },
             tooltip: {
               enabled: false
             }
@@ -157,7 +294,22 @@ export default {
           tooltip: {
             x: {
               show: true,
-              formatter: undefined
+              formatter: (val) => {
+                let start = new Date(val)
+                let end = new Date(+new Date(start) + 10 * 60 * 1000)
+
+                let hs = start.getHours().toString()
+                let ms = start.getMinutes().toString()
+                let he = end.getHours().toString()
+                let me = end.getMinutes().toString()
+
+                if (hs.length !== 2) hs = `0${hs}`
+                if (ms.length !== 2) ms = `0${ms}`
+                if (he.length !== 2) he = `0${he}`
+                if (me.length !== 2) me = `0${me}`
+
+                return `${hs}:${ms} - ${he}:${me}`
+              }
             }
           },
           markers: {
@@ -172,6 +324,61 @@ export default {
           data: []
         }, {
           name: 'Total',
+          data: []
+        }]
+      },
+
+      dailyUsersChart: {
+        options: {
+          xaxis: {
+            type: 'datetime',
+            categories: [],
+            tooltip: {
+              enabled: false
+            }
+          },
+          markers: {
+            size: 0
+          }
+        },
+        series: [{
+          name: 'Total users',
+          data: []
+        }, {
+          name: 'Active users',
+          data: []
+        }]
+      },
+
+      weeklyUsersChart: {
+        options: {
+          xaxis: {
+            type: 'datetime',
+            categories: [],
+            tooltip: {
+              enabled: false
+            }
+          },
+          tooltip: {
+            x: {
+              show: true,
+              formatter: (val) => {
+                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+                let start = new Date(val)
+                let end = new Date(+new Date(start) + 7 * 24 * 60 * 60 * 1000)
+                return `${start.getDate()} ${months[start.getMonth()]} - ${end.getDate()} ${months[end.getMonth()]}`
+              }
+            }
+          },
+          markers: {
+            size: 0
+          }
+        },
+        series: [{
+          name: 'Total users',
+          data: []
+        }, {
+          name: 'Active users',
           data: []
         }]
       }
@@ -199,13 +406,7 @@ export default {
     async setMessagesChartData(hours) {
       try {
         const request = await axios.get(`/api/stats/messages_chart?hours=${hours}`)
-        this.messagesChart.options.xaxis.categories = request.data.xaxis.filter(function(value, index, Arr) {
-          return index % Math.round(request.data.xaxis.length / 6) === 0
-        }).map(s => s.replace(/^.* - */, ''))
-
-        this.messagesChart.options.tooltip.x.formatter = (val, row) => {
-          return request.data.xaxis[row.dataPointIndex]
-        }
+        this.messagesChart.options.xaxis.categories = request.data.xaxis
 
         this.$refs.messagesChart.refresh()
         for (const row of request.data.stats) {
@@ -225,6 +426,48 @@ export default {
       } catch (e) {
         this.$refs.notifier.pushNotification('cannot load!', `An error occured during messages statistic data load. Error code: ${e.response.status}`, 'error', 10000)
       }
+    },
+
+    async setBotData() {
+      try {
+        const request = await axios.get('/api/stats/bot')
+        this.bot = request.data
+      } catch (e) {
+        this.$refs.notifier.pushNotification('cannot load!', `An error occured during bot data load. Error code: ${e.response.status}`, 'error', 10000)
+      }
+    },
+
+    async setUsersData() {
+      try {
+        const request = await axios.get('/api/stats/users')
+        this.users = request.data
+      } catch (e) {
+        this.$refs.notifier.pushNotification('cannot load!', `An error occured during users data load. Error code: ${e.response.status}`, 'error', 10000)
+      }
+    },
+
+    async setDailyUsersChart(days) {
+      try {
+        const request = await axios.get(`/api/stats/users_daily_chart?days=${days}`)
+        this.dailyUsersChart.options.xaxis.categories = request.data.xaxis
+        this.$refs.dailyUsersChart.refresh()
+        this.dailyUsersChart.series[0].data = request.data.allUsers
+        this.dailyUsersChart.series[1].data = request.data.uniqueUsers
+      } catch (e) {
+        this.$refs.notifier.pushNotification('cannot load!', `An error occured during users daily chart data load. Error code: ${e.response.status}`, 'error', 10000)
+      }
+    },
+
+    async setWeeklyUsersChart(weeks) {
+      try {
+        const request = await axios.get(`/api/stats/users_weekly_chart?weeks=${weeks}`)
+        this.weeklyUsersChart.options.xaxis.categories = request.data.xaxis
+        this.$refs.weeklyUsersChart.refresh()
+        this.weeklyUsersChart.series[0].data = request.data.allUsers
+        this.weeklyUsersChart.series[1].data = request.data.uniqueUsers
+      } catch (e) {
+        this.$refs.notifier.pushNotification('cannot load!', `An error occured during users weekly chart data load. Error code: ${e.response.status}`, 'error', 10000)
+      }
     }
   },
 
@@ -233,8 +476,12 @@ export default {
       axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token')
       let that = this
       await this.getSystemStatus()
-      await this.setMessagesChartData(24)
-      await this.setMessagesData(24)
+      await this.setMessagesChartData(72)
+      await this.setMessagesData(72)
+      await this.setBotData()
+      await this.setUsersData()
+      await this.setDailyUsersChart(21)
+      await this.setWeeklyUsersChart(26)
       setInterval(async function() {
         await that.getSystemStatus()
       }, 60 * 1000)
@@ -308,6 +555,10 @@ export default {
         font-size: 1.5em;
         padding-left: 15px;
         margin-top: 5px;
+    }
+
+    &__panel-number-title {
+        font-size: 0.7em;
     }
 }
 

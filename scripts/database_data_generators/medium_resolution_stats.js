@@ -1,4 +1,4 @@
-const knex = require('../modules/knex')
+const knex = require('../../modules/knex')
 
 async function start(){
   try {
