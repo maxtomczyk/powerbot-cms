@@ -4,19 +4,6 @@ const knex = require('../knex.js')
 const redis = require('../redis.js')
 const logger = require('../logger.js')
 
-function createChartTimeString(date) {
-  let d = new Date(date)
-  let h = d.getHours().toString()
-  let m = d.getMinutes().toString()
-  let day = d.getDate()
-  let month = ['I.', 'II.', 'III.', 'IV.', 'V.', 'VI.', 'VII.', 'VIII.', 'IX.', 'X.', 'XI.', 'XII.'][d.getMonth()]
-
-  if (h.length !== 2) h = `0${h}`
-  if (m.length !== 2) m = `0${m}`
-
-  return `${day} ${month} ${h}:${m}`
-}
-
 async function systemStatus(req, res) {
   try {
     let status = {
@@ -56,7 +43,6 @@ async function messagesChartData(req, res) {
     let dates = []
 
     for (let record of data) {
-      let str = `${createChartTimeString(record.start)} - ${createChartTimeString(record.end)}`
       dates.push(record.start)
     }
 
@@ -183,8 +169,6 @@ async function usersWeeklyChartData(req, res) {
     let uniqueUsers = []
 
     for (let record of rows) {
-      let label = createChartTimeString(record.start)
-      label = label.replace(/ \d\d:\d\d/, '')
       xaxis.push(record.start)
       allUsers.push(record.all_users)
       uniqueUsers.push(record.unique_users)
