@@ -516,7 +516,7 @@ export default {
 
     async setMessagesChartData(hours) {
       try {
-        const url = (typeof(hours) === 'object') ? `/api/stats/messages_chart?start=${hours.start}&end=${hours.end}` : `/api/stats/messages_chart?hours=${hours}`
+        const url = (typeof hours === 'object') ? `/api/stats/messages_chart?start=${hours.start}&end=${hours.end}` : `/api/stats/messages_chart?hours=${hours}`
         const request = await axios.get(url)
 
         this.messagesChart.series[0].data = []
@@ -544,7 +544,7 @@ export default {
 
     async setMessagesData(hours) {
       try {
-        const url = (typeof(hours) === 'object') ? `/api/stats/messages?start=${hours.start}&end=${hours.end}` : `/api/stats/messages?hours=${hours}`
+        const url = (typeof hours === 'object') ? `/api/stats/messages?start=${hours.start}&end=${hours.end}` : `/api/stats/messages?hours=${hours}`
         const request = await axios.get(url)
         this.messages = request.data
       } catch (e) {
@@ -572,7 +572,7 @@ export default {
 
     async setDailyUsersChart(days) {
       try {
-        const url = (typeof(days) === 'object') ? `/api/stats/users_daily_chart?start=${days.start}&end=${days.end}` : `/api/stats/users_daily_chart?days=${days}`
+        const url = (typeof days === 'object') ? `/api/stats/users_daily_chart?start=${days.start}&end=${days.end}` : `/api/stats/users_daily_chart?days=${days}`
         const request = await axios.get(url)
         this.dailyUsersChart.series[0].data = []
         this.dailyUsersChart.series[1].data = []
@@ -599,13 +599,12 @@ export default {
 
     async setWeeklyUsersChart(weeks) {
       try {
-        const url = (typeof(weeks) === 'object') ? `/api/stats/users_weekly_chart?start=${weeks.start}&end=${weeks.end}` : `/api/stats/users_weekly_chart?weeks=${weeks}`
+        const url = (typeof weeks === 'object') ? `/api/stats/users_weekly_chart?start=${weeks.start}&end=${weeks.end}` : `/api/stats/users_weekly_chart?weeks=${weeks}`
         const request = await axios.get(url)
 
         this.weeklyUsersChart.series[0].data = []
         this.weeklyUsersChart.series[1].data = []
         this.weeklyUsersChart.series[2].data = []
-
 
         for (const row of request.data.rows) {
           this.weeklyUsersChart.series[0].data.push({
@@ -628,13 +627,12 @@ export default {
 
     async setMonthlyUsersChart(months) {
       try {
-        const url = (typeof(months) === 'object') ? `/api/stats/users_monthly_chart?start=${months.start}&end=${months.end}` : `/api/stats/users_monthly_chart?months=${months}`
+        const url = (typeof months === 'object') ? `/api/stats/users_monthly_chart?start=${months.start}&end=${months.end}` : `/api/stats/users_monthly_chart?months=${months}`
         const request = await axios.get(url)
 
         this.monthlyUsersChart.series[0].data = []
         this.monthlyUsersChart.series[1].data = []
         this.monthlyUsersChart.series[2].data = []
-
 
         for (const row of request.data.rows) {
           this.monthlyUsersChart.series[0].data.push({
