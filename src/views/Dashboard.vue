@@ -46,7 +46,19 @@
         </div>
         <div class="col-xs-12 col-md-6">
           <div class="dashboard__panel messages-panel">
-            <h3>MESSAGES</h3>
+            <div class="dashboard__panel-header-flex">
+              <h3>MESSAGES</h3>
+              <date-range :val="72" @change="setMessagesData">
+                <option :value="24">Last 24 hours</option>
+                <option :value="72">Last 72 hours</option>
+                <option :value="168">Last week</option>
+                <option :value="336">Last 2 weeks</option>
+                <option :value="720">Last month</option>
+                <option :value="2160">Last 3 months</option>
+                <option :value="4320">Last 6 months</option>
+                <option :value="8640">Last year</option>
+              </date-range>
+            </div>
             <div class="messages-panel__boxes">
               <div class="messages-panel__box">
                 <div class="dashboard__panel-header">
@@ -206,7 +218,19 @@
       <div class="row" style="">
         <div class="col-xs-12">
           <div class="dashboard__panel chart-panel">
-            <h3>MESSAGES IN TIME</h3>
+            <div class="dashboard__panel-header-flex">
+              <h3>MESSAGES IN TIME</h3>
+              <date-range :val="72" @change="setMessagesChartData">
+                <option :value="24">Last 24 hours</option>
+                <option :value="72">Last 72 hours</option>
+                <option :value="168">Last week</option>
+                <option :value="336">Last 2 weeks</option>
+                <option :value="720">Last month</option>
+                <option :value="2160">Last 3 months</option>
+                <option :value="4320">Last 6 months</option>
+                <option :value="8640">Last year</option>
+              </date-range>
+            </div>
             <div class="dashboard__panel-content">
               <apexchart ref="messagesChart" type="line" height="330" :options="messagesChart.options" :series="messagesChart.series" />
             </div>
@@ -215,19 +239,54 @@
       </div>
 
       <div class="row" style="">
-        <div class="col-xs-12 col-lg-6">
+        <div class="col-xs-12 col-lg-12">
           <div class="dashboard__panel chart-panel">
-            <h3>DAILY USERS</h3>
+            <div class="dashboard__panel-header-flex">
+              <h3>DAILY USERS</h3>
+              <date-range :val="30" @change="setDailyUsersChart">
+                <option :value="7">Last week</option>
+                <option :value="14">Last 2 weeks</option>
+                <option :value="30">Last month</option>
+                <option :value="90">Last 3 months</option>
+              </date-range>
+            </div>
             <div class="dashboard__panel-content">
               <apexchart type="area" height="350" ref="dailyUsersChart" :options="dailyUsersChart.options" :series="dailyUsersChart.series" />
             </div>
           </div>
         </div>
+      </div>
+
+      <div class="row" style="">
         <div class="col-xs-12 col-lg-6">
           <div class="dashboard__panel chart-panel">
-            <h3>WEEKLY USERS</h3>
+            <div class="dashboard__panel-header-flex">
+              <h3>WEEKLY USERS</h3>
+              <date-range :val="9" @change="setWeeklyUsersChart">
+                <option :value="9">Last 2 months</option>
+                <option :value="13">Last 3 months</option>
+                <option :value="26">Last 6 months</option>
+                <option :value="52">Last year</option>
+              </date-range>
+            </div>
             <div class="dashboard__panel-content">
               <apexchart type="area" height="350" ref="weeklyUsersChart" :options="weeklyUsersChart.options" :series="weeklyUsersChart.series" />
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xs-12 col-lg-6">
+          <div class="dashboard__panel chart-panel">
+            <div class="dashboard__panel-header-flex">
+              <h3>MONTHLY USERS</h3>
+              <date-range :val="6" @change="setMonthlyUsersChart">
+                <option :value="6">Last 6 months</option>
+                <option :value="12">Last year</option>
+                <option :value="24">Last 2 years</option>
+              </date-range>
+            </div>
+            <div class="dashboard__panel-content">
+              <apexchart type="area" height="350" ref="monthlyUsersChart" :options="monthlyUsersChart.options" :series="monthlyUsersChart.series" />
             </div>
           </div>
         </div>
@@ -247,6 +306,7 @@ export default {
   data() {
     return {
       statusInterval: null,
+      messagesPanelRange: 72,
       status: {
         system: {
           live: null
@@ -342,7 +402,7 @@ export default {
               show: true,
               formatter: (val) => {
                 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-                let start = new Date(val + 2 * 60 * 60 * 1000)
+                let start = new Date(val + 3 * 60 * 60 * 1000)
                 return `${start.getDate()} ${months[start.getMonth()]}`
               }
             }
@@ -374,9 +434,41 @@ export default {
               show: true,
               formatter: (val) => {
                 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-                let start = new Date(val + 2 * 60 * 60 * 1000)
+                let start = new Date(val + 3 * 60 * 60 * 1000)
                 let end = new Date(+new Date(start) + (7 * 24 * 60 * 60 * 1000) - 2 * 60 * 60 * 1000)
                 return `${start.getDate()} ${months[start.getMonth()]} - ${end.getDate()} ${months[end.getMonth()]}`
+              }
+            }
+          },
+          markers: {
+            size: 0
+          }
+        },
+        series: [{
+          name: 'Total users',
+          data: []
+        }, {
+          name: 'Active users',
+          data: []
+        }]
+      },
+
+      monthlyUsersChart: {
+        options: {
+          xaxis: {
+            type: 'datetime',
+            categories: [],
+            tooltip: {
+              enabled: false
+            }
+          },
+          tooltip: {
+            x: {
+              show: true,
+              formatter: (val) => {
+                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+                let start = new Date(val + 3 * 60 * 60 * 1000)
+                return `${months[start.getMonth()]} ${start.getFullYear()}`
               }
             }
           },
@@ -415,12 +507,26 @@ export default {
 
     async setMessagesChartData(hours) {
       try {
-        const request = await axios.get(`/api/stats/messages_chart?hours=${hours}`)
+        const url = (typeof(hours) === 'object') ? `/api/stats/messages_chart?start=${hours.start}&end=${hours.end}` :  `/api/stats/messages_chart?hours=${hours}`
+        const request = await axios.get(url)
+
+        this.messagesChart.series[0].data = []
+        this.messagesChart.series[1].data = []
+        this.messagesChart.series[2].data = []
 
         for (const row of request.data.stats) {
-          this.messagesChart.series[0].data.push({x: row.start, y: row.messages_outgoing})
-          this.messagesChart.series[1].data.push({x: row.start, y: row.messages_incoming})
-          this.messagesChart.series[2].data.push({x: row.start, y: row.messages_total})
+          this.messagesChart.series[0].data.push({
+            x: row.start,
+            y: row.messages_outgoing
+          })
+          this.messagesChart.series[1].data.push({
+            x: row.start,
+            y: row.messages_incoming
+          })
+          this.messagesChart.series[2].data.push({
+            x: row.start,
+            y: row.messages_total
+          })
         }
       } catch (e) {
         this.$refs.notifier.pushNotification('cannot load!', `An error occured during messages time chart data load. Error code: ${e.response.status}`, 'error', 10000)
@@ -429,7 +535,8 @@ export default {
 
     async setMessagesData(hours) {
       try {
-        const request = await axios.get(`/api/stats/messages?hours=${hours}`)
+        const url = (typeof(hours) === 'object') ? `/api/stats/messages?start=${hours.start}&end=${hours.end}` :  `/api/stats/messages?hours=${hours}`
+        const request = await axios.get(url)
         this.messages = request.data
       } catch (e) {
         this.$refs.notifier.pushNotification('cannot load!', `An error occured during messages statistic data load. Error code: ${e.response.status}`, 'error', 10000)
@@ -456,10 +563,20 @@ export default {
 
     async setDailyUsersChart(days) {
       try {
-        const request = await axios.get(`/api/stats/users_daily_chart?days=${days}`)
+        const url = (typeof(days) === 'object') ? `/api/stats/users_daily_chart?start=${days.start}&end=${days.end}` :  `/api/stats/users_daily_chart?days=${days}`
+        const request = await axios.get(url)
+        this.dailyUsersChart.series[0].data = []
+        this.dailyUsersChart.series[1].data = []
+
         for (const row of request.data.rows) {
-          this.dailyUsersChart.series[0].data.push({x: row.start, y: row.all_users})
-          this.dailyUsersChart.series[1].data.push({x: row.start, y: row.unique_users})
+          this.dailyUsersChart.series[0].data.push({
+            x: row.start,
+            y: row.all_users
+          })
+          this.dailyUsersChart.series[1].data.push({
+            x: row.start,
+            y: row.unique_users
+          })
         }
       } catch (e) {
         this.$refs.notifier.pushNotification('cannot load!', `An error occured during users daily chart data load. Error code: ${e.response.status}`, 'error', 10000)
@@ -468,13 +585,47 @@ export default {
 
     async setWeeklyUsersChart(weeks) {
       try {
-        const request = await axios.get(`/api/stats/users_weekly_chart?weeks=${weeks}`)
+        const url = (typeof(weeks) === 'object') ? `/api/stats/users_weekly_chart?start=${weeks.start}&end=${weeks.end}` :  `/api/stats/users_weekly_chart?weeks=${weeks}`
+        const request = await axios.get(url)
+
+        this.weeklyUsersChart.series[0].data = []
+        this.weeklyUsersChart.series[1].data = []
+
         for (const row of request.data.rows) {
-          this.weeklyUsersChart.series[0].data.push({x: row.start, y: row.all_users})
-          this.weeklyUsersChart.series[1].data.push({x: row.start, y: row.unique_users})
+          this.weeklyUsersChart.series[0].data.push({
+            x: row.start,
+            y: row.all_users
+          })
+          this.weeklyUsersChart.series[1].data.push({
+            x: row.start,
+            y: row.unique_users
+          })
         }
       } catch (e) {
         this.$refs.notifier.pushNotification('cannot load!', `An error occured during users weekly chart data load. Error code: ${e.response.status}`, 'error', 10000)
+      }
+    },
+
+    async setMonthlyUsersChart(months) {
+      try {
+        const url = (typeof(months) === 'object') ? `/api/stats/users_monthly_chart?start=${months.start}&end=${months.end}` :  `/api/stats/users_monthly_chart?months=${months}`
+        const request = await axios.get(url)
+
+        this.monthlyUsersChart.series[0].data = []
+        this.monthlyUsersChart.series[1].data = []
+
+        for (const row of request.data.rows) {
+          this.monthlyUsersChart.series[0].data.push({
+            x: row.start,
+            y: row.all_users
+          })
+          this.monthlyUsersChart.series[1].data.push({
+            x: row.start,
+            y: row.unique_users
+          })
+        }
+      } catch (e) {
+        this.$refs.notifier.pushNotification('cannot load!', `An error occured during users monthly chart data load. Error code: ${e.response.status}`, 'error', 10000)
       }
     }
   },
@@ -485,11 +636,12 @@ export default {
       let that = this
       await this.getSystemStatus()
       await this.setMessagesChartData(72)
-      await this.setMessagesData(72)
+      await this.setMessagesData(this.messagesPanelRange)
       await this.setBotData()
       await this.setUsersData()
-      await this.setDailyUsersChart(21)
-      await this.setWeeklyUsersChart(26)
+      await this.setDailyUsersChart(30)
+      await this.setWeeklyUsersChart(9)
+      await this.setMonthlyUsersChart(6)
       setInterval(async function() {
         await that.getSystemStatus()
       }, 60 * 1000)
@@ -551,6 +703,18 @@ export default {
         h5 {
             margin-left: 8px;
             font-size: 1.03em;
+        }
+    }
+
+    &__panel-header-flex {
+        display: flex;
+
+        select {
+            left: 20px;
+            top: -6px;
+            width: 20% !important;
+            min-width: 130px;
+            position: relative;
         }
     }
 

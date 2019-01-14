@@ -37,8 +37,21 @@ async function systemStatus(req, res) {
 
 async function messagesChartData(req, res) {
   try {
-    let data = await knex('stats_medium_resolution').select('*', knex.raw('(messages_incoming + messages_outgoing) as messages_total')).orderBy('id', 'desc').limit(6 * req.query.hours);
-    data = data.reverse()
+    let now = new Date()
+    let first = new Date(+new Date() - req.query.hours * 60 * 60 * 1000)
+    let data = null
+    if (req.query.hours) {
+      data = await knex('stats_medium_resolution').select('*', knex.raw('(messages_incoming + messages_outgoing) as messages_total')).whereBetween('start', [first, now]).orderBy('id', 'asc')
+    } else {
+      let start = new Date(req.query.start)
+      let end = new Date(req.query.end)
+      console.log(start);
+      console.log(end);
+      start.setUTCHours(0, 0, 0, 0)
+      end.setUTCHours(23, 59, 59, 0)
+      data = await knex('stats_medium_resolution').select('*', knex.raw('(messages_incoming + messages_outgoing) as messages_total')).whereBetween('start', [start, end]).orderBy('id', 'asc')
+    }
+
 
     for (let i = 0; i < data.length; i++) {
       let row = data[i]
@@ -84,7 +97,17 @@ async function messagesChartData(req, res) {
 
 async function messagesData(req, res) {
   try {
-    const data = await knex.raw('select sum(messages_outgoing) as outgoing, sum(messages_incoming) as incoming from (select * from stats_medium_resolution order by id desc limit ?) as subquery', [6 * req.query.hours])
+    let data = null
+
+    if (req.query.hours) {
+      data = await knex.raw('select sum(messages_outgoing) as outgoing, sum(messages_incoming) as incoming from (select * from stats_medium_resolution order by id desc limit ?) as subquery', [6 * req.query.hours])
+    } else {
+      let end = new Date(req.query.end)
+      let start = new Date(req.query.start)
+      start.setUTCHours(0, 0, 0, 0)
+      end.setUTCHours(23, 59, 59, 0)
+      data = await knex.raw('select sum(messages_outgoing) as outgoing, sum(messages_incoming) as incoming from (select * from stats_medium_resolution where start between ? and ?) as subquery', [new Date(start).toUTCString(), new Date(end).toUTCString()])
+    }
     const incoming = parseInt(data.rows[0].incoming)
     const outgoing = parseInt(data.rows[0].outgoing)
     const total = incoming + outgoing
@@ -161,8 +184,20 @@ async function botData(req, res) {
 
 async function usersDailyChartData(req, res) {
   try {
-    let rows = await knex('stats_daily_resolution').orderBy('id', 'desc').limit(req.query.days)
-    rows = rows.reverse()
+    let now = new Date()
+    let first = new Date(+new Date() - (parseInt(req.query.days) + 1) * 24 * 60 * 60 * 1000)
+    let rows = null
+
+    if (req.query.days) {
+      rows = await knex('stats_daily_resolution').whereBetween('start', [first, now]).orderBy('id', 'asc')
+    } else {
+      let end = new Date(+new Date(req.query.end) - 24 * 60 * 60 * 1000)
+      let start = new Date(+new Date(req.query.start) - 24 * 60 * 60 * 1000)
+      start.setUTCHours(0, 0, 0, 0)
+      end.setUTCHours(23, 59, 59, 0)
+
+      rows = await knex('stats_daily_resolution').whereBetween('start', [start, end]).orderBy('id', 'asc')
+    }
     let xaxis = []
     let allUsers = []
     let uniqueUsers = []
@@ -207,8 +242,20 @@ async function usersDailyChartData(req, res) {
 
 async function usersWeeklyChartData(req, res) {
   try {
-    let rows = await knex('stats_weekly_resolution').orderBy('id', 'desc').limit(req.query.weeks)
-    rows = rows.reverse()
+    let now = new Date()
+    let first = new Date(+new Date() - (parseInt(req.query.weeks)) * 7 * 24 * 60 * 60 * 1000)
+    let rows = null
+
+    if (req.query.weeks) {
+      rows = await knex('stats_weekly_resolution').whereBetween('start', [first, now]).orderBy('id', 'asc')
+    } else {
+      let end = new Date(+new Date(req.query.end) - 24 * 60 * 60 * 1000)
+      let start = new Date(+new Date(req.query.start) - 24 * 60 * 60 * 1000)
+      start.setUTCHours(0, 0, 0, 0)
+      end.setUTCHours(23, 59, 59, 0)
+
+      rows = await knex('stats_weekly_resolution').whereBetween('start', [start, end]).orderBy('id', 'asc')
+    }
     let xaxis = []
     let allUsers = []
     let uniqueUsers = []
@@ -252,6 +299,67 @@ async function usersWeeklyChartData(req, res) {
   }
 }
 
+async function usersMonthlyChartData(req, res) {
+  try {
+    let now = new Date()
+    let first = new Date(new Date().setMonth(new Date().getMonth() - parseInt(req.query.months), 1))
+    first.setHours(0, 0, 0, 0)
+    let rows = null
+
+    if (req.query.months) {
+      rows = await knex('stats_monthly_resolution').whereBetween('start', [first, now]).orderBy('id', 'asc')
+    } else {
+      let end = new Date(+new Date(req.query.end) - 24 * 60 * 60 * 1000)
+      let start = new Date(+new Date(req.query.start) - 24 * 60 * 60 * 1000)
+      start.setUTCHours(0, 0, 0, 0)
+      end.setUTCHours(23, 59, 59, 0)
+
+      rows = await knex('stats_monthly_resolution').whereBetween('start', [start, end]).orderBy('id', 'asc')
+    }
+    let xaxis = []
+    let allUsers = []
+    let uniqueUsers = []
+
+    for (let i = 0; i < rows.length; i++) {
+      let row = rows[i]
+      let nextRow = rows[i + 1]
+
+      if (nextRow) {
+        if (nextRow.start - row.start > (7 * 24 * 60 * 60 * 1000) + 10000) {
+          let startDate = row.end
+          let insertData = []
+          while (startDate < nextRow.start) {
+            insertData.push({
+              all_users: null,
+              unique_users: null,
+              start: startDate,
+              end: new Date(+new Date(startDate) + 7 * 24 * 60 * 60 * 1000)
+            })
+            startDate = new Date(+new Date(startDate) + 7 * 24 * 60 * 60 * 1000)
+          }
+          insertData.reverse()
+          for (insert of insertData) {
+            let o = i + 1
+            rows.splice(o, 0, insert)
+            o++
+          }
+
+          i = i + insertData.length
+        }
+      }
+    }
+
+
+    res.json({
+      rows
+    })
+  } catch (e) {
+    console.error(e)
+    res.sendStatus(500)
+  }
+}
+
+
 module.exports = {
   systemStatus,
   messagesChartData,
@@ -259,5 +367,6 @@ module.exports = {
   usersData,
   botData,
   usersDailyChartData,
-  usersWeeklyChartData
+  usersWeeklyChartData,
+  usersMonthlyChartData
 }

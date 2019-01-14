@@ -17,7 +17,6 @@ async function start(){
       let row = {
         messages_incoming: Math.floor(Math.random() * (200 - 50)) + 50,
         messages_outgoing: Math.floor(Math.random() * (200 - 50)) + 50,
-        new_users: Math.floor(Math.random() * (15 - 0)) + 0,
         start: new Date(startDate),
         end: new Date(startDate + 10 * 60 * 1000)
       }

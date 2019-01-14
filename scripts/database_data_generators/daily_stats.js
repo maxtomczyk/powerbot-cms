@@ -14,6 +14,7 @@ async function start() {
       let row = {
         unique_users: Math.floor(Math.random() * 70) + 1,
         all_users: allUsers,
+        new_users: Math.floor(Math.random() * (15 - 0)) + 0,
         start: currentDate,
         end: new Date(+new Date(currentDate) + (24 * 60 * 60 * 1000))
       }

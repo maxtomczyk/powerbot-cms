@@ -118,6 +118,10 @@ router.get('/api/stats/users_weekly_chart', auth.authenticate(), async (req, res
   api.stats.usersWeeklyChartData(req, res)
 })
 
+router.get('/api/stats/users_monthly_chart', auth.authenticate(), async (req, res) => {
+  api.stats.usersMonthlyChartData(req, res)
+})
+
 router.put('/api/admins', auth.authenticate(), async (req, res) => {
   api.admins.create(req, res)
 })

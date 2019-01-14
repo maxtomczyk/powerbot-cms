@@ -30,6 +30,7 @@ import Tabs from '@/components/Tabs'
 import Radio from '@/components/Radio'
 import MessagePreview from '@/components/MessagePreview'
 import Checkbox from '@/components/Checkbox'
+import DateRange from '@/components/DateRange'
 
 library.add(fas)
 
@@ -52,6 +53,7 @@ Vue.component('radio', Radio)
 Vue.component('message-preview', MessagePreview)
 Vue.component('checkbox', Checkbox)
 Vue.component('apexchart', VueApexCharts)
+Vue.component('date-range', DateRange)
 
 Vue.config.productionTip = false
 

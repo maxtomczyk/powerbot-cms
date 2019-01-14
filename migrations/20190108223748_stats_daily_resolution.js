@@ -3,6 +3,7 @@ exports.up = function (knex, Promise) {
     t.increments()
     t.integer('unique_users').notNullable()
     t.integer('all_users').notNullable()
+    t.integer('new_users').notNullable()
     t.timestamp('start', { useTz: false }).notNullable()
     t.timestamp('end', { useTz: false }).defaultTo(knex.fn.now()).notNullable()
     t.unique('id')
