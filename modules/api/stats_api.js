@@ -45,8 +45,6 @@ async function messagesChartData(req, res) {
     } else {
       let start = new Date(req.query.start)
       let end = new Date(req.query.end)
-      console.log(start);
-      console.log(end);
       start.setUTCHours(0, 0, 0, 0)
       end.setUTCHours(23, 59, 59, 0)
       data = await knex('stats_medium_resolution').select('*', knex.raw('(messages_incoming + messages_outgoing) as messages_total')).whereBetween('start', [start, end]).orderBy('id', 'asc')
@@ -214,6 +212,7 @@ async function usersDailyChartData(req, res) {
             insertData.push({
               all_users: null,
               unique_users: null,
+              new_users: null,
               start: startDate,
               end: new Date(+new Date(startDate) + 24 * 60 * 60 * 1000)
             })
@@ -230,7 +229,6 @@ async function usersDailyChartData(req, res) {
         }
       }
     }
-
     res.json({
       rows
     })
@@ -244,10 +242,13 @@ async function usersWeeklyChartData(req, res) {
   try {
     let now = new Date()
     let first = new Date(+new Date() - (parseInt(req.query.weeks)) * 7 * 24 * 60 * 60 * 1000)
+    first.setUTCHours(0, 0, 0, 0)
     let rows = null
+    let dailyRows = null
 
     if (req.query.weeks) {
       rows = await knex('stats_weekly_resolution').whereBetween('start', [first, now]).orderBy('id', 'asc')
+      dailyRows = await knex('stats_daily_resolution').whereBetween('start', [first, now])
     } else {
       let end = new Date(+new Date(req.query.end) - 24 * 60 * 60 * 1000)
       let start = new Date(+new Date(req.query.start) - 24 * 60 * 60 * 1000)
@@ -255,7 +256,10 @@ async function usersWeeklyChartData(req, res) {
       end.setUTCHours(23, 59, 59, 0)
 
       rows = await knex('stats_weekly_resolution').whereBetween('start', [start, end]).orderBy('id', 'asc')
+      dailyRows = await knex('stats_daily_resolution').whereBetween('start', [start, end])
     }
+
+
     let xaxis = []
     let allUsers = []
     let uniqueUsers = []
@@ -263,6 +267,14 @@ async function usersWeeklyChartData(req, res) {
     for (let i = 0; i < rows.length; i++) {
       let row = rows[i]
       let nextRow = rows[i + 1]
+      rows[i].new_users = 0
+
+      for (let o = 0; o < dailyRows.length; o++) {
+        let dailyRow = dailyRows[o]
+        if(+new Date(dailyRow.start) >= +new Date(row.start) && +new Date(dailyRow.start) <= +new Date(row.end)){
+          rows[i].new_users += dailyRow.new_users
+        }
+      }
 
       if (nextRow) {
         if (nextRow.start - row.start > (7 * 24 * 60 * 60 * 1000) + 10000) {
@@ -273,6 +285,7 @@ async function usersWeeklyChartData(req, res) {
               all_users: null,
               unique_users: null,
               start: startDate,
+              new_users: null,
               end: new Date(+new Date(startDate) + 7 * 24 * 60 * 60 * 1000)
             })
             startDate = new Date(+new Date(startDate) + 7 * 24 * 60 * 60 * 1000)
@@ -288,7 +301,6 @@ async function usersWeeklyChartData(req, res) {
         }
       }
     }
-
 
     res.json({
       rows
@@ -305,9 +317,11 @@ async function usersMonthlyChartData(req, res) {
     let first = new Date(new Date().setMonth(new Date().getMonth() - parseInt(req.query.months), 1))
     first.setHours(0, 0, 0, 0)
     let rows = null
+    let dailyRows = null
 
     if (req.query.months) {
       rows = await knex('stats_monthly_resolution').whereBetween('start', [first, now]).orderBy('id', 'asc')
+      dailyRows = await knex('stats_daily_resolution').whereBetween('start', [first, now])
     } else {
       let end = new Date(+new Date(req.query.end) - 24 * 60 * 60 * 1000)
       let start = new Date(+new Date(req.query.start) - 24 * 60 * 60 * 1000)
@@ -315,6 +329,7 @@ async function usersMonthlyChartData(req, res) {
       end.setUTCHours(23, 59, 59, 0)
 
       rows = await knex('stats_monthly_resolution').whereBetween('start', [start, end]).orderBy('id', 'asc')
+      dailyRows = await knex('stats_daily_resolution').whereBetween('start', [start, end])
     }
     let xaxis = []
     let allUsers = []
@@ -323,6 +338,14 @@ async function usersMonthlyChartData(req, res) {
     for (let i = 0; i < rows.length; i++) {
       let row = rows[i]
       let nextRow = rows[i + 1]
+      rows[i].new_users = 0
+
+      for (let o = 0; o < dailyRows.length; o++) {
+        let dailyRow = dailyRows[o]
+        if(+new Date(dailyRow.start) >= +new Date(row.start) && +new Date(dailyRow.start) < +new Date(row.end)){
+          rows[i].new_users += dailyRow.new_users
+        }
+      }
 
       if (nextRow) {
         if (nextRow.start - row.start > (7 * 24 * 60 * 60 * 1000) + 10000) {
@@ -333,6 +356,7 @@ async function usersMonthlyChartData(req, res) {
               all_users: null,
               unique_users: null,
               start: startDate,
+              new_users: null,
               end: new Date(+new Date(startDate) + 7 * 24 * 60 * 60 * 1000)
             })
             startDate = new Date(+new Date(startDate) + 7 * 24 * 60 * 60 * 1000)
@@ -349,6 +373,7 @@ async function usersMonthlyChartData(req, res) {
       }
     }
 
+    console.log(rows)
 
     res.json({
       rows
