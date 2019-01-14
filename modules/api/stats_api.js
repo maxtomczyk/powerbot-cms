@@ -373,8 +373,6 @@ async function usersMonthlyChartData(req, res) {
       }
     }
 
-    console.log(rows)
-
     res.json({
       rows
     })

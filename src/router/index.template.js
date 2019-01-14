@@ -12,6 +12,7 @@ import UnknownPhrases from '@/views/UnknownPhrases'
 import Emissions from '@/views/Emissions'
 import Keywords from '@/views/Keywords'
 import Attachments from '@/views/Attachments'
+import Elements from '@/views/Elements'
 
 Vue.use(Router)
 
@@ -64,6 +65,11 @@ export default new Router({
     path: '/attachments',
     name: 'Attachments',
     component: Attachments,
+    beforeEnter: Guard.auth
+  }, {
+    path: '/elements',
+    name: 'Bot Elements',
+    component: Elements,
     beforeEnter: Guard.auth
   }, {
     path: '*',

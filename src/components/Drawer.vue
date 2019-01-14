@@ -13,6 +13,7 @@
           <drawer-item icon="broadcast-tower" target="/emissions" @clicked="close()">Emissions</drawer-item>
           <drawer-item icon="paperclip" target="/attachments" @clicked="close()">Attachments</drawer-item>
           <drawer-item icon="user-shield" target="/admins" @clicked="close()">Admins</drawer-item>
+          <drawer-item icon="list" target="/elements" @clicked="close()">Bot elements</drawer-item>
         </div>
 
         <div class="drawer__list">
@@ -25,6 +26,7 @@
           <drawer-list-item icon="broadcast-tower" target="/emissions" @clicked="close()">Emissions</drawer-list-item>
           <drawer-list-item icon="paperclip" target="/attachments" @clicked="close()">Attachments</drawer-list-item>
           <drawer-list-item icon="user-shield" target="/admins" @clicked="close()">Admins</drawer-list-item>
+          <drawer-list-item icon="list" target="/elements" @clicked="close()">Bot elements</drawer-list-item>
         </div>
 
         <div class="drawer__footer">
