@@ -7,6 +7,7 @@ const broadcast = require('./broadcast_api')
 const keywords = require('./keywords_api')
 const attachments = require('./attachments_api')
 const stats = require('./stats_api')
+const elements = require('./elements_api')
 
 module.exports = {
   admins,
@@ -17,5 +18,6 @@ module.exports = {
   broadcast,
   keywords,
   attachments,
-  stats
+  stats,
+  elements
 }

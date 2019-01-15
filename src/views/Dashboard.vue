@@ -691,7 +691,6 @@ export default {
 @import "../styles/variables";
 
 .dashboard {
-
     .row {
         & > div {
             margin-bottom: 50px;

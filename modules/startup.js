@@ -130,7 +130,6 @@ async function checkFirstStart() {
 
 async function start() {
   try {
-    // await checkAttachments()
     await checkChannels()
     await checkChannelsSync()
     await checkFirstStart()

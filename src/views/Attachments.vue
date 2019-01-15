@@ -1,7 +1,6 @@
 <template>
 <div class="attachments view-with-navbar">
   <notifier ref="notifier"></notifier>
-  <!-- <creation-button></creation-button> -->
 
   <div class="view-actions">
     <div class="button button--blue" :class="(unsyncedN) ? '' : 'button--disabled'" @click="syncAll">

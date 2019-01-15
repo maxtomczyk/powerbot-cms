@@ -122,6 +122,10 @@ router.get('/api/stats/users_monthly_chart', auth.authenticate(), async (req, re
   api.stats.usersMonthlyChartData(req, res)
 })
 
+router.get('/api/elements/list', auth.authenticate(), async (req, res) => {
+  api.elements.list(req, res)
+})
+
 router.put('/api/admins', auth.authenticate(), async (req, res) => {
   api.admins.create(req, res)
 })
@@ -176,6 +180,14 @@ router.post('/api/broadcast-cancel', auth.authenticate(), async (req, res) => {
 
 router.post('/api/chat_request_lock', auth.authenticate(), async (req, res) => {
   api.chats.lock(req, res)
+})
+
+router.post('/api/elements/save', auth.authenticate(), async (req, res) => {
+  api.elements.save(req, res)
+})
+
+router.post('/api/elements/sync', auth.authenticate(), async (req, res) => {
+  api.elements.sync(req, res)
 })
 
 router.delete('/api/admins', auth.authenticate(), async (req, res) => {
