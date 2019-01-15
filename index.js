@@ -7,7 +7,6 @@ const customRoutes = require('./modules/custom_routes')
 const auth = require('./modules/auth')()
 const User = require('./modules/bot/models/User')
 const echo = require('./modules/bot/echo')
-const staticElements = require('./modules/bot/static_elements')
 const postback = require('./modules/bot/postbacks')
 const startup = require('./modules/startup')
 const logger = require('./modules/logger')
@@ -23,7 +22,6 @@ const Stats = require('./modules/models/Stats')
 
 const stats = new Stats()
 
-staticElements()
 startup()
 jobs.start()
 

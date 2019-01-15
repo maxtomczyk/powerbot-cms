@@ -74,7 +74,7 @@ async function sync(req, res) {
     if (elements.menu) await incredbot.send.setting(elements.menu.json)
 
     await knex('static_elements').update('force_update', false)
-    logger.info('Updated Get Started button, Greeting message and Persistent Menu.')
+    logger.info('Updated static elements.')
 
     res.sendStatus(200)
   } catch (e) {
