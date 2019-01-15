@@ -4,7 +4,7 @@
   <div class="dashboard__wrapper">
     <div class="container" style="width: 100%;">
       <div class="row" style="height: 18vh; min-height: 150px">
-        <div class="col-xs-12 col-md-6">
+        <div class="col-xs-12 col-md-6 mobile-limited-height">
           <div class="dashboard__status-panel dashboard__panel">
             <h3>SYSTEM STATUS</h3>
             <div class="status-panel__boxes">
@@ -44,7 +44,7 @@
             </div>
           </div>
         </div>
-        <div class="col-xs-12 col-md-6">
+        <div class="col-xs-12 col-md-6 mobile-limited-height">
           <div class="dashboard__panel messages-panel">
             <div class="dashboard__panel-header-flex">
               <h3>MESSAGES</h3>
@@ -110,7 +110,7 @@
       </div>
 
       <div class="row" style="height: 18vh; min-height: 150px">
-        <div class="col-xs-12 col-md-6">
+        <div class="col-xs-12 col-md-6 mobile-limited-height">
           <div class="dashboard__status-panel dashboard__panel">
             <h3>BOT</h3>
             <div class="messages-panel__boxes">
@@ -731,6 +731,7 @@ export default {
 
     &__panel-header-flex {
         display: flex;
+        flex-wrap: wrap;
 
         select {
             left: 20px;
@@ -761,6 +762,7 @@ export default {
     &__boxes {
         display: flex;
         justify-content: space-around;
+        flex-wrap: wrap;
     }
 
     &__box {
@@ -822,5 +824,27 @@ export default {
 
 .apexcharts-legend-text {
     color: $font-primary !important;
+}
+
+@media only screen and (max-width: 768px) {
+    .dashboard {
+        .row {
+            height: auto !important;
+        }
+
+        .mobile-limited-height {
+            max-height: 100px !important;
+        }
+
+        &__panel-header {
+            h5 {
+                display: none;
+            }
+        }
+
+        &__panel-number {
+            font-size: 1em;
+        }
+    }
 }
 </style>

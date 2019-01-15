@@ -155,7 +155,12 @@ export default {
         &__row{
           width: calc(100% - 16px);
           position: static;
+          margin-top: -40px;
         }
+    }
+
+    .notification:last-of-type{
+      margin-top: 50px;
     }
 }
 </style>

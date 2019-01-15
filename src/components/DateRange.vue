@@ -75,4 +75,21 @@ export default {
         }
     }
 }
+
+@media only screen and (max-width: 768px) {
+    .data-range {
+
+        &__ranges {
+            margin-left: 0;
+            margin-right: 0;
+            justify-content: flex-start;
+            width: 70%;
+            margin-right: 10px;
+
+            input{
+              width: 48%;
+            }
+        }
+    }
+}
 </style>
