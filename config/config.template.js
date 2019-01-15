@@ -33,5 +33,6 @@ config.redis.timeouts = {
 config.features.registerUnknownPhrases = true || process.env.FEATURE_REGISTER_UNKNOWN_PHRASES
 
 config.settings.defaultGender = process.env.DEFAULT_GENDER || 'male'
+config.settings.usersAdditionalData = process.env.USERS_DATA || ''
 
 module.exports = config

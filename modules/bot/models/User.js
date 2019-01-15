@@ -95,7 +95,8 @@ class User {
         Object.assign(this, record)
         return this
       } else {
-        let data = await incredbot.User(this.messenger_id).getData('first_name', 'last_name', 'id')
+        let additionalData = (config.settings.usersAdditionalData) ? config.settings.usersAdditionalData.split(' ') : []
+        let data = await incredbot.User(this.messenger_id).getData('first_name', 'last_name', 'id', ...additionalData)
         let defaultChannels = await this.getDefaultChannels()
 
         let user = {
@@ -103,6 +104,7 @@ class User {
           last_name: data.last_name,
           locale: data.locale,
           gender: data.gender,
+          timezone: data.timezone,
           messenger_id: data.id
         }
 
