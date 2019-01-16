@@ -1,12 +1,38 @@
-const User = require('./models/User.js')
+const User = require('./models/User')
+const BotData = require('./models/BotData')
 
 const messages = require('../messages')
+const config = require('../../config/config.js')
+const botData = new BotData()
 
 module.exports = async function (message, user) {
   const payload = message.payload
 
   switch (payload) {
     case 'CONTACT':
+      if (config.settings.useModeratorHours) {
+        const moderatorHours = await botData.get('moderator_hours')
+        const todayHours = moderatorHours[new Date().getDay()]
+
+        if (!todayHours.from || !todayHours.to) {
+          await message.reply.raw(await messages.get('contact_no_moderator_time', user))
+          await message.reply.raw(await messages.get('contact_question', user))
+          return
+        }
+
+        const startHours = parseInt(todayHours.from.substring(0, 2))
+        const startMinutes = parseInt(todayHours.from.substring(3, 5))
+        const endHours = parseInt(todayHours.to.substring(0, 2))
+        const endMinutes = parseInt(todayHours.to.substring(3, 5))
+        const now = new Date()
+        let start = new Date()
+        let end = new Date()
+
+        start.setHours(startHours, startMinutes, 0, 0)
+        end.setHours(endHours, endMinutes, 0, 0)
+
+        if (start > now || now > end) await message.reply.raw(await messages.get('contact_no_moderator_time', user))
+      }
       await message.reply.raw(await messages.get('contact_question', user))
       break
 

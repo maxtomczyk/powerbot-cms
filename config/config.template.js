@@ -35,5 +35,6 @@ config.features.registerUnknownPhrases = true || process.env.FEATURE_REGISTER_UN
 config.settings.defaultGender = process.env.DEFAULT_GENDER || 'male'
 config.settings.usersAdditionalData = process.env.USERS_DATA || ''
 config.settings.statsCollectorTimezone = process.env.STATS_COLLECTOR_TIMEZONE || 'Europe/Warsaw'
+config.settings.useModeratorHours = process.env.USE_MODERATOR_HOURS || false
 
 module.exports = config
