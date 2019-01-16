@@ -2,6 +2,9 @@ const cron = require('cron')
 const CronJob = require('cron').CronJob
 const Stats = require('./models/Stats')
 const logger = require('./logger')
+const config = require('../config/config')
+
+const cronTimezone = config.settings.statsCollectorTimezone || 'Europe/London'
 
 const stats = new Stats()
 let mediumResolutionStatsSave = new CronJob(`0 */10 * * * *`, async function () {
@@ -13,7 +16,9 @@ let mediumResolutionStatsSave = new CronJob(`0 */10 * * * *`, async function () 
     logger.error('An error occured during medium resolution statistics data save')
     console.error(e)
   }
-}, null, true);
+}, {
+  timezone: cronTimezone
+});
 
 let dailyResolutionStatsSave = new CronJob(`0 0 0 * * *`, async function () {
   try {
@@ -24,7 +29,9 @@ let dailyResolutionStatsSave = new CronJob(`0 0 0 * * *`, async function () {
     logger.error('An error occured during daily statistics data save')
     console.error(e)
   }
-}, null, true);
+}, {
+  timezone: cronTimezone
+});
 
 let weeklyResolutionStatsSave = new CronJob(`0 0 0 * * 1`, async function () {
   try {
@@ -35,7 +42,9 @@ let weeklyResolutionStatsSave = new CronJob(`0 0 0 * * 1`, async function () {
     logger.error('An error occured during weekly statistics data save')
     console.error(e)
   }
-}, null, true);
+}, {
+  timezone: cronTimezone
+});
 
 let monthlyResolutionStatsSave = new CronJob(`0 0 0 1 * *`, async function () {
   try {
@@ -46,7 +55,9 @@ let monthlyResolutionStatsSave = new CronJob(`0 0 0 1 * *`, async function () {
     logger.error('An error occured during monthly statistics data save')
     console.error(e)
   }
-}, null, true);
+}, {
+  timezone: cronTimezone
+});
 
 function start() {
 
