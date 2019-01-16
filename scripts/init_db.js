@@ -159,12 +159,6 @@ async function start() {
       owner: true
     })
 
-    await knex('channels').insert({
-      name: 'incredbot_default',
-      friendly_name: 'Incredbot CMS Channel',
-      default: true
-    })
-
     await knex('languages').insert({
       name: 'English',
       locale: 'en_US',
@@ -225,7 +219,7 @@ async function start() {
               payload: 'CLEAR_USER_DATA'
             }]
           }, {
-            title: 'Powered by Incredbot',
+            title: 'Powered by Powerbot',
             type: 'web_url',
             url: 'https://github.com/maxtomczyk/incredbot-cms'
           }]
