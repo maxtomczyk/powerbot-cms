@@ -16,9 +16,7 @@ let mediumResolutionStatsSave = new CronJob(`0 */10 * * * *`, async function () 
     logger.error('An error occured during medium resolution statistics data save')
     console.error(e)
   }
-}, {
-  timezone: cronTimezone
-});
+}, null, true, cronTimezone);
 
 let dailyResolutionStatsSave = new CronJob(`0 0 0 * * *`, async function () {
   try {
@@ -29,9 +27,7 @@ let dailyResolutionStatsSave = new CronJob(`0 0 0 * * *`, async function () {
     logger.error('An error occured during daily statistics data save')
     console.error(e)
   }
-}, {
-  timezone: cronTimezone
-});
+}, null, true, cronTimezone);
 
 let weeklyResolutionStatsSave = new CronJob(`0 0 0 * * 1`, async function () {
   try {
@@ -42,9 +38,7 @@ let weeklyResolutionStatsSave = new CronJob(`0 0 0 * * 1`, async function () {
     logger.error('An error occured during weekly statistics data save')
     console.error(e)
   }
-}, {
-  timezone: cronTimezone
-});
+}, null, true, cronTimezone);
 
 let monthlyResolutionStatsSave = new CronJob(`0 0 0 1 * *`, async function () {
   try {
@@ -55,9 +49,7 @@ let monthlyResolutionStatsSave = new CronJob(`0 0 0 1 * *`, async function () {
     logger.error('An error occured during monthly statistics data save')
     console.error(e)
   }
-}, {
-  timezone: cronTimezone
-});
+}, null, true, cronTimezone);
 
 function start() {
 
