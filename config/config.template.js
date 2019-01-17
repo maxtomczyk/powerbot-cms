@@ -7,6 +7,7 @@ config.app = {}
 config.redis = {}
 config.features = {}
 config.settings = {}
+config.email = {}
 
 config.facebook.access_token = process.env.FB_ACCESS || ''
 
@@ -36,5 +37,14 @@ config.settings.defaultGender = process.env.DEFAULT_GENDER || 'male'
 config.settings.usersAdditionalData = process.env.USERS_DATA || ''
 config.settings.statsCollectorTimezone = process.env.STATS_COLLECTOR_TIMEZONE || 'Europe/Warsaw'
 config.settings.useModeratorHours = process.env.USE_MODERATOR_HOURS || false
+config.settings.cmsUrl = process.env.CMS_URL || 'http://localhost:3000'
+config.settings.chatRequestEmail = process.env.CHAT_REQUEST_EMAIL || false
+
+config.email.host = process.env.EMAIL_HOST || ''
+config.email.port = process.env.EMAIL_PORT || ''
+config.email.sender = process.env.EMAIL_SENDER || ''
+config.email.login = process.env.EMAIL_LOGIN || ''
+config.email.password = process.env.EMAIL_PASSWORD || ''
+config.email.app_name = process.env.EMAIL_APP_NAME || ''
 
 module.exports = config

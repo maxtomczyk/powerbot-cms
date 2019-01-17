@@ -1,0 +1,72 @@
+body {
+  font-family: Helvetica;
+  background-color: white;
+  margin: 0;
+  padding: 0;
+  text-align: justify;
+}
+
+header {
+  height: 70px;
+  padding: 25px 15px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.header-logo {
+  width: 45px;
+  height: 45px;
+  margin-top: -4px;
+  margin-left: 10px;
+  margin-right: 5px;
+}
+
+.header-logo>img{
+  width: 55px;
+}
+
+.header-wrapper{
+  margin-left: 12px;
+}
+
+.app-name {
+  font-size: 28px;
+  color: #2892D7;
+}
+
+.powered-by {
+  color: #848484;
+  font-size: 12px;
+  margin-left: 4px;
+}
+
+.title {
+  text-align: center;
+  font-size: 24px;
+}
+
+.text {
+  margin: 15px auto 0 auto;
+  width: 75%;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.italic {
+  font-style: italic;
+}
+
+a {
+  text-decoration: none;
+  color: #2892D7;
+}
+
+footer {
+  text-align: right;
+  width: 75%;
+  /* margin: 10px auto; */
+  margin: 0 auto;
+}

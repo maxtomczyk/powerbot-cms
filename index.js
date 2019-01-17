@@ -6,6 +6,7 @@ const routes = require('./modules/routes')
 const customRoutes = require('./modules/custom_routes')
 const auth = require('./modules/auth')()
 const User = require('./modules/bot/models/User')
+const Stats = require('./modules/models/Stats')
 const echo = require('./modules/bot/echo')
 const postback = require('./modules/bot/postbacks')
 const startup = require('./modules/startup')
@@ -18,7 +19,7 @@ const redis = require('./modules/redis')
 const messages = require('./modules/messages')
 const attachments = require('./modules/attachments')
 const jobs = require('./modules/jobs')
-const Stats = require('./modules/models/Stats')
+const emails = require('./modules/emails')
 
 const stats = new Stats()
 
@@ -41,6 +42,8 @@ app.use(auth.initialize())
 bot.on('text', async (message, raw) => {
   try {
     let user = await new User(message.sender_id).loadOrCreate()
+    await emails.send('new_chat_request', user)
+
     if (user.bot_lock) return
     if (user.waiting_for_reason) {
       await knex('users').update({
