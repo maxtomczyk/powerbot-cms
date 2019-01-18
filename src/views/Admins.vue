@@ -26,13 +26,13 @@
         <div class="row">
           <div class="col-xs-12">
             <label class="label label--centered">Current password
-              <input class="input" type="password" name="password" v-model="password_dialog.password" />
+              <input class="input" type="password" name="password" v-model="password_dialog.user.password" />
             </label>
             <label class="label label--centered">New password
-              <input class="input" type="password" name="newPassword" v-model="password_dialog.new_password" />
+              <input class="input" type="password" name="newPassword" v-model="password_dialog.user.new_password" />
             </label>
             <label class="label label--centered" for="newPasswordRepeat">New password repeat
-              <input class="input" type="password" name="login" v-model="password_dialog.new_password_repeat" />
+              <input class="input" type="password" name="newPasswordRepeat" v-model="password_dialog.user.new_password_repeat" />
             </label>
           </div>
         </div>
@@ -81,14 +81,17 @@
   <table class="table admins__table">
     <tr class="table__row">
       <th class="table__head">Name</th>
+      <th class="table__head">Email</th>
       <th class="table__head">Login</th>
       <th class="table__head">Actions</th>
     </tr>
     <tr class="table__row" v-for="admin in admins" :key="admin.id">
       <td class="table__cell">{{ admin.name }}</td>
+      <td class="table__cell">{{ admin.email || '-' }}</td>
       <td class="table__cell">{{ admin.login }}</td>
       <td class="table__cell">
-        <font-awesome-icon @click="$refs.passwordDialog.openDialog()" icon="key" size="lg" class="table__icon" v-tooltip.top-center="'Change password'" />
+        <font-awesome-icon @click="password_dialog.user.id = admin.id; $refs.passwordDialog.openDialog()" icon="key" size="lg" class="table__icon" v-tooltip.top-center="'Change password'" />
+        <font-awesome-icon @click="" icon="bell" size="lg" class="table__icon" v-tooltip.top-center="'Manage email notifications'" />
         <font-awesome-icon @click="openDeleteDialog(admin)" v-tooltip.top-center="'Remove administrator'" v-if="admin.id !== logged_admin.id && logged_admin.owner && !admin.owner" icon="trash-alt" size="lg" class="table__icon" />
       </td>
     </tr>

@@ -3,6 +3,9 @@ const revalidator = require('revalidator')
 module.exports = function(data) {
     return revalidator.validate(data, {
         properties: {
+            id: {
+              required: true
+            },
             password: {
                 required: true,
                 type: 'string'

@@ -5,7 +5,7 @@ const logger = require('../logger.js')
 
 async function list(req, res) {
     try {
-        let admins = await knex('admins').select('id', 'name', 'login', 'owner').orderBy('id', 'asc')
+        let admins = await knex('admins').select('id', 'name', 'login', 'owner', 'email', 'chat_requests_notifications', 'weekly_email_raports', 'monthly_email_raports').orderBy('id', 'asc')
         res.json(admins)
     } catch (e) {
         logger.error(e)
