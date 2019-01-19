@@ -190,6 +190,10 @@ router.post('/api/elements/sync', auth.authenticate(), async (req, res) => {
   api.elements.sync(req, res)
 })
 
+router.post('/api/admins/notifications', auth.authenticate(), async (req, res) => {
+  api.admins.notificationsSettings(req, res)
+})
+
 router.delete('/api/admins', auth.authenticate(), async (req, res) => {
   api.admins.deleteAdmin(req, res)
 })

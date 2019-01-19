@@ -91,9 +91,25 @@
       <td class="table__cell">{{ admin.login }}</td>
       <td class="table__cell">
         <font-awesome-icon @click="password_dialog.user.id = admin.id; $refs.passwordDialog.openDialog()" icon="key" size="lg" class="table__icon" v-tooltip.top-center="'Change password'" />
-        <font-awesome-icon @click="" icon="bell" size="lg" class="table__icon" v-tooltip.top-center="'Manage email notifications'" />
+        <font-awesome-icon @click="$refs[`notificationDialog_${admin.id}`][0].openDialog()" icon="bell" size="lg" class="table__icon" v-tooltip.top-center="'Manage email notifications'" />
         <font-awesome-icon @click="openDeleteDialog(admin)" v-tooltip.top-center="'Remove administrator'" v-if="admin.id !== logged_admin.id && logged_admin.owner && !admin.owner" icon="trash-alt" size="lg" class="table__icon" />
       </td>
+
+      <custom-dialog :ref="`notificationDialog_${admin.id}`">
+        <div slot="custom-dialog-header">
+          <h1>Email notifications</h1>
+        </div>
+        <div slot="custom-dialog-content">
+          <checkbox v-model="admin.chat_requests_notifications" :val="admin.chat_requests_notifications">New chat requests</checkbox>
+          <checkbox v-model="admin.weekly_email_reports" :val="admin.weekly_email_reports">Weekly reports</checkbox>
+          <checkbox v-model="admin.monthly_email_reports" :val="admin.monthly_email_reports">Monthly reports</checkbox>
+        </div>
+        <div slot="custom-dialog-buttons">
+          <div class="dialog__button dialog__button--orange" @click="changeNotificationSettings(admin)">
+            SAVE
+          </div>
+        </div>
+      </custom-dialog>
     </tr>
   </table>
 </div>
@@ -136,6 +152,13 @@ export default {
           new_password_repeat: ''
         }
       },
+      notificationsSettings: {
+        0: {
+          chatRequests: false,
+          weeklyRaports: false,
+          monthlyRaports: false
+        }
+      },
       admins: [],
       logged_admin: JSON.parse(localStorage.getItem('user'))
     }
@@ -172,10 +195,27 @@ export default {
           new_password_repeat: ''
         }
         this.$refs.passwordDialog.closeDialog()
-        this.$refs.notifier.pushNotification('changed!', 'Password has beed changed.', 'success', 4000)
+        this.$refs.notifier.pushNotification('changed!', 'Password has been changed.', 'success', 4000)
       } catch (e) {
         this.$refs.passwordDialog.closeDialog()
         this.$refs.notifier.pushNotification('cannot change!', `There was an error during password change request. Error code: ${e.response.status}`, 'error', 10000)
+      }
+    },
+
+    async changeNotificationSettings(admin) {
+      try {
+        const updated = await axios.post('/api/admins/notifications', {
+          id: admin.id,
+          chat_requests_notifications: admin.chat_requests_notifications,
+          weekly_email_reports: admin.weekly_email_reports,
+          monthly_email_reports: admin.monthly_email_reports
+        })
+
+        this.$refs[`notificationDialog_${admin.id}`][0].closeDialog()
+        this.$refs.notifier.pushNotification('changed!', 'Notifications settings has been changed.', 'success', 4000)
+      } catch (e) {
+        this.$refs.notificationsDialog.closeDialog()
+        this.$refs.notifier.pushNotification('cannot change!', `There was an error during notifications settings change request. Error code: ${e.response.status}`, 'error', 10000)
       }
     },
 
@@ -212,6 +252,14 @@ export default {
       axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token')
       let admins = await axios.get('/api/admins')
       this.admins = admins.data
+
+      for (const admin in this.admins) {
+        this.notificationsSettings[admin.id] = {
+          chatRequests: admin.chat_requests_notifications,
+          weeklyRaports: admin.weekly_email_raports,
+          monthlyRaports: admin.monthly_email_raports
+        }
+      }
     } catch (e) {
       this.$refs.notifier.pushNotification('cannot load!', `There was an error during data load. Error code: ${e.response.status}`, 'error', 10000)
     }
