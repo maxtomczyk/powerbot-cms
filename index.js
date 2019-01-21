@@ -42,15 +42,15 @@ app.use(auth.initialize())
 bot.on('text', async (message, raw) => {
   try {
     let user = await new User(message.sender_id).loadOrCreate()
-    await emails.send('new_chat_request', user)
-
     if (user.bot_lock) return
     if (user.waiting_for_reason) {
       await knex('users').update({
         waiting_for_reason: false,
         chat_reason: message.text
       }).where('id', user.id)
+      user.chat_reason = message.text
       await message.reply.raw(await messages.get('contact_message_saved', user))
+      emails.broadcastChatRequestMail(user)
       return
     }
 

@@ -1,5 +1,7 @@
 const Email = require('email-templates')
 const path = require('path')
+const knex = require('./knex')
+const logger = require('./logger')
 
 const config = require('../config/config')
 
@@ -31,24 +33,33 @@ const email = new Email({
   }
 });
 
-async function send(name, data) {
-  let mailData = {}
-  Object.assign(mailData, data)
+async function broadcastChatRequestMail(data) {
+  try {
+    let mailData = {}
+    const admins = await knex('admins').where('chat_requests_notifications', true).andWhereNot('email', null)
+    Object.assign(mailData, data)
 
-  mailData.app_name = config.email.app_name
-  mailData.cms_url = config.settings.cmsUrl
-  email
-    .send({
-      template: `../emails/${name}`,
-      message: {
-        to: 'm.tomczyk.dev@gmail.com'
-      },
-      locals: mailData
-    })
-    .then(console.log)
-    .catch(console.error);
+    for (admin of admins) {
+      mailData.app_name = config.email.app_name
+      mailData.cms_url = config.settings.cmsUrl
+      mailData.admin_name = admin.name.split(' ')[0]
+
+      let emailConfig = {
+        template: `../emails/new_chat_request`,
+        message: {
+          to: admin.email
+        },
+        locals: mailData
+      }
+      await email.send(emailConfig)
+    }
+  } catch (e) {
+    logger.error(e)
+  }
 }
 
+
+
 module.exports = {
-  send
+  broadcastChatRequestMail
 }
