@@ -1,5 +1,6 @@
 const redis = require('../redis')
 const knex = require('../knex')
+const emails = require('../emails')
 const config = require('../../config/config')
 
 class Stats {
@@ -106,6 +107,7 @@ class Stats {
 
       await knex('stats_weekly_resolution').insert(o)
       this.clearWeeklyResolutionData()
+      emails.broadcastWeeklyStats(o)
     } catch (e) {
       throw e
     }
@@ -133,6 +135,7 @@ class Stats {
 
       await knex('stats_monthly_resolution').insert(o)
       this.clearMonthlyResolutionData()
+      emails.broadcastMonthlyStats(o)
     } catch (e) {
       throw e
     }

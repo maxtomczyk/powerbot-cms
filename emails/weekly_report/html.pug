@@ -1,0 +1,39 @@
+html
+  head
+    link(rel="stylesheet", href="/css/style.css", data-inline)
+  body
+    include ../includes/header.pug
+    main
+      .title Weekly report
+      .text Hi #{admin_name},
+        |
+        br
+        |
+        br
+        | There is a weekly report for you.
+        br
+        |
+        br
+        |
+        b Unique users:
+        span  #{unique_users}
+        |
+        br
+        |
+        b Active users:
+        span  #{active_users}%
+        |
+        br
+        |
+        br
+        |
+        span You can check all data
+        |
+        a(href=`${cms_url}/#/`)  here
+        |
+        span .
+    footer
+      |
+      br
+      div Have a nice day,
+      div #{app_name}
