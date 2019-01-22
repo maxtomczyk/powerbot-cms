@@ -26,6 +26,12 @@ module.exports = function(data) {
                 type: 'string',
                 minLength: 8,
                 maxLength: 64
+            },
+            email: {
+                required: true,
+                type: 'string',
+                minLength: 5,
+                maxLength: 255
             }
         }
     }, {

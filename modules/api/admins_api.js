@@ -21,10 +21,14 @@ async function create(req, res) {
     delete body.password_repeat
 
     body.password = await argon2.hash(body.password)
-    let [admin_id] = await knex('admins').insert(body).returning('id')
+    let [created] = await knex('admins').insert(body).returning('*')
+    let admin_id = created.id
     delete body.password
 
+    body = created
     body.id = admin_id
+
+    console.log(body);
     res.json(body)
   } catch (e) {
     logger.error(e)

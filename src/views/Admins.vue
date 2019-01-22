@@ -59,6 +59,9 @@
             <label class="label label--centered" for="login">Login
               <input class="input" type="text" name="login" v-model="creation_dialog.user.login" />
             </label>
+            <label class="label label--centered" for="login">Email
+              <input class="input" type="email" name="email" v-model="creation_dialog.user.email" />
+            </label>
           </div>
           <div class="col-xs-12 col-md-6">
             <label class="label label--centered" for="password">Password
@@ -139,7 +142,8 @@ export default {
           login: '',
           name: '',
           password: '',
-          password_repeat: ''
+          password_repeat: '',
+          email: ''
         }
       },
       password_dialog: {
@@ -204,7 +208,7 @@ export default {
 
     async changeNotificationSettings(admin) {
       try {
-        const updated = await axios.post('/api/admins/notifications', {
+        await axios.post('/api/admins/notifications', {
           id: admin.id,
           chat_requests_notifications: admin.chat_requests_notifications,
           weekly_email_reports: admin.weekly_email_reports,
