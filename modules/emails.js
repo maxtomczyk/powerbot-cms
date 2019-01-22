@@ -1,4 +1,6 @@
 const Email = require('email-templates')
+const nodemailer = require('nodemailer')
+const inlineBase64 = require('nodemailer-plugin-inline-base64')
 const path = require('path')
 const knex = require('./knex')
 const logger = require('./logger')
@@ -6,6 +8,16 @@ const logger = require('./logger')
 const config = require('../config/config')
 
 const root = path.join(__dirname, '..', 'emails')
+
+let mailTransport = nodemailer.createTransport({
+  host: config.email.host,
+  port: config.email.port,
+  auth: {
+    user: config.email.login,
+    pass: config.email.password
+  }
+})
+mailTransport.use('compile', inlineBase64());
 
 const email = new Email({
   message: {
@@ -15,15 +27,7 @@ const email = new Email({
     root
   },
   send: true,
-  transport: {
-    // host: process.env.MAIL_HOST,
-    // port: process.env.MAIL_PORT,
-    // auth: {
-    //   user: process.env.MAIL_USERNAME,
-    //   pass: process.env.MAIL_PASSWORD
-    // }
-    jsonTransport: true
-  },
+  transport: mailTransport,
   juice: true,
   juiceResources: {
     preserveImportant: true,
@@ -64,6 +68,8 @@ async function broadcastWeeklyStats(data) {
     const admins = await knex('admins').where('weekly_email_reports', true).andWhereNot('email', null)
     Object.assign(mailData, data)
 
+    mailData.formed_date = new Date(data.start).toLocaleDateString()
+
     for (admin of admins) {
       mailData.app_name = config.email.app_name
       mailData.cms_url = config.settings.cmsUrl
@@ -90,6 +96,8 @@ async function broadcastMonthlyStats(data) {
     let mailData = {}
     const admins = await knex('admins').where('monthly_email_reports', true).andWhereNot('email', null)
     Object.assign(mailData, data)
+
+    mailData.formed_date = new Date(data.start).toLocaleDateString()
 
     for (admin of admins) {
       mailData.app_name = config.email.app_name
