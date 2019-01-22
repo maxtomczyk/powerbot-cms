@@ -54,6 +54,8 @@ bot.on('text', async (message, raw) => {
       return
     }
 
+    if(user.moderator_chat) await message.reply.raw(await messages.get('chat_in_progress', user))
+
     emitter.emit('text', message, user, raw)
   } catch (e) {
     logger.error(e)
