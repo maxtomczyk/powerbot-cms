@@ -28,7 +28,6 @@ async function create(req, res) {
     body = created
     body.id = admin_id
 
-    console.log(body);
     res.json(body)
   } catch (e) {
     logger.error(e)
