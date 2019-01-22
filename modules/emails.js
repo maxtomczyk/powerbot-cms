@@ -44,6 +44,7 @@ async function broadcastChatRequestMail(data) {
     Object.assign(mailData, data)
 
     for (admin of admins) {
+      if (admin.email.length < 5) continue;
       mailData.app_name = config.email.app_name
       mailData.cms_url = config.settings.cmsUrl
       mailData.admin_name = admin.name.split(' ')[0]
@@ -71,10 +72,11 @@ async function broadcastWeeklyStats(data) {
     mailData.formed_date = new Date(data.start).toLocaleDateString()
 
     for (admin of admins) {
+      if (admin.email.length < 5) continue;
       mailData.app_name = config.email.app_name
       mailData.cms_url = config.settings.cmsUrl
       mailData.admin_name = admin.name.split(' ')[0]
-      if(mailData.all_users) mailData.active_users = (Math.round((data.unique_users / data.all_users) * 100) * 100) / 100
+      if (mailData.all_users) mailData.active_users = (Math.round((data.unique_users / data.all_users) * 100) * 100) / 100
       else mailData.active_users = 0
 
       let emailConfig = {
@@ -100,10 +102,11 @@ async function broadcastMonthlyStats(data) {
     mailData.formed_date = new Date(data.start).toLocaleDateString()
 
     for (admin of admins) {
+      if (admin.email.length < 5) continue;
       mailData.app_name = config.email.app_name
       mailData.cms_url = config.settings.cmsUrl
       mailData.admin_name = admin.name.split(' ')[0]
-      if(mailData.all_users) mailData.active_users = (Math.round((data.unique_users / data.all_users) * 100) * 100) / 100
+      if (mailData.all_users) mailData.active_users = (Math.round((data.unique_users / data.all_users) * 100) * 100) / 100
       else mailData.active_users = 0
 
       let emailConfig = {
