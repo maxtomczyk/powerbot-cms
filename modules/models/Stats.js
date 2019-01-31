@@ -75,7 +75,7 @@ class Stats {
       }
 
       let uniqueUsers = await redis.scardAsync('stats-daily-unique-users-list')
-      let newUsers = await redis.scardAsync('stats-daily-new-users')
+      let newUsers = await redis.getAsync('stats-daily-new-users')
       let allUsers = users.count
 
       if (uniqueUsers) o.unique_users = uniqueUsers
