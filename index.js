@@ -26,7 +26,7 @@ const stats = new Stats()
 startup()
 jobs.start()
 
-class Emitter extends EventEmitter {}
+class Emitter extends EventEmitter { }
 const emitter = new Emitter()
 
 const webhook = incredbot.Server.setup()
@@ -54,7 +54,7 @@ bot.on('text', async (message, raw) => {
       return
     }
 
-    if(user.moderator_chat) await message.reply.raw(await messages.get('chat_in_progress', user))
+    if (user.moderator_chat) await message.reply.raw(await messages.get('chat_in_progress', user))
 
     emitter.emit('text', message, user, raw)
   } catch (e) {

@@ -21,7 +21,6 @@
               </div>
             </template>
           </v-popover>
-
         </div>
       </div>
     </div>
@@ -56,6 +55,7 @@ export default {
     width: 100vw;
     height: 6vh;
     left: 0;
+    top: 0;
     min-height: 55px;
     background-color: $bg-accent;
     display: flex;

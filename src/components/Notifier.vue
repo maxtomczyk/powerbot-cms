@@ -78,6 +78,7 @@ export default {
         position: fixed;
         right: 40px;
         width: 20%;
+        height: 0;
     }
 
     &__container {
@@ -121,8 +122,6 @@ export default {
         font-size: 1.4em;
         margin-bottom: 0;
     }
-
-    &__text {}
 
     &--removing {
         margin-left: 200%;
