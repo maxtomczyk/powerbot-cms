@@ -1,14 +1,8 @@
 const redis = require('../redis')
 const knex = require('../knex')
 const emails = require('../emails')
-const config = require('../../config/config')
-// const prox = require('proxy-date')
 
 class Stats {
-  constructor () {
-
-  }
-
   incomingMessage (message) {
     redis.incr('stats-med-incoming-messages')
     redis.sadd('stats-daily-unique-users-list', message.sender_id)
@@ -47,7 +41,7 @@ class Stats {
       let o = {
         messages_incoming: 0,
         messages_outgoing: 0,
-        start: new Date(+new Date - 10 * 60 * 1000),
+        start: new Date(+new Date() - 10 * 60 * 1000),
         end: new Date()
       }
 
@@ -71,7 +65,7 @@ class Stats {
         unique_users: 0,
         all_users: 0,
         new_users: 0,
-        start: new Date(+new Date - 24 * 60 * 60 * 1000),
+        start: new Date(+new Date() - 24 * 60 * 60 * 1000),
         end: new Date()
       }
 
@@ -92,12 +86,16 @@ class Stats {
 
   async saveWeeklyResolutionData () {
     try {
+      let start = new Date(+new Date() - 13 * 60 * 60 * 1000)
+      let end = new Date(+new Date() - 13 * 60 * 60 * 1000)
+      start.setHours(0, 0, 0, 0)
+      end.setHours(23, 59, 59, 999)
       const [users] = await knex('users').count()
       let o = {
         unique_users: 0,
         all_users: 0,
-        start: new Date(+new Date - 7 * 24 * 60 * 60 * 1000),
-        end: new Date()
+        start: new Date(+new Date(start) - 6 * 24 * 60 * 60 * 1000),
+        end
       }
 
       let uniqueUsers = await redis.scardAsync('stats-weekly-unique-users-list')
@@ -116,7 +114,6 @@ class Stats {
 
   async saveMonthlyResolutionData () {
     try {
-      // prox.mock('2019-06-01T07:00:00.000Z')
       const [users] = await knex('users').count()
       let now = new Date(+new Date() - 13 * 60 * 60 * 1000)
       let end = new Date(+new Date() - 13 * 60 * 60 * 1000)
@@ -146,4 +143,4 @@ class Stats {
   }
 }
 
-module.exports = Stats;
+module.exports = Stats
