@@ -2,46 +2,47 @@ const redis = require('../redis')
 const knex = require('../knex')
 const emails = require('../emails')
 const config = require('../../config/config')
+// const prox = require('proxy-date')
 
 class Stats {
-  constructor() {
+  constructor () {
 
   }
 
-  incomingMessage(message) {
+  incomingMessage (message) {
     redis.incr('stats-med-incoming-messages')
     redis.sadd('stats-daily-unique-users-list', message.sender_id)
     redis.sadd('stats-weekly-unique-users-list', message.sender_id)
     redis.sadd('stats-monthly-unique-users-list', message.sender_id)
   }
 
-  outgoingMessage(message) {
+  outgoingMessage (message) {
     redis.incr('stats-med-outgoing-messages')
   }
 
-  newUser(user) {
+  newUser (user) {
     redis.incr('stats-daily-new-users')
   }
 
-  clearMediumResolutionData() {
+  clearMediumResolutionData () {
     redis.set('stats-med-incoming-messages', 0)
     redis.set('stats-med-outgoing-messages', 0)
   }
 
-  clearDailyResolutionData() {
+  clearDailyResolutionData () {
     redis.del('stats-daily-unique-users-list')
     redis.del('stats-daily-new-users')
   }
 
-  clearWeeklyResolutionData() {
+  clearWeeklyResolutionData () {
     redis.del('stats-weekly-unique-users-list')
   }
 
-  clearMonthlyResolutionData() {
+  clearMonthlyResolutionData () {
     redis.del('stats-monthly-unique-users-list')
   }
 
-  async saveMediumResolutionData() {
+  async saveMediumResolutionData () {
     try {
       let o = {
         messages_incoming: 0,
@@ -63,7 +64,7 @@ class Stats {
     }
   }
 
-  async saveDailyResolutionData() {
+  async saveDailyResolutionData () {
     try {
       const [users] = await knex('users').count()
       let o = {
@@ -89,7 +90,7 @@ class Stats {
     }
   }
 
-  async saveWeeklyResolutionData() {
+  async saveWeeklyResolutionData () {
     try {
       const [users] = await knex('users').count()
       let o = {
@@ -113,18 +114,21 @@ class Stats {
     }
   }
 
-  async saveMonthlyResolutionData() {
+  async saveMonthlyResolutionData () {
     try {
+      // prox.mock('2019-06-01T07:00:00.000Z')
       const [users] = await knex('users').count()
-      let now = new Date()
+      let now = new Date(+new Date() - 13 * 60 * 60 * 1000)
+      let end = new Date(+new Date() - 13 * 60 * 60 * 1000)
       now.setHours(0, 0, 0, 0)
-      now.setMonth(now.getMonth() - 1, 1)
-
+      now.setMonth(now.getMonth(), 1)
+      end.setHours(23, 59, 59, 0)
+      end.setMonth(now.getMonth() + 1, 0)
       let o = {
         unique_users: 0,
         all_users: 0,
         start: now,
-        end: new Date()
+        end: end
       }
 
       let uniqueUsers = await redis.scardAsync('stats-monthly-unique-users-list')
