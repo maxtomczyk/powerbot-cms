@@ -335,11 +335,11 @@
 </template>
 
 <script>
-import axios from "axios";
-import { EventBus } from "../event-bus";
+import axios from 'axios'
+import { EventBus } from '../event-bus'
 
 export default {
-  data() {
+  data () {
     return {
       statusInterval: null,
       messagesPanelRange: 72,
@@ -381,7 +381,7 @@ export default {
       messagesChart: {
         options: {
           xaxis: {
-            type: "datetime",
+            type: 'datetime',
             categories: [],
             tooltip: {
               enabled: false
@@ -391,20 +391,20 @@ export default {
             x: {
               show: true,
               formatter: val => {
-                let start = new Date(val);
-                let end = new Date(+new Date(start) + 10 * 60 * 1000);
+                let start = new Date(val)
+                let end = new Date(+new Date(start) + 10 * 60 * 1000)
 
-                let hs = start.getHours().toString();
-                let ms = start.getMinutes().toString();
-                let he = end.getHours().toString();
-                let me = end.getMinutes().toString();
+                let hs = start.getHours().toString()
+                let ms = start.getMinutes().toString()
+                let he = end.getHours().toString()
+                let me = end.getMinutes().toString()
 
-                if (hs.length !== 2) hs = `0${hs}`;
-                if (ms.length !== 2) ms = `0${ms}`;
-                if (he.length !== 2) he = `0${he}`;
-                if (me.length !== 2) me = `0${me}`;
+                if (hs.length !== 2) hs = `0${hs}`
+                if (ms.length !== 2) ms = `0${ms}`
+                if (he.length !== 2) he = `0${he}`
+                if (me.length !== 2) me = `0${me}`
 
-                return `${hs}:${ms} - ${he}:${me} UTC`;
+                return `${hs}:${ms} - ${he}:${me} UTC`
               }
             }
           },
@@ -414,15 +414,15 @@ export default {
         },
         series: [
           {
-            name: "Outgoing",
+            name: 'Outgoing',
             data: []
           },
           {
-            name: "Incoming",
+            name: 'Incoming',
             data: []
           },
           {
-            name: "Total",
+            name: 'Total',
             data: []
           }
         ]
@@ -431,7 +431,7 @@ export default {
       dailyUsersChart: {
         options: {
           xaxis: {
-            type: "datetime",
+            type: 'datetime',
             categories: [],
             tooltip: {
               enabled: false
@@ -442,21 +442,21 @@ export default {
               show: true,
               formatter: val => {
                 const months = [
-                  "Jan",
-                  "Feb",
-                  "Mar",
-                  "Apr",
-                  "May",
-                  "Jun",
-                  "Jul",
-                  "Aug",
-                  "Sep",
-                  "Oct",
-                  "Nov",
-                  "Dec"
-                ];
-                let start = new Date(val + 3 * 60 * 60 * 1000);
-                return `${start.getDate()} ${months[start.getMonth()]}`;
+                  'Jan',
+                  'Feb',
+                  'Mar',
+                  'Apr',
+                  'May',
+                  'Jun',
+                  'Jul',
+                  'Aug',
+                  'Sep',
+                  'Oct',
+                  'Nov',
+                  'Dec'
+                ]
+                let start = new Date(val + 3 * 60 * 60 * 1000)
+                return `${start.getDate()} ${months[start.getMonth()]}`
               }
             }
           },
@@ -466,15 +466,15 @@ export default {
         },
         series: [
           {
-            name: "Total users",
+            name: 'Total users',
             data: []
           },
           {
-            name: "Active users",
+            name: 'Active users',
             data: []
           },
           {
-            name: "New users",
+            name: 'New users',
             data: []
           }
         ]
@@ -483,7 +483,7 @@ export default {
       weeklyUsersChart: {
         options: {
           xaxis: {
-            type: "datetime",
+            type: 'datetime',
             categories: [],
             tooltip: {
               enabled: false
@@ -494,28 +494,26 @@ export default {
               show: true,
               formatter: val => {
                 const months = [
-                  "Jan",
-                  "Feb",
-                  "Mar",
-                  "Apr",
-                  "May",
-                  "Jun",
-                  "Jul",
-                  "Aug",
-                  "Sep",
-                  "Oct",
-                  "Nov",
-                  "Dec"
-                ];
-                let start = new Date(val + 3 * 60 * 60 * 1000);
+                  'Jan',
+                  'Feb',
+                  'Mar',
+                  'Apr',
+                  'May',
+                  'Jun',
+                  'Jul',
+                  'Aug',
+                  'Sep',
+                  'Oct',
+                  'Nov',
+                  'Dec'
+                ]
+                let start = new Date(val + 3 * 60 * 60 * 1000)
                 let end = new Date(
                   +new Date(start) +
-                    7 * 24 * 60 * 60 * 1000 -
-                    2 * 60 * 60 * 1000
-                );
-                return `${start.getDate()} ${
-                  months[start.getMonth()]
-                } - ${end.getDate()} ${months[end.getMonth()]}`;
+                  7 * 24 * 60 * 60 * 1000 -
+                  2 * 60 * 60 * 1000
+                )
+                return `${start.getDate()} ${months[start.getMonth()]} - ${end.getDate()} ${months[end.getMonth()]}`
               }
             }
           },
@@ -525,15 +523,15 @@ export default {
         },
         series: [
           {
-            name: "Total users",
+            name: 'Total users',
             data: []
           },
           {
-            name: "Active users",
+            name: 'Active users',
             data: []
           },
           {
-            name: "New users",
+            name: 'New users',
             data: []
           }
         ]
@@ -542,7 +540,7 @@ export default {
       monthlyUsersChart: {
         options: {
           xaxis: {
-            type: "datetime",
+            type: 'datetime',
             categories: [],
             tooltip: {
               enabled: false
@@ -553,21 +551,21 @@ export default {
               show: true,
               formatter: val => {
                 const months = [
-                  "Jan",
-                  "Feb",
-                  "Mar",
-                  "Apr",
-                  "May",
-                  "Jun",
-                  "Jul",
-                  "Aug",
-                  "Sep",
-                  "Oct",
-                  "Nov",
-                  "Dec"
-                ];
-                let start = new Date(val + 3 * 60 * 60 * 1000);
-                return `${months[start.getMonth()]} ${start.getFullYear()}`;
+                  'Jan',
+                  'Feb',
+                  'Mar',
+                  'Apr',
+                  'May',
+                  'Jun',
+                  'Jul',
+                  'Aug',
+                  'Sep',
+                  'Oct',
+                  'Nov',
+                  'Dec'
+                ]
+                let start = new Date(val + 3 * 60 * 60 * 1000)
+                return `${months[start.getMonth()]} ${start.getFullYear()}`
               }
             }
           },
@@ -577,285 +575,257 @@ export default {
         },
         series: [
           {
-            name: "Total users",
+            name: 'Total users',
             data: []
           },
           {
-            name: "Active users",
+            name: 'Active users',
             data: []
           },
           {
-            name: "New users",
+            name: 'New users',
             data: []
           }
         ]
       }
-    };
+    }
   },
 
   methods: {
-    assignStatusClass(status) {
-      if (status.live === true) return "status-panel__state--up";
-      else if (status.live === false) return "status-panel__state--down";
-      else return "status-panel__state--unknown";
+    assignStatusClass (status) {
+      if (status.live === true) return 'status-panel__state--up'
+      else if (status.live === false) return 'status-panel__state--down'
+      else return 'status-panel__state--unknown'
     },
 
-    async getSystemStatus() {
+    async getSystemStatus () {
       try {
-        const status = await axios.get("/api/stats/system");
-        this.status = status.data;
+        const status = await axios.get('/api/stats/system')
+        this.status = status.data
       } catch (e) {
-        this.status.system.live = false;
-        this.status.database.live = null;
-        this.status.cache.live = null;
+        this.status.system.live = false
+        this.status.database.live = null
+        this.status.cache.live = null
       }
     },
 
-    async setMessagesChartData(hours) {
+    async setMessagesChartData (hours) {
       try {
-        const url =
-          typeof hours === "object"
-            ? `/api/stats/messages_chart?start=${hours.start}&end=${hours.end}`
-            : `/api/stats/messages_chart?hours=${hours}`;
-        const request = await axios.get(url);
+        const url = (typeof hours === 'object') ? `/api/stats/messages_chart?start=${hours.start}&end=${hours.end}` : `/api/stats/messages_chart?hours=${hours}`
+        const request = await axios.get(url)
 
-        this.messagesChart.series[0].data = [];
-        this.messagesChart.series[1].data = [];
-        this.messagesChart.series[2].data = [];
+        this.messagesChart.series[0].data = []
+        this.messagesChart.series[1].data = []
+        this.messagesChart.series[2].data = []
 
         for (const row of request.data.stats) {
           this.messagesChart.series[0].data.push({
             x: row.start,
             y: row.messages_outgoing
-          });
+          })
           this.messagesChart.series[1].data.push({
             x: row.start,
             y: row.messages_incoming
-          });
+          })
           this.messagesChart.series[2].data.push({
             x: row.start,
             y: row.messages_total
-          });
+          })
         }
       } catch (e) {
         this.$refs.notifier.pushNotification(
-          "cannot load!",
-          `An error occured during messages time chart data load. Error code: ${
-            e.response.status
-          }`,
-          "error",
+          'cannot load!',
+          `An error occured during messages time chart data load. Error code: ${e.response.status}`,
+          'error',
           10000
-        );
+        )
       }
     },
 
-    async setMessagesData(hours) {
+    async setMessagesData (hours) {
       try {
         const url =
-          typeof hours === "object"
+          typeof hours === 'object'
             ? `/api/stats/messages?start=${hours.start}&end=${hours.end}`
-            : `/api/stats/messages?hours=${hours}`;
-        const request = await axios.get(url);
-        this.messages = request.data;
+            : `/api/stats/messages?hours=${hours}`
+        const request = await axios.get(url)
+        this.messages = request.data
       } catch (e) {
         this.$refs.notifier.pushNotification(
-          "cannot load!",
-          `An error occured during messages statistic data load. Error code: ${
-            e.response.status
-          }`,
-          "error",
+          'cannot load!',
+          `An error occured during messages statistic data load. Error code: ${e.response.status}`,
+          'error',
           10000
-        );
+        )
       }
     },
 
-    async setBotData() {
+    async setBotData () {
       try {
-        const request = await axios.get("/api/stats/bot");
-        this.bot = request.data;
+        const request = await axios.get('/api/stats/bot')
+        this.bot = request.data
       } catch (e) {
         this.$refs.notifier.pushNotification(
-          "cannot load!",
-          `An error occured during bot data load. Error code: ${
-            e.response.status
-          }`,
-          "error",
+          'cannot load!',
+          `An error occured during bot data load. Error code: ${e.response.status}`,
+          'error',
           10000
-        );
+        )
       }
     },
 
-    async setUsersData() {
+    async setUsersData () {
       try {
-        const request = await axios.get("/api/stats/users");
-        this.users = request.data;
+        const request = await axios.get('/api/stats/users')
+        this.users = request.data
       } catch (e) {
         this.$refs.notifier.pushNotification(
-          "cannot load!",
-          `An error occured during users data load. Error code: ${
-            e.response.status
-          }`,
-          "error",
+          'cannot load!',
+          `An error occured during users data load. Error code: ${e.response.status}`,
+          'error',
           10000
-        );
+        )
       }
     },
 
-    async setDailyUsersChart(days) {
+    async setDailyUsersChart (days) {
       try {
         const url =
-          typeof days === "object"
+          typeof days === 'object'
             ? `/api/stats/users_daily_chart?start=${days.start}&end=${days.end}`
-            : `/api/stats/users_daily_chart?days=${days}`;
-        const request = await axios.get(url);
-        this.dailyUsersChart.series[0].data = [];
-        this.dailyUsersChart.series[1].data = [];
-        this.dailyUsersChart.series[2].data = [];
+            : `/api/stats/users_daily_chart?days=${days}`
+        const request = await axios.get(url)
+        this.dailyUsersChart.series[0].data = []
+        this.dailyUsersChart.series[1].data = []
+        this.dailyUsersChart.series[2].data = []
 
         for (const row of request.data.rows) {
           this.dailyUsersChart.series[0].data.push({
             x: row.start,
             y: row.all_users
-          });
+          })
           this.dailyUsersChart.series[1].data.push({
             x: row.start,
             y: row.unique_users
-          });
+          })
           this.dailyUsersChart.series[2].data.push({
             x: row.start,
             y: row.new_users
-          });
+          })
         }
       } catch (e) {
         this.$refs.notifier.pushNotification(
-          "cannot load!",
-          `An error occured during users daily chart data load. Error code: ${
-            e.response.status
-          }`,
-          "error",
+          'cannot load!',
+          `An error occured during users daily chart data load. Error code: ${e.response.status}`,
+          'error',
           10000
-        );
+        )
       }
     },
 
-    async setWeeklyUsersChart(weeks) {
+    async setWeeklyUsersChart (weeks) {
       try {
-        const url =
-          typeof weeks === "object"
-            ? `/api/stats/users_weekly_chart?start=${weeks.start}&end=${
-                weeks.end
-              }`
-            : `/api/stats/users_weekly_chart?weeks=${weeks}`;
-        const request = await axios.get(url);
+        const url = (typeof weeks === 'object') ? `/api/stats/users_weekly_chart?start=${weeks.start}&end=${weeks.end}` : `/api/stats/users_weekly_chart?weeks=${weeks}`
+        const request = await axios.get(url)
 
-        this.weeklyUsersChart.series[0].data = [];
-        this.weeklyUsersChart.series[1].data = [];
-        this.weeklyUsersChart.series[2].data = [];
+        this.weeklyUsersChart.series[0].data = []
+        this.weeklyUsersChart.series[1].data = []
+        this.weeklyUsersChart.series[2].data = []
 
         for (const row of request.data.rows) {
           this.weeklyUsersChart.series[0].data.push({
             x: row.start,
             y: row.all_users
-          });
+          })
           this.weeklyUsersChart.series[1].data.push({
             x: row.start,
             y: row.unique_users
-          });
+          })
           this.weeklyUsersChart.series[2].data.push({
             x: row.start,
             y: row.new_users
-          });
+          })
         }
       } catch (e) {
         this.$refs.notifier.pushNotification(
-          "cannot load!",
-          `An error occured during users weekly chart data load. Error code: ${
-            e.response.status
-          }`,
-          "error",
+          'cannot load!',
+          `An error occured during users weekly chart data load. Error code: ${e.response.status}`,
+          'error',
           10000
-        );
+        )
       }
     },
 
-    async setMonthlyUsersChart(months) {
+    async setMonthlyUsersChart (months) {
       try {
-        const url =
-          typeof months === "object"
-            ? `/api/stats/users_monthly_chart?start=${months.start}&end=${
-                months.end
-              }`
-            : `/api/stats/users_monthly_chart?months=${months}`;
-        const request = await axios.get(url);
+        const url = (typeof months === 'object') ? `/api/stats/users_monthly_chart?start=${months.start}&end=${months.end}` : `/api/stats/users_monthly_chart?months=${months}`
 
-        this.monthlyUsersChart.series[0].data = [];
-        this.monthlyUsersChart.series[1].data = [];
-        this.monthlyUsersChart.series[2].data = [];
+        const request = await axios.get(url)
+        this.monthlyUsersChart.series[0].data = []
+        this.monthlyUsersChart.series[1].data = []
+        this.monthlyUsersChart.series[2].data = []
 
         for (const row of request.data.rows) {
           this.monthlyUsersChart.series[0].data.push({
             x: row.start,
             y: row.all_users
-          });
+          })
           this.monthlyUsersChart.series[1].data.push({
             x: row.start,
             y: row.unique_users
-          });
+          })
           this.monthlyUsersChart.series[2].data.push({
             x: row.start,
             y: row.new_users
-          });
+          })
         }
       } catch (e) {
         this.$refs.notifier.pushNotification(
-          "cannot load!",
-          `An error occured during users monthly chart data load. Error code: ${
-            e.response.status
-          }`,
-          "error",
+          'cannot load!',
+          `An error occured during users monthly chart data load. Error code: ${e.response.status}`,
+          'error',
           10000
-        );
+        )
       }
     }
   },
 
-  async created() {
+  async created () {
     try {
-      axios.defaults.headers.common["Authorization"] =
-        "Bearer " + localStorage.getItem("token");
-      let that = this;
-      await this.getSystemStatus();
-      await this.setMessagesChartData(72);
-      await this.setMessagesData(this.messagesPanelRange);
-      await this.setBotData();
-      await this.setUsersData();
-      await this.setDailyUsersChart(30);
-      await this.setWeeklyUsersChart(9);
-      await this.setMonthlyUsersChart(6);
-      setInterval(async function() {
-        await that.getSystemStatus();
-      }, 60 * 1000);
+      axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token')
+      let that = this
+      await this.getSystemStatus()
+      await this.setMessagesChartData(72)
+      await this.setMessagesData(this.messagesPanelRange)
+      await this.setBotData()
+      await this.setUsersData()
+      await this.setDailyUsersChart(30)
+      await this.setWeeklyUsersChart(9)
+      await this.setMonthlyUsersChart(6)
+      setInterval(async function () {
+        await that.getSystemStatus()
+      }, 60 * 1000)
     } catch (e) {
       this.$refs.notifier.pushNotification(
-        "cannot load!",
+        'cannot load!',
         `An error occured during data load. Error code: ${e.response.status}`,
-        "error",
+        'error',
         10000
-      );
+      )
     }
   },
 
-  async mounted() {
-    EventBus.$on("token_refresh", token => {
-      axios.defaults.headers.common["Authorization"] = "Bearer " + token;
-    });
+  async mounted () {
+    EventBus.$on('token_refresh', token => {
+      axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
+    })
   },
 
-  destroyed() {
-    EventBus.$off("token_refresh");
-    clearInterval(this.statusInterval);
+  destroyed () {
+    EventBus.$off('token_refresh')
+    clearInterval(this.statusInterval)
   }
-};
+}
 </script>
 
 <style lang="scss">
