@@ -221,7 +221,7 @@ async function start() {
           }, {
             title: 'Powered by Powerbot',
             type: 'web_url',
-            url: 'https://github.com/maxtomczyk/incredbot-cms'
+            url: 'https://github.com/maxtomczyk/powerbot-cms'
           }]
         }]
       }
