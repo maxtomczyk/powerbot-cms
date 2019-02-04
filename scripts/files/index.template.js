@@ -1,4 +1,4 @@
-const cms = require('incredbot-cms')
+const cms = require('powerbot-cms')
 
 const postbacks = require('./postbacks')
 const bot = cms.bot

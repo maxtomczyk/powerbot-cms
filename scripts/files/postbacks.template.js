@@ -1,4 +1,4 @@
-const cms = require('incredbot-cms')
+const cms = require('powerbot-cms')
 
 module.exports = async function (message, user) {
   switch (message.payload) {

@@ -19,10 +19,10 @@ config.database.name = process.env.DB_NAME || ''
 config.jwt.secret = process.env.JWT_SECRET || 'jwt_secret'
 
 config.app.logLevel = process.env.LOG_LEVEL || 'silly'
-config.app.logPrefix = process.env.LOG_PREFIX || 'incredbot-cms'
+config.app.logPrefix = process.env.LOG_PREFIX || 'powerbot-cms'
 
 config.redis.url = process.env.REDIS_URL || ''
-config.redis.prefix = process.env.REDIS_PREFIX || 'incredbot-cms::'
+config.redis.prefix = process.env.REDIS_PREFIX || 'powerbot-cms::'
 config.redis.timeouts = {
   messages: process.env.RT_MESSAGES || 15,
   regexTable: process.env.RT_REGEX || 15,
