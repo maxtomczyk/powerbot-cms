@@ -12,7 +12,7 @@ import 'flexboxgrid/dist/flexboxgrid.min.css'
 
 import VueApexCharts from 'vue-apexcharts'
 
-import App from '../node_modules/incredbot-cms/src/App.vue'
+import App from '../node_modules/powerbot-cms/src/App.vue'
 import router from './vue_router'
 import VTooltip from 'v-tooltip'
 
