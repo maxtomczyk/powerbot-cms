@@ -1,6 +1,6 @@
 {
-  "name": "incredbot-cms",
-  "version": "0.3.2",
+  "name": "powerbot-cms",
+  "version": "1.0.0",
   "description": "CMS for Facebook Messenger bots packed into NPM package",
   "author": "Maksymilian Tomczyk <m.tomczyk.dev@gmail.com>",
   "scripts": {
@@ -107,11 +107,11 @@
   "devDependencies": {},
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/maxtomczyk/incredbot-cms.git"
+    "url": "git+https://github.com/maxtomczyk/powerbot-cms.git"
   },
   "license": "CC-BY-NC-4.0",
   "bugs": {
-    "url": "https://github.com/maxtomczyk/incredbot-cms/issues"
+    "url": "https://github.com/maxtomczyk/powerbot-cms/issues"
   },
-  "homepage": "https://github.com/maxtomczyk/incredbot-cms#readme"
+  "homepage": "https://github.com/maxtomczyk/powerbot-cms#readme"
 }
