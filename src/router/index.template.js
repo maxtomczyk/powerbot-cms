@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Guard from '../node_modules/incredbot-cms/src/auth-guard/middleware'
+import Guard from '../node_modules/powerbot-cms/src/auth-guard/middleware'
 import Login from '@/views/Login'
 import Logout from '@/views/Logout'
 import Dashboard from '@/views/Dashboard'
