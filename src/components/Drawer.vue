@@ -14,6 +14,7 @@
           <drawer-item icon="paperclip" target="/attachments" @clicked="close()">Attachments</drawer-item>
           <drawer-item icon="user-shield" target="/admins" @clicked="close()">Admins</drawer-item>
           <drawer-item icon="list" target="/elements" @clicked="close()">Bot elements</drawer-item>
+          <drawer-item v-for="route in customRoutes" :key="`DRAWER-${route.name}`" :icon="route.icon" :target="route.route" @clicked="close()">{{ route.name }}</drawer-item>
         </div>
 
         <div class="drawer__list">
@@ -27,6 +28,7 @@
           <drawer-list-item icon="paperclip" target="/attachments" @clicked="close()">Attachments</drawer-list-item>
           <drawer-list-item icon="user-shield" target="/admins" @clicked="close()">Admins</drawer-list-item>
           <drawer-list-item icon="list" target="/elements" @clicked="close()">Bot elements</drawer-list-item>
+          <drawer-list-item v-for="route in customRoutes" :key="`DRAWER-LIST-${route.name}`" :icon="route.icon" :target="route.route" @clicked="close()">{{ route.name }}</drawer-list-item>
         </div>
       </div>
       <div v-if="opened" class="drawer__overlay col-md-8 col-lg-9 col-xs-3" @click="close()"></div>
@@ -36,10 +38,13 @@
 </template>
 
 <script>
+import userRoutes from './UserDefinedViewsLinks'
+
 export default {
   data() {
     return {
-      opened: false
+      opened: false,
+      customRoutes: userRoutes
     }
   },
 

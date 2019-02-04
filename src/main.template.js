@@ -17,7 +17,6 @@ import router from './vue_router'
 import VTooltip from 'v-tooltip'
 
 import CustomMessageCreator from '@/components/CustomMessageCreator'
-import UserDefinedViewsLinks from '@/components/UserDefinedViewsLinks'
 import Notifier from '@/components/Notifier'
 import Navbar from '@/components/Navbar'
 import Drawer from '@/components/Drawer'
@@ -39,7 +38,6 @@ Vue.use(VueApexCharts)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.component('message-creator', CustomMessageCreator)
-Vue.component('custom-links', UserDefinedViewsLinks)
 Vue.component('notifier', Notifier)
 Vue.component('navbar', Navbar)
 Vue.component('drawer', Drawer)

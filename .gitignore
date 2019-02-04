@@ -11,7 +11,7 @@ README.old.md
 /config/config.js
 src/router/index.js
 src/main.js
-src/components/UserDefinedViewsLinks.vue
+src/components/UserDefinedViewsLinks.js
 modules/custom_routes.js
 modules/api/custom_api.js
 
