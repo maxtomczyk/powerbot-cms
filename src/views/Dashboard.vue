@@ -3,7 +3,7 @@
     <notifier ref="notifier"></notifier>
     <div class="dashboard__wrapper">
       <div class="container" style="width: 100%;">
-        <div class="row" style="height: 18vh; min-height: 150px">
+        <div class="row">
           <div class="col-xs-12 col-md-6 mobile-limited-height">
             <div class="dashboard__status-panel dashboard__panel">
               <h3>SYSTEM STATUS</h3>
@@ -126,7 +126,7 @@
           </div>
         </div>
 
-        <div class="row" style="height: 18vh; min-height: 150px">
+        <div class="row">
           <div class="col-xs-12 col-md-6 mobile-limited-height">
             <div class="dashboard__status-panel dashboard__panel">
               <h3>BOT</h3>
@@ -833,8 +833,10 @@ export default {
 
 .dashboard {
   .row {
-    & > div {
-      margin-bottom: 50px;
+    padding: 15px;
+
+    &:not(:first-of-type) {
+      margin-top: 25px;
     }
   }
 
@@ -911,7 +913,6 @@ export default {
   }
 
   &__box {
-    height: 100px;
     width: calc(32% - 6px);
     padding: 3px;
   }
@@ -944,7 +945,6 @@ export default {
   }
 
   &__box {
-    height: 100px;
     width: calc(24% - 6px);
     padding: 3px;
   }
@@ -975,10 +975,17 @@ export default {
   .dashboard {
     .row {
       height: auto !important;
+      margin-top: 0px !important;
     }
 
     .mobile-limited-height {
-      max-height: 100px !important;
+      &:not(:last-of-type) {
+        margin-bottom: 20px;
+      }
+    }
+
+    &__panel {
+      height: auto !important;
     }
 
     &__panel-header {
