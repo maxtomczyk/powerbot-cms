@@ -1,34 +1,40 @@
 <template>
-<div class="notifier">
-  <div class="notifier__container container">
-    <div class="row end-md center-xs notifier__row">
-      <div class="notifier__wrapper col-md-12 col-xs-12">
-        <div @click="removeNotification(n.timestamp)" class="notification" :class="[`notification--${n.type}`, (n.removing) ? 'notification--removing' : '', (n.justCreated) ? 'notification--fresh' : '']" v-for="n in notifications" :key="n.timestamp">
-          <div class="notification__content">
-            <h3 class="notification__title">{{ n.title.toUpperCase() }}</h3>
-            <p class="notification__text">{{ n.text }}</p>
+  <div class="notifier">
+    <div class="notifier__container container">
+      <div class="row end-md center-xs notifier__row" :class="(!notifications.length) ? 'notifier__row--empty' : ''">
+        <div class="notifier__wrapper col-md-12 col-xs-12">
+          <div
+            @click="removeNotification(n.timestamp)"
+            class="notification"
+            :class="[`notification--${n.type}`, (n.removing) ? 'notification--removing' : '', (n.justCreated) ? 'notification--fresh' : '']"
+            v-for="n in notifications"
+            :key="n.timestamp"
+          >
+            <div class="notification__content">
+              <h3 class="notification__title">{{ n.title.toUpperCase() }}</h3>
+              <p class="notification__text">{{ n.text }}</p>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 </template>
 
 <script>
 export default {
-  data() {
+  data () {
     return {
       notifications: []
     }
   },
 
   methods: {
-    delay(ms) {
+    delay (ms) {
       return new Promise(resolve => setTimeout(resolve, ms))
     },
 
-    async pushNotification(title, text, type, time) {
+    async pushNotification (title, text, type, time) {
       const timestamp = +new Date()
       time = time || 8000
 
@@ -51,7 +57,7 @@ export default {
       this.removeNotification(timestamp)
     },
 
-    async removeNotification(ts) {
+    async removeNotification (ts) {
       this.notifications.map((not, i) => {
         if (not.timestamp === ts) not.removing = true
       })
@@ -65,101 +71,103 @@ export default {
 </script>
 
 <style lang="scss">
-@import '../styles/variables';
+@import "../styles/variables";
 
 .notifier {
+  position: fixed;
+  top: 0;
+  max-height: 0;
+  width: 100vw;
+  z-index: 200;
+
+  &__row {
     position: fixed;
-    top: 0;
+    right: 40px;
+    width: 20%;
+
+    &--empty {
+      height: 0;
+    }
+  }
+
+  &__container {
+    position: absolute;
+    right: 8px;
+    width: calc(100% - 16px);
+    padding: 0;
+    height: 0;
     max-height: 0;
-    width: 100vw;
-    z-index: 200;
+  }
 
-    &__row {
-        position: fixed;
-        right: 40px;
-        width: 20%;
-        height: 0;
-    }
-
-    &__container {
-        position: absolute;
-        right: 8px;
-        width: calc(100% - 16px);
-        padding: 0;
-        height: 0;
-        max-height: 0;
-    }
-
-    &__wrapper {
-        display: flex;
-        flex-direction: column-reverse;
-    }
+  &__wrapper {
+    display: flex;
+    flex-direction: column-reverse;
+  }
 }
 
 .notification {
+  background-color: $error;
+  text-align: left;
+  padding: 1px 15px;
+  margin: 10px auto 2px 0;
+  transition: opacity 0.25s ease, margin-left 0.4s ease, margin-top 0.4s ease;
+  will-change: opacity, margin-left, margin-top;
+  border-radius: 8px;
+  opacity: 0.6;
+  width: 100%;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  &__content {
+    color: white;
+    will-change: opacity;
+  }
+
+  &__title {
+    font-size: 1.4em;
+    margin-bottom: 0;
+  }
+
+  &--removing {
+    margin-left: 200%;
+  }
+
+  &--fresh {
+    margin-top: -130px;
+    margin-bottom: 20px;
+  }
+
+  &--error {
     background-color: $error;
-    text-align: left;
-    padding: 1px 15px;
-    margin: 10px auto 2px 0;
-    transition: opacity 0.25s ease, margin-left 0.4s ease, margin-top 0.4s ease;
-    will-change: opacity, margin-left, margin-top;
-    border-radius: 8px;
-    opacity: 0.6;
-    width: 100%;
-    cursor: pointer;
+  }
 
-    &:hover {
-        opacity: 0.9;
-    }
+  &--warning {
+    background-color: $warning;
+  }
 
-    &__content {
-        color: white;
-        will-change: opacity;
-    }
+  &--info {
+    background-color: $info;
+  }
 
-    &__title {
-        // font-family: 'Major Mono Display', monospace;
-        font-size: 1.4em;
-        margin-bottom: 0;
-    }
-
-    &--removing {
-        margin-left: 200%;
-    }
-
-    &--fresh {
-        margin-top: -130px;
-        margin-bottom: 20px;
-    }
-
-    &--error {
-        background-color: $error;
-    }
-
-    &--warning {
-        background-color: $warning;
-    }
-
-    &--info {
-        background-color: $info;
-    }
-
-    &--success {
-        background-color: $success;
-    }
+  &--success {
+    background-color: $success;
+  }
 }
 
 @media only screen and (max-width: 768px) {
-    .notifier {
-        &__row{
-          width: calc(100% - 16px);
-          position: static;
-          margin-top: -40px;
-        }
+  .notifier {
+    &__row {
+      width: calc(100% - 16px);
+      position: static;
+      margin-top: -40px;
     }
+  }
 
-    .notification:last-of-type{
-      margin-top: 50px;
-    }
+  .notification:last-of-type {
+    margin-top: 50px;
+  }
 }
 </style>
