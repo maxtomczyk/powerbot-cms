@@ -1,24 +1,20 @@
-const Incredbot = require('incredbot')
 const config = require('../../../config/config.js')
 const knex = require('../../knex.js')
-const BotText = require('../../models/BotText.js')
 const logger = require('../../logger.js')
 const incredbot = require('../../incredbot.js')
 const messages = require('../../messages.js')
 const redis = require('../../redis.js')
 const Stats = require('../../models/Stats')
 
-const texts = new BotText()
-
 const stats = new Stats()
 
 class User {
-  constructor(messenger_id) {
+  constructor (messenger_id) {
     this.data = {}
     this.messenger_id = messenger_id
   }
 
-  async getDefaultChannels() {
+  async getDefaultChannels () {
     try {
       return await knex('channels').where('default', true).andWhereNot('label_id', null)
     } catch (e) {
@@ -26,7 +22,7 @@ class User {
     }
   }
 
-  async addToChannel(name) {
+  async addToChannel (name) {
     try {
       const row = await knex('channels').where('name', name).first()
       const labelId = row.label_id
@@ -60,7 +56,7 @@ class User {
     }
   }
 
-  async removeFromChannel(name) {
+  async removeFromChannel (name) {
     try {
       const row = await knex('channels').where('name', name).first()
       const labelId = row.label_id
@@ -87,7 +83,7 @@ class User {
     }
   }
 
-  async loadOrCreate() {
+  async loadOrCreate () {
     try {
       let record = await knex('users').where('messenger_id', this.messenger_id).first()
 
@@ -105,7 +101,8 @@ class User {
           locale: data.locale,
           gender: data.gender,
           timezone: data.timezone,
-          messenger_id: data.id
+          messenger_id: data.id,
+          profile_pic: data.profile_pic
         }
 
         let createdUser = null
@@ -154,9 +151,9 @@ class User {
     }
   }
 
-  async enableModeratorChat() {
+  async enableModeratorChat () {
     try {
-      let [updated] = await knex('users').update({
+      await knex('users').update({
         moderator_chat: true,
         waiting_for_reason: true
       }).where('messenger_id', this.messenger_id).returning('*')
@@ -165,7 +162,7 @@ class User {
     }
   }
 
-  async disableModeratorChat() {
+  async disableModeratorChat () {
     try {
       let [updated] = await knex('users').update({
         moderator_chat: false,
@@ -181,7 +178,7 @@ class User {
     }
   }
 
-  async disableModeratorChatWithId(id) {
+  async disableModeratorChatWithId (id) {
     try {
       let [updated] = await knex('users').update({
         moderator_chat: false,
@@ -197,7 +194,7 @@ class User {
     }
   }
 
-  async removeFromDatabase() {
+  async removeFromDatabase () {
     try {
       await knex('users').where('messenger_id', this.messenger_id).del()
     } catch (e) {
@@ -205,7 +202,7 @@ class User {
     }
   }
 
-  async syncChannelsWithRemote() {
+  async syncChannelsWithRemote () {
     try {
       if (!this.id) await this.loadOrCreate()
       logger.debug(`Channels sync started for user ${this.id}`)
@@ -256,7 +253,7 @@ class User {
     }
   }
 
-  async getDbKey(key, detailed) {
+  async getDbKey (key, detailed) {
     try {
       if (!this.id) {
         logger.warn(`Trying to get key '${key}' from database users data for user without id!`)
@@ -272,7 +269,7 @@ class User {
     }
   }
 
-  async setDbKey(key, value) {
+  async setDbKey (key, value) {
     try {
       if (!this.id) {
         logger.warn(`Trying to set key '${key}' to database users data for user without id!`)
@@ -296,14 +293,14 @@ class User {
         name: key,
         user_id: this.id
       }
-      const created = await knex('users_data').insert(ins)
+      await knex('users_data').insert(ins)
       return
     } catch (e) {
       throw e
     }
   }
 
-  async removeDbKey(key) {
+  async removeDbKey (key) {
     try {
       if (!this.id) {
         logger.warn(`Trying to remove key '${key}' from database users data for user without id!`)
@@ -317,11 +314,11 @@ class User {
     }
   }
 
-  createRedisKeyName(key) {
+  createRedisKeyName (key) {
     return `user-data:${this.id}:${key}`
   }
 
-  async getCacheKey(key) {
+  async getCacheKey (key) {
     try {
       if (!this.id) {
         logger.warn(`Trying to get key '${key}' from cache users data for user without id!`)
@@ -336,7 +333,7 @@ class User {
     }
   }
 
-  setCacheKey(key, value, expiration) {
+  setCacheKey (key, value, expiration) {
     try {
       if (!this.id) {
         logger.warn(`Trying to set key '${key}' to cache users data for user without id!`)
@@ -354,7 +351,7 @@ class User {
     }
   }
 
-  async removeCacheKey(key) {
+  async removeCacheKey (key) {
     try {
       if (!this.id) {
         logger.warn(`Trying to remove key '${key}' from cache users data for user without id!`)
