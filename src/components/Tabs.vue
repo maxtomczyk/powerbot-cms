@@ -82,6 +82,7 @@ export default {
             content: '';
             position: absolute;
             bottom: 0;
+            left: 0;
             display: block;
             width: 0;
             height: 3px;
