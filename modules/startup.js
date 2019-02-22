@@ -4,7 +4,7 @@ const knex = require('./knex.js')
 
 const User = require('./bot/models/User.js')
 
-async function checkAttachments() {
+async function checkAttachments () {
   try {
     let attachments = await knex('attachments').where('force_update', true).orWhere('attachment_id', null)
     if (!attachments.length > 0) return logger.info(`All attachment's up to date`)
@@ -38,7 +38,7 @@ async function checkAttachments() {
   }
 }
 
-async function checkChannels() {
+async function checkChannels () {
   try {
     let start = await knex('settings').where('name', 'channels_check').first()
     if (!JSON.parse(start.value)) return
@@ -84,7 +84,7 @@ async function checkChannels() {
   }
 }
 
-async function checkChannelsSync() {
+async function checkChannelsSync () {
   try {
     let start = await knex('settings').where('name', 'channels_sync_check').first()
     if (!JSON.parse(start.value)) return
@@ -111,24 +111,31 @@ async function checkChannelsSync() {
   }
 }
 
-async function checkFirstStart() {
+async function checkFirstStart () {
   try {
     const exists = await knex('bot_data').where('name', 'first_start').first()
-    if (exists) return
-    logger.info('Saving first start date.')
-    await knex('bot_data').insert({
-      name: 'first_start',
-      editable: false,
-      data: {
-        timestamp: +new Date()
-      }
-    })
+    if (!exists) {
+      logger.info('Saving first start date.')
+      await knex('bot_data').insert({
+        name: 'first_start',
+        editable: false,
+        data: {
+          timestamp: +new Date()
+        }
+      })
+      return
+    }
+    const val = await knex('bot_data').where('name', 'first_start').first()
+    if (!val.timestamp) {
+      logger.info('Saving first start date.')
+      await knex('bot_data').update('data', { timestamp: +new Date() }).where('name', 'first_start')
+    }
   } catch (e) {
     throw e
   }
 }
 
-async function start() {
+async function start () {
   try {
     await checkChannels()
     await checkChannelsSync()
