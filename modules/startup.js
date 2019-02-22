@@ -1,6 +1,7 @@
 const incredbot = require('./incredbot.js')
 const logger = require('./logger.js')
 const knex = require('./knex.js')
+const redis = require('./redis.js')
 
 const User = require('./bot/models/User.js')
 
@@ -111,6 +112,19 @@ async function checkChannelsSync () {
   }
 }
 
+async function checkChacheFlush () {
+  try {
+    let start = await knex('settings').where('name', 'flush_cache').first()
+    if (!JSON.parse(start.value)) return
+
+    logger.info('Flushing cache memory.')
+    await knex('settings').update('value', 'false').where('name', 'flush_cache')
+    redis.flushdb()
+  } catch (e) {
+    throw e
+  }
+}
+
 async function checkFirstStart () {
   try {
     const exists = await knex('bot_data').where('name', 'first_start').first()
@@ -139,6 +153,7 @@ async function start () {
   try {
     await checkChannels()
     await checkChannelsSync()
+    await checkChacheFlush()
     await checkFirstStart()
   } catch (e) {
     logger.error(e)

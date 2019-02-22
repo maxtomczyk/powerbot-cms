@@ -1,5 +1,5 @@
 const redis = require('redis')
-const bluebird = require('bluebird');
+const bluebird = require('bluebird')
 const logger = require('./logger')
 const config = require('../config/config.js')
 
@@ -12,7 +12,7 @@ let client = require('redis').createClient(config.redis.url, {
 })
 
 client.on('error', (err) => {
-    logger.warn(err)
+  logger.warn(err)
 })
 
 module.exports = client
