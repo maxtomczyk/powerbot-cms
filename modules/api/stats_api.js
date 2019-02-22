@@ -127,7 +127,6 @@ async function usersData(req, res) {
   try {
     const gendersCount = await knex('users').select('gender').groupBy('gender').count()
     const [awaitingCount] = await knex('users').where('moderator_chat', true).count()
-    const [topId] = await knex('users').max('id')
 
     let total = 0
     let genders = {}
@@ -145,7 +144,9 @@ async function usersData(req, res) {
     percents.male = Math.round((genders.male / (genders.male + genders.female)) * 100)
     percents.female = Math.round((genders.female / (genders.male + genders.female)) * 100)
 
-    let deleted = topId.max - total
+    let [deleted] = await knex('users_removed').count('id')
+    deleted = deleted.count
+
     let awaiting = awaitingCount.count
 
     res.json({
