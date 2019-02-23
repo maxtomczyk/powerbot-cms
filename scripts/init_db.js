@@ -4,7 +4,7 @@ const {
   spawnSync
 } = require('child_process')
 
-async function start() {
+async function start () {
   try {
     await knex.schema.createTable('admins', function (table) {
       table.increments()
@@ -360,11 +360,11 @@ async function start() {
       type: 'quick_replies'
     }])
     const npm = (os.platform() === 'win32') ? 'npm.cmd' : 'npm'
-    const child = spawnSync(npm, ['run', 'migrate']);
+    const child = spawnSync(npm, ['run', 'migrate'])
 
-    if (child.error) console.log(child.error.toString('utf8'));
-    if (child.stdout) console.log(child.stdout.toString('utf8'));
-    if (child.stderr) console.log(child.stderr.toString('utf8'));
+    if (child.error) console.log(child.error.toString('utf8'))
+    if (child.stdout) console.log(child.stdout.toString('utf8'))
+    if (child.stderr) console.log(child.stderr.toString('utf8'))
 
     process.exit(0)
   } catch (e) {
