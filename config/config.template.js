@@ -31,7 +31,7 @@ config.redis.timeouts = {
   attachments: process.env.RT_ATTACHMENTS || 15
 }
 
-config.features.registerUnknownPhrases = true || process.env.FEATURE_REGISTER_UNKNOWN_PHRASES
+config.features.registerUnknownPhrases = process.env.FEATURE_REGISTER_UNKNOWN_PHRASES || true
 
 config.settings.defaultGender = process.env.DEFAULT_GENDER || 'male'
 config.settings.usersAdditionalData = process.env.USERS_DATA || ''

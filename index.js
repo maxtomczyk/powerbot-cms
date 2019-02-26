@@ -2,6 +2,7 @@ const express = require('express')
 const EventEmitter = require('events')
 const path = require('path')
 
+const config = require('./config/config')
 const routes = require('./modules/routes')
 const customRoutes = require('./modules/custom_routes')
 const auth = require('./modules/auth')()
@@ -54,7 +55,7 @@ bot.on('text', async (message, raw) => {
       return
     }
 
-    if (user.moderator_chat) await message.reply.raw(await messages.get('chat_in_progress', user))
+    if (config.settings.useChatInProgressMessage && user.moderator_chat) await message.reply.raw(await messages.get('chat_in_progress', user))
 
     emitter.emit('text', message, user, raw)
   } catch (e) {
