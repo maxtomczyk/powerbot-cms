@@ -8,6 +8,7 @@ config.redis = {}
 config.features = {}
 config.settings = {}
 config.email = {}
+config.hosting = {}
 
 config.facebook.access_token = process.env.FB_ACCESS || ''
 
@@ -46,5 +47,7 @@ config.email.sender = process.env.EMAIL_SENDER || ''
 config.email.login = process.env.EMAIL_LOGIN || ''
 config.email.password = process.env.EMAIL_PASSWORD || ''
 config.email.app_name = process.env.EMAIL_APP_NAME || ''
+
+config.hosting.provider = process.env.HOSTING_PROVIDER || 'nanobox'
 
 module.exports = config

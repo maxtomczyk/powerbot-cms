@@ -6,10 +6,20 @@ const config = require('../config/config.js')
 bluebird.promisifyAll(redis.RedisClient.prototype)
 bluebird.promisifyAll(redis.Multi.prototype)
 
-let client = require('redis').createClient(config.redis.url, {
-  prefix: config.redis.prefix,
-  enable_offline_queue: false
-})
+let client = null
+
+if (config.hosting.provider === 'nanobox') {
+  client = require('redis').createClient({
+    host: config.redis.url,
+    prefix: config.redis.prefix,
+    enable_offline_queue: false
+  })
+} else {
+  client = require('redis').createClient(config.redis.url, {
+    prefix: config.redis.prefix,
+    enable_offline_queue: false
+  })
+}
 
 client.on('error', (err) => {
   logger.warn(err)

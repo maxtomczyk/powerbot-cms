@@ -1,8 +1,8 @@
 data.postgres:
-  image: nanobox/postgresql:9.5
+  image: nanobox/postgresql:9.6
 
 data.redis:
-  image: nanobox/redis:3.2
+  image: nanobox/redis:4.0
 
 run.config:
   engine: nodejs
@@ -17,11 +17,7 @@ run.config:
 
   build_triggers:
     - package.json
-
-  extra_steps:
-    - cd ./node_modules/powerbot-cms; node ./scripts/create_db.js
-    - cd ./node_modules/powerbot-cms; node ./scripts/init_db.js
-    - cd ./node_modules/powerbot-cms; knex migrate:latest
+    - package-lock.json
 
 web.system:
   start: node index.js
