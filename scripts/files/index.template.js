@@ -19,6 +19,6 @@ bot.on('payload', async (message, user, raw) => {
   }
 })
 
-cms.server.listen(process.env.PORT || 3000, () => {
+cms.server.listen(process.env.PORT || 3000, '0.0.0.0', () => {
 
 })

@@ -11,17 +11,17 @@ config.email = {}
 
 config.facebook.access_token = process.env.FB_ACCESS || ''
 
-config.database.host = process.env.DB_HOST || 'localhost'
-config.database.user = process.env.DB_USER || 'postgres'
-config.database.password = process.env.DB_PASSWORD || ''
-config.database.name = process.env.DB_NAME || ''
+config.database.host = process.env.DB_HOST || process.env.DATA_POSTGRES_HOST || 'localhost'
+config.database.user = process.env.DB_USER || process.env.DATA_POSTGRES_USER || 'postgres'
+config.database.password = process.env.DB_PASSWORD || process.env.DATA_POSTGRES_PASS || ''
+config.database.name = process.env.DB_NAME || process.env.DATA_POSTGRES_NAME || ''
 
 config.jwt.secret = process.env.JWT_SECRET || 'jwt_secret'
 
 config.app.logLevel = process.env.LOG_LEVEL || 'silly'
 config.app.logPrefix = process.env.LOG_PREFIX || 'powerbot-cms'
 
-config.redis.url = process.env.REDIS_URL || ''
+config.redis.url = process.env.REDIS_URL || process.env.DATA_REDIS_HOST || ''
 config.redis.prefix = process.env.REDIS_PREFIX || 'powerbot-cms::'
 config.redis.timeouts = {
   messages: process.env.RT_MESSAGES || 15,

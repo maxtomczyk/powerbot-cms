@@ -1,0 +1,29 @@
+data.postgres:
+  image: nanobox/postgresql:9.5
+
+data.redis:
+  image: nanobox/redis:3.2
+
+run.config:
+  engine: nodejs
+  engine.config:
+    runtime: nodejs-9.3
+    dep_manager: npm
+    python_version: python-2.7
+
+  extra_packages:
+    - nginx
+    - python-2
+
+  build_triggers:
+    - package.json
+
+  extra_steps:
+    - cd ./node_modules/powerbot-cms; node ./scripts/create_db.js
+    - cd ./node_modules/powerbot-cms; node ./scripts/init_db.js
+    - cd ./node_modules/powerbot-cms; knex migrate:latest
+
+web.system:
+  start: node index.js
+  routes:
+    - /
