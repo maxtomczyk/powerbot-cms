@@ -33,6 +33,6 @@ data.redis:
 web.system:
   start: 
     nginx: nginx -c /app/config/nginx.conf
-    node: forever index.js
+    node: DATA_POSTGRES_NAME=gonano bash -c 'forever index.js'
   routes:
     - /
