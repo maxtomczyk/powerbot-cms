@@ -1,11 +1,13 @@
-const os = require('os')
 const knex = require('../modules/knex')
-const {
-  spawnSync
-} = require('child_process')
 
 async function start () {
   try {
+    let ready = await knex.raw(`SELECT EXISTS (SELECT 1 FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace WHERE n.nspname = 'public' AND c.relname = 'users_channels' AND c.relkind = 'r');`)
+    ready = ready.rows[0].exists
+    if (ready) {
+      console.log('Database already initialized')
+      process.exit(0)
+    }
     await knex.schema.createTable('admins', function (table) {
       table.increments()
       table.string('name', 64).notNullable()
@@ -359,13 +361,8 @@ async function start () {
       group_id: 1,
       type: 'quick_replies'
     }])
-    const npm = (os.platform() === 'win32') ? 'npm.cmd' : 'npm'
-    const child = spawnSync(npm, ['run', 'migrate'])
 
-    if (child.error) console.log(child.error.toString('utf8'))
-    if (child.stdout) console.log(child.stdout.toString('utf8'))
-    if (child.stderr) console.log(child.stderr.toString('utf8'))
-
+    console.log('Database initialized successfully.')
     process.exit(0)
   } catch (e) {
     console.error(e)

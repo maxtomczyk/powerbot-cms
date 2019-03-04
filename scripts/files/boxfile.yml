@@ -1,9 +1,3 @@
-data.postgres:
-  image: nanobox/postgresql:9.6
-
-data.redis:
-  image: nanobox/redis:4.0
-
 run.config:
   engine: nodejs
   engine.config:
@@ -18,6 +12,19 @@ run.config:
   build_triggers:
     - package.json
     - package-lock.json
+
+deploy.config:
+  before_live:
+    web.system:
+      - DATA_POSTGRES_NAME=gonano bash -c 'node ./node_modules/powerbot-cms/scripts/create_db.js'
+      - DATA_POSTGRES_NAME=gonano bash -c 'node ./node_modules/powerbot-cms/scripts/init_db.js'
+      - DATA_POSTGRES_NAME=gonano bash -c '(cd ./node_modules/powerbot-cms; knex migrate:latest)'
+
+data.postgres:
+  image: nanobox/postgresql:9.6
+
+data.redis:
+  image: nanobox/redis:4.0
 
 web.system:
   start: node index.js

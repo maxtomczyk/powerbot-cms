@@ -48,6 +48,6 @@ config.email.login = process.env.EMAIL_LOGIN || ''
 config.email.password = process.env.EMAIL_PASSWORD || ''
 config.email.app_name = process.env.EMAIL_APP_NAME || ''
 
-config.hosting.provider = process.env.HOSTING_PROVIDER || 'nanobox'
+config.hosting.provider = process.env.HOSTING_PROVIDER || ''
 
 module.exports = config
