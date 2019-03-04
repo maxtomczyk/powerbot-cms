@@ -28,10 +28,12 @@ if (!initialized) {
   const components = fs.readdirSync('../../cms/components')
 
   for (const view of views) {
+    if (view === '.gitkeep') continue
     fs.symlinkSync(`../../../../cms/views/${view}`, `./src/views/${view}`)
   }
 
   for (const component of components) {
+    if (component === '.gitkeep') continue
     fs.symlinkSync(`../../../../cms/components/${component}`, `./src/components/${component}`)
   }
 }
