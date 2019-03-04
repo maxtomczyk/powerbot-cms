@@ -1,1 +1,1 @@
-release: (cd ./node_modules/powerbot-cms; knex migrate:latest; cd ../../; knex migrate:latest;)
+release: (knex migrate:latest;)
