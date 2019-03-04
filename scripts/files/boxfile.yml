@@ -19,6 +19,7 @@ deploy.config:
       - DATA_POSTGRES_NAME=gonano bash -c 'node ./node_modules/powerbot-cms/scripts/create_db.js'
       - DATA_POSTGRES_NAME=gonano bash -c 'node ./node_modules/powerbot-cms/scripts/init_db.js'
       - DATA_POSTGRES_NAME=gonano bash -c '(cd ./node_modules/powerbot-cms; knex migrate:latest)'
+      - (cd ./node_modules/powerbot-cms; npm run build)
 
 data.postgres:
   image: nanobox/postgresql:9.6
