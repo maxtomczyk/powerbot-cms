@@ -6,6 +6,7 @@ if (!initialized) {
   fs.mkdirSync('../../cms')
   fs.mkdirSync('../../cms/components')
   fs.mkdirSync('../../cms/views')
+  fs.mkdirSync('../../migrations')
 
   fs.copyFileSync('./config/config.template.js', '../../config/config.js')
   fs.copyFileSync('./src/main.template.js', '../../cms/main.js')
@@ -19,10 +20,12 @@ if (!initialized) {
   fs.copyFileSync('./scripts/files/boxfile.yml', '../../boxfile.yml')
   fs.copyFileSync('./scripts/files/Procfile', '../../Procfile')
   fs.copyFileSync('./scripts/files/.nanoignore', '../../.nanoignore')
+  fs.copyFileSync('./scripts/files/knexfile.js', '../../knexfile.js')
 
   fs.writeFileSync('../../.gitignore', 'node_modules/', 'utf8')
   fs.writeFileSync('../../cms/components/.gitkeep', '', 'utf8')
   fs.writeFileSync('../../cms/views/.gitkeep', '', 'utf8')
+  fs.writeFileSync('../../migrations/.gitkeep', '', 'utf8')
 } else {
   const views = fs.readdirSync('../../cms/views')
   const components = fs.readdirSync('../../cms/components')

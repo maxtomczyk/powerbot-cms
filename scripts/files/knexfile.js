@@ -11,6 +11,6 @@ module.exports = {
     database: config.database.name
   },
   migrations: {
-    directory: ['../../migrations', './migrations']
+    directory: ['./node_modules/powerbot-cms/migrations', './migrations']
   }
 }
