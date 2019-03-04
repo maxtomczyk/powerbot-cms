@@ -17,6 +17,7 @@ if (!initialized) {
   fs.copyFileSync('./scripts/files/api.template.js', '../../cms/api.js')
   fs.copyFileSync('./scripts/files/nginx.conf', '../../config/nginx.conf')
   fs.copyFileSync('./scripts/files/boxfile.yml', '../../boxfile.yml')
+  fs.copyFileSync('./scripts/files/Procfile', '../../Procfile')
   fs.copyFileSync('./scripts/files/.nanoignore', '../../.nanoignore')
 
   fs.writeFileSync('../../.gitignore', 'node_modules/', 'utf8')
