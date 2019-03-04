@@ -140,7 +140,7 @@ async function checkFirstStart () {
       return
     }
     const val = await knex('bot_data').where('name', 'first_start').first()
-    if (!val.timestamp) {
+    if (!val.data.timestamp) {
       logger.info('Saving first start date.')
       await knex('bot_data').update('data', { timestamp: +new Date() }).where('name', 'first_start')
     }
