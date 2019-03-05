@@ -8,7 +8,7 @@
     "start": "node index.js",
     "lint": "eslint --ext .js,.vue src",
     "build": "node build/build.js",
-    "postinstall": "node scripts/init.js && npm run build && npm i knex forever -g",
+    "postinstall": "node scripts/init.js && npm run build && npm i knex -g",
     "migrate": "knex migrate:latest"
   },
   "dependencies": {
