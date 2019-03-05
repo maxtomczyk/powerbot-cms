@@ -1,1 +1,1 @@
-release: (knex migrate:latest;)
+release: (node ./node_modules/powerbot-cms/scripts/create_db.js; node ./node_modules/powerbot-cms/scripts/init_db.js; knex migrate:latest;)
