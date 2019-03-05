@@ -15,6 +15,7 @@ run.config:
 
   extra_steps:
     - npm install
+    - npm install forever -g
     - (cd ./node_modules/powerbot-cms; npm run build)
 
 deploy.config:
@@ -33,6 +34,6 @@ data.redis:
 web.system:
   start: 
     nginx: nginx -c /app/config/nginx.conf
-    node: DATA_POSTGRES_NAME=gonano bash -c 'forever index.js'
+    node: bash -c 'DATA_POSTGRES_NAME=gonano forever ./index.js'
   routes:
     - /
