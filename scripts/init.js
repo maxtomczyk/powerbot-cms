@@ -20,7 +20,7 @@ if (!fs.existsSync('../../Procfile')) fs.copyFileSync('./scripts/files/Procfile'
 if (!fs.existsSync('../../.nanoignore')) fs.copyFileSync('./scripts/files/.nanoignore', '../../.nanoignore')
 if (!fs.existsSync('../../knexfile.js')) fs.copyFileSync('./scripts/files/knexfile.js', '../../knexfile.js')
 
-if (!fs.existsSync('../../.gitignore')) fs.writeFileSync('../../.gitignore', 'node_modules/', 'utf8')
+if (!fs.existsSync('../../.gitignore')) fs.writeFileSync('../../.gitignore', 'node_modules/\n.yarn/', 'utf8')
 if (!fs.existsSync('../../cms/components/.gitkeep')) fs.writeFileSync('../../cms/components/.gitkeep', '', 'utf8')
 if (!fs.existsSync('../../cms/views/.gitkeep')) fs.writeFileSync('../../cms/views/.gitkeep', '', 'utf8')
 if (!fs.existsSync('../../migrations/.gitkeep')) fs.writeFileSync('../../migrations/.gitkeep', '', 'utf8')
