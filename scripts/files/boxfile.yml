@@ -33,7 +33,7 @@ data.redis:
 
 web.system:
   start: 
-    node:  bash -c forever index.js >> /app/cms_log.log
+    node: forever index.js > /app/last_cms_log.log
     nginx: nginx -c /app/config/nginx.conf
   routes:
     - /
