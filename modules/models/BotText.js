@@ -24,7 +24,7 @@ class BotText {
     async setDefaults(locale) {
         try {
             if (lodash.isEmpty(this.locales)) {
-                logger.debug('Loading locales list to server memory')
+                logger.silly('Loading locales list to server memory')
 
                 let dbLocales = await knex('languages')
                 dbLocales.map(loc => {
@@ -33,7 +33,7 @@ class BotText {
             }
 
             if (!this.defaultLocale) {
-                logger.debug('Loading default locale to memory')
+                logger.silly('Loading default locale to memory')
                 let [def] = await knex('languages').where('default', true)
                 this.defaultLocale = def.locale
             }

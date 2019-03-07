@@ -43,6 +43,8 @@ async function broadcastChatRequestMail(data) {
     const admins = await knex('admins').where('chat_requests_notifications', true).andWhereNot('email', null)
     Object.assign(mailData, data)
 
+    logger.debug('Broadcasting chat request e-mail notification')
+
     for (admin of admins) {
       if (admin.email.length < 5) continue;
       mailData.app_name = config.email.app_name
@@ -70,6 +72,8 @@ async function broadcastWeeklyStats(data) {
     Object.assign(mailData, data)
 
     mailData.formed_date = new Date(data.start).toLocaleDateString()
+
+    logger.info('Broadcasting weekly stats e-mail notification')
 
     for (admin of admins) {
       if (admin.email.length < 5) continue;
@@ -100,6 +104,8 @@ async function broadcastMonthlyStats(data) {
     Object.assign(mailData, data)
 
     mailData.formed_date = new Date(data.start).toLocaleDateString()
+
+    logger.info('Broadcasting monthly stats e-mail notification')
 
     for (admin of admins) {
       if (admin.email.length < 5) continue;

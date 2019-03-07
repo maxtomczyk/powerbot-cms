@@ -6,15 +6,15 @@ const config = require('../config/config.js')
 async function get (id) {
   try {
     let aId = await redisHandler.get(`attachment-id:${id}`)
-    logger.debug(`Attachment '${id}' found in cache memory!`)
+    logger.silly(`Attachment '${id}' found in cache memory!`)
 
     if (aId) return aId
 
     let row = await knex('attachments').where('name', id).first()
     if (!row) return null
-    logger.debug(`Attachment '${id}' fetched from database`)
+    logger.silly(`Attachment '${id}' fetched from database`)
     aId = row.attachment_id
-    logger.debug(`Saving attachment '${id}' to cache memory`)
+    logger.silly(`Saving attachment '${id}' to cache memory`)
     redisHandler.set(`attachment-id:${id}`, aId, config.redis.timeouts.attachments)
 
     return aId

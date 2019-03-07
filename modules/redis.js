@@ -22,7 +22,7 @@ if (config.hosting.provider === 'nanobox') {
 }
 
 client.on('error', (err) => {
-  logger.warn(err)
+  logger.error(err)
 })
 
 module.exports = client

@@ -10,9 +10,9 @@ const stats = new Stats()
 function start () {
   let mediumResolutionStatsSave = new CronJob(`0 */10 * * * *`, async function () {
     try {
-      logger.debug('Starting medium resolution statistics data save job.')
+      logger.silly('Starting medium resolution statistics data save job.')
       await stats.saveMediumResolutionData()
-      logger.debug('Medium resolution data saved.')
+      logger.silly('Medium resolution data saved.')
     } catch (e) {
       logger.error('An error occured during medium resolution statistics data save')
       console.error(e)
@@ -52,10 +52,10 @@ function start () {
     }
   }, null, true, cronTimezone)
 
-  logger.debug(`Medium resolution stats collector cron job started: ${mediumResolutionStatsSave.running}`)
-  logger.debug(`Daily stats collector cron job started: ${dailyResolutionStatsSave.running}`)
-  logger.debug(`Weekly stats collector cron job started: ${weeklyResolutionStatsSave.running}`)
-  logger.debug(`Montlhy resolution stats collector cron job started: ${monthlyResolutionStatsSave.running}`)
+  logger.silly(`Medium resolution stats collector cron job status: ${mediumResolutionStatsSave.running}`)
+  logger.silly(`Daily stats collector cron job status: ${dailyResolutionStatsSave.running}`)
+  logger.silly(`Weekly stats collector cron job status: ${weeklyResolutionStatsSave.running}`)
+  logger.silly(`Montlhy resolution stats collector cron job status: ${monthlyResolutionStatsSave.running}`)
 }
 
 module.exports = {

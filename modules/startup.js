@@ -72,7 +72,7 @@ async function checkChannels () {
           }
         }
         if (!remoteFound) {
-          logger.info(`Didn't found label with name ${local.name} on remote. Creating new one.`)
+          logger.info(`Didn't found label with name ${local.name} on remote. Creating a new one.`)
           const labelId = await incredbot.broadcast.createLabel(local.name)
           await knex('channels').update('label_id', labelId).where('id', local.id)
         }
@@ -103,7 +103,7 @@ async function checkChannelsSync () {
   try {
     let start = await knex('settings').where('name', 'channels_sync_check').first()
     if (!JSON.parse(start.value)) return
-    logger.info('Checking channels sync for all users. It can take a lot of time, logging for each user start.')
+    logger.info('Checking channels sync for all users. It can take a while. Logging for every user available on silly logging level.')
 
     let errors = 0
 
@@ -111,7 +111,7 @@ async function checkChannelsSync () {
 
     for (const userData of users) {
       const user = await new User(userData.messenger_id).loadOrCreate()
-      logger.info(`Starting channel sync procedure for user ${user.id}`)
+      logger.silly(`Starting channel sync procedure for user with ID ${user.id}`)
       try {
         await user.syncChannelsWithRemote()
       } catch (e) {

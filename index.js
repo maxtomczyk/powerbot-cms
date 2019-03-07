@@ -1,6 +1,7 @@
 const express = require('express')
 const EventEmitter = require('events')
 const path = require('path')
+const fs = require('fs')
 
 const config = require('./config/config')
 const routes = require('./modules/routes')
@@ -23,6 +24,10 @@ const jobs = require('./modules/jobs')
 const emails = require('./modules/emails')
 
 const stats = new Stats()
+
+const version  = JSON.parse(fs.readFileSync('./node_modules/powerbot-cms/package.json', 'utf8')).version
+
+logger.info(`Welcome to Powerbot CMS ${version}. Loading amazing stuff...`)
 
 startup()
 jobs.start()

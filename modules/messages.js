@@ -11,15 +11,15 @@ async function getFromDbOrCache (name, getById) {
     let message = await redisHandler.get(`message:${name}`)
     if (message) {
       message = JSON.parse(message)
-      logger.debug(`Loaded message '${name}' (${message.id}) from cache memory.`)
+      logger.silly(`Loaded message '${name}' (${message.id}) from cache memory.`)
       return message
     }
 
     if (!getById) message = await knex('messages').where('name', name).first()
     else message = await knex('messages').where('id', name).first()
-    logger.debug(`Loaded message '${name}' (${message.id}) from database.`)
+    logger.silly(`Loaded message '${name}' (${message.id}) from database.`)
     redisHandler.set(`message:${name}`, JSON.stringify(message), config.redis.timeouts.messages)
-    logger.debug(`Saved message '${name}' (${message.id}) to cache memory.`)
+    logger.silly(`Saved message '${name}' (${message.id}) to cache memory.`)
     return message
   } catch (e) {
     throw e
@@ -31,14 +31,14 @@ async function getDefaultLanguage () {
     let lang = await redisHandler.get(`default-lang`)
     if (lang) {
       lang = JSON.parse(lang)
-      logger.debug('Loaded default language from cache memory')
+      logger.silly('Loaded default language from cache memory')
       return lang
     }
 
     lang = await knex('languages').where('default', true).first()
-    logger.debug('Loaded default language from database')
+    logger.silly('Loaded default language from database')
     redisHandler.set('default-lang', JSON.stringify(lang), config.redis.timeouts.defaultLanguage)
-    logger.debug('Saved default language to cache memory')
+    logger.silly('Saved default language to cache memory')
     return lang
   } catch (e) {
     throw e
