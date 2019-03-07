@@ -20,7 +20,7 @@ if (config.s3.streamLogs) {
   })
 
   transports.push(
-    new (winston.transports.File)({
+    new (winston.transports.Stream)({
       stream: s3Stream
     }))
 }
