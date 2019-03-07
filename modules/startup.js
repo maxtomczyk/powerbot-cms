@@ -11,11 +11,11 @@ async function createGoogleAuthFile () {
   try {
     if (!config.dialogflow.enable) return
     const jsonPath = (config.hosting.provider !== 'nanobox') ? './gapi_key.json' : './storage/gapi_key.json'
-    console.log(jsonPath)
     if (fs.existsSync(jsonPath)) fs.unlinkSync(jsonPath)
     fs.writeFileSync(jsonPath, JSON.stringify(config.googleAuth))
     logger.info('Created Google Auth JSON file.')
   } catch (e) {
+    logger.error('An error occured during Google Auth JSON file creation. Auth JSON is required when Dialogflow service is enabled.')
     throw e
   }
 }

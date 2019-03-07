@@ -43,6 +43,7 @@ config.settings.statsCollectorTimezone = process.env.STATS_COLLECTOR_TIMEZONE ||
 config.settings.useModeratorHours = process.env.USE_MODERATOR_HOURS || false
 config.settings.cmsUrl = process.env.CMS_URL || 'http://localhost:3000'
 config.settings.useChatInProgressMessage = process.env.CHAT_IN_PROGRESS_MSG || false
+config.settings.dbDumpCron = process.env.DB_DUMP_CRON_EXPRESSION || '0 30 4 * * 2,5'
 
 config.email.host = process.env.EMAIL_HOST || ''
 config.email.port = process.env.EMAIL_PORT || ''
@@ -72,7 +73,9 @@ config.googleAuth.client_x509_cert_url = process.env.GAUTH_CLIENT_X509_CERT_URL 
 config.s3.bucketName = process.env.S3_BUCKET_NAME || ''
 config.s3.accessKeyId = process.env.S3_ACCESS_KEY_ID || ''
 config.s3.secretAccessKey = process.env.S3_SECRET_ACCESS_KEY || ''
+config.s3.streamLogs = process.env.S3_STREAM_LOGS || false
+config.s3.autoDbDump = process.env.S3_AUTO_DB_DUMP || false
 config.s3.logsCatalog = process.env.S3_LOGS_CATALOG || ''
-config.s3.streamLogs = process.env.S3_STREAM_LOGS || ''
+config.s3.dumpsCatalog = process.env.S3_DUMPS_CATALOG || ''
 
 module.exports = config

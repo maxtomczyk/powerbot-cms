@@ -1,5 +1,6 @@
 const CronJob = require('cron').CronJob
 const Stats = require('./models/Stats')
+const dbDumper = require('./db_dump')
 const logger = require('./logger')
 const config = require('../config/config')
 
@@ -52,10 +53,20 @@ function start () {
     }
   }, null, true, cronTimezone)
 
+  let dbDump = new CronJob(config.settings.dbDumpCron, async function () {
+    try {
+      await dbDumper.start()
+    } catch (e) {
+      console.error(e)
+    }
+  }, null, true, cronTimezone)
+
+
   logger.silly(`Medium resolution stats collector cron job status: ${mediumResolutionStatsSave.running}`)
   logger.silly(`Daily stats collector cron job status: ${dailyResolutionStatsSave.running}`)
   logger.silly(`Weekly stats collector cron job status: ${weeklyResolutionStatsSave.running}`)
   logger.silly(`Montlhy resolution stats collector cron job status: ${monthlyResolutionStatsSave.running}`)
+  logger.silly(`Automatic database dump to S3 cron job status: ${dbDump.running}`)
 }
 
 module.exports = {
