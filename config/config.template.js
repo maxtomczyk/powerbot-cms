@@ -11,6 +11,7 @@ config.email = {}
 config.hosting = {}
 config.dialogflow = {}
 config.googleAuth = {}
+config.s3 = {}
 
 config.facebook.access_token = process.env.FB_ACCESS || ''
 
@@ -67,5 +68,11 @@ config.googleAuth.auth_uri = process.env.GAUTH_AUTH_URI || ''
 config.googleAuth.token_uri = process.env.GAUTH_TOKEN_URI || ''
 config.googleAuth.auth_provider_x509_cert_url = process.env.GAUTH_AUTH_PROVIDER_X509_CERT_URL || ''
 config.googleAuth.client_x509_cert_url = process.env.GAUTH_CLIENT_X509_CERT_URL || ''
+
+config.s3.bucketName = process.env.S3_BUCKET_NAME || ''
+config.s3.accessKeyId = process.env.S3_ACCESS_KEY_ID || ''
+config.s3.secretAccessKey = process.env.S3_SECRET_ACCESS_KEY || ''
+config.s3.logsCatalog = process.env.S3_LOGS_CATALOG || ''
+config.s3.streamLogs = process.env.S3_STREAM_LOGS || ''
 
 module.exports = config
