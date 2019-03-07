@@ -31,9 +31,15 @@ data.postgres:
 data.redis:
   image: nanobox/redis:4.0
 
+data.storage:
+  image: nanobox/unfs:0.9
+
 web.system:
   start: 
-    node: forever index.js > /app/last_cms_log.log
+    node: bash -c 'GOOGLE_APPLICATION_CREDENTIALS=./storage/gapi_key.json forever index.js > /app/last_cms_log.log'
     nginx: nginx -c /app/config/nginx.conf
   routes:
     - /
+  network_dirs:
+    data.storage:
+      - storage/

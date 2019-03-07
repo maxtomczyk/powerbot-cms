@@ -51,3 +51,10 @@ if (!fs.existsSync('./src/main.js')) fs.symlinkSync('../../../cms/main.js', './s
 if (!fs.existsSync('./src/router/index.js')) fs.symlinkSync('../../../../cms/vue_router.js', './src/router/index.js')
 if (!fs.existsSync('./modules/custom_routes.js')) fs.symlinkSync('../../../cms/api_routes.js', './modules/custom_routes.js')
 if (!fs.existsSync('./src/components/UserDefinedViewsLinks.js')) fs.symlinkSync('../../../../cms/CustomRoutes.js', './src/components/UserDefinedViewsLinks.js')
+
+if (fs.existsSync('../../package.json')) {
+  let packageData = JSON.parse(fs.readFileSync('../../package.json', 'utf-8'))
+  packageData.scripts.start = 'GOOGLE_APPLICATION_CREDENTIALS=./gapi_key.json node index.js'
+  packageData.scripts.dev = 'GOOGLE_APPLICATION_CREDENTIALS=./gapi_key.json nodemon index.js'
+  fs.writeFileSync('../../package.json', JSON.stringify(packageData, null, 2), 'utf-8')
+}

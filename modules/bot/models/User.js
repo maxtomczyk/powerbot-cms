@@ -366,6 +366,15 @@ class User {
       throw e
     }
   }
+
+  async endNLPSession () {
+    try {
+      await redis.delAsync(`dialogflow-session-user:${this.id}`)
+      return
+    } catch (e) {
+      throw e
+    }
+  }
 }
 
 module.exports = User
