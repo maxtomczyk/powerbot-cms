@@ -61,10 +61,10 @@ async function checkChannels () {
     const remoteChannels = await incredbot.broadcast.listLabels()
     const localNames = localChannels.map(chan => chan.name)
 
-    for (local of localChannels) {
+    for (let local of localChannels) {
       if (!local.label_id) {
         let remoteFound = false
-        for (remote of remoteChannels.data) {
+        for (let remote of remoteChannels.data) {
           if (remote.name === local.name) {
             remoteFound = true
             await knex('channels').update('label_id', remote.id).where('id', local.id)
@@ -79,8 +79,8 @@ async function checkChannels () {
 
         logger.info(`Setted label_id for channel ${local.name}`)
       } else {
-        for (remote of remoteChannels.data) {
-          if (remote.id === local.label_id && remote.name === local.name) continue;
+        for (let remote of remoteChannels.data) {
+          if (remote.id === local.label_id && remote.name === local.name) continue
           if (remote.name === local.name) {
             await knex('channels').update('label_id', remote.id).where('id', local.id)
             logger.info(`Changed label_id for ${local.name} due to label_id missmatch`)

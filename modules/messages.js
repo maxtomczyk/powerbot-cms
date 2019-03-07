@@ -66,7 +66,7 @@ async function getCoreMessage (name, user) {
       message.text = format(getRandom(message.texts), user)
       const genderMatches = utilities.matchAll(/\(\(\(([^\x00-\x7F]+|\w+|\s+)+\|([^\x00-\x7F]+|\w+|\s+)+\)\)\)/gi, message.text)
 
-      for(const toReplace of genderMatches){
+      for (const toReplace of genderMatches) {
         const targetWord = toReplace.replace(/\(|\)/g, '').split('|')[genderInt]
         message.text = message.text.replace(toReplace, targetWord)
       }
