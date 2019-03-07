@@ -142,7 +142,6 @@ bot.on('message_sent', async (message, raw) => {
 })
 
 bot.on('log', log => {
-  console.log(log)
   logger.log(log.level, log.message)
 })
 
