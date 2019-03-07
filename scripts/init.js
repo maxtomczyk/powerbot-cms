@@ -19,8 +19,10 @@ if (!fs.existsSync('../../boxfile.yml')) fs.copyFileSync('./scripts/files/boxfil
 if (!fs.existsSync('../../Procfile')) fs.copyFileSync('./scripts/files/Procfile', '../../Procfile')
 if (!fs.existsSync('../../.nanoignore')) fs.copyFileSync('./scripts/files/.nanoignore', '../../.nanoignore')
 if (!fs.existsSync('../../knexfile.js')) fs.copyFileSync('./scripts/files/knexfile.js', '../../knexfile.js')
+if (!fs.existsSync('../../nlp.js')) fs.copyFileSync('./scripts/files/nlp.js', '../../nlp.js')
+if (!fs.existsSync('../../nodemon.json')) fs.copyFileSync('./scripts/files/nodemon.json', '../../nodemon.json')
 
-if (!fs.existsSync('../../.gitignore')) fs.writeFileSync('../../.gitignore', 'node_modules/\n.yarn/', 'utf8')
+if (!fs.existsSync('../../.gitignore')) fs.writeFileSync('../../.gitignore', 'node_modules/\n.yarn/\ngapi_key.json', 'utf8')
 if (!fs.existsSync('../../cms/components/.gitkeep')) fs.writeFileSync('../../cms/components/.gitkeep', '', 'utf8')
 if (!fs.existsSync('../../cms/views/.gitkeep')) fs.writeFileSync('../../cms/views/.gitkeep', '', 'utf8')
 if (!fs.existsSync('../../migrations/.gitkeep')) fs.writeFileSync('../../migrations/.gitkeep', '', 'utf8')

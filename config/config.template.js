@@ -9,6 +9,8 @@ config.features = {}
 config.settings = {}
 config.email = {}
 config.hosting = {}
+config.dialogflow = {}
+config.googleAuth = {}
 
 config.facebook.access_token = process.env.FB_ACCESS || ''
 
@@ -49,5 +51,21 @@ config.email.password = process.env.EMAIL_PASSWORD || ''
 config.email.app_name = process.env.EMAIL_APP_NAME || ''
 
 config.hosting.provider = process.env.HOSTING_PROVIDER || ''
+
+config.dialogflow.enable = process.env.DIALOGFLOW_ENABLED || false
+config.dialogflow.sessionTimeout = process.env.DIALOGFLOW_SESSION_TIMEOUT || 1200
+config.dialogflow.projectId = process.env.DIALOGFLOW_PROJECT_ID || ''
+config.dialogflow.language = process.env.DIALOGFLOW_LANGUAGE || 'en-US'
+
+config.googleAuth.type = process.env.GAUTH_TYPE || ''
+config.googleAuth.project_id = process.env.GAUTH_PROJECT_ID || ''
+config.googleAuth.private_key_id = process.env.GAUTH_PRIVATE_KEY_ID || ''
+config.googleAuth.private_key = process.env.GAUTH_PRIVATE_KEY || ''
+config.googleAuth.client_email = process.env.GAUTH_CLIENT_EMAIL || ''
+config.googleAuth.client_id = process.env.GAUTH_CLIENT_ID || ''
+config.googleAuth.auth_uri = process.env.GAUTH_AUTH_URI || ''
+config.googleAuth.token_uri = process.env.GAUTH_TOKEN_URI || ''
+config.googleAuth.auth_provider_x509_cert_url = process.env.GAUTH_AUTH_PROVIDER_X509_CERT_URL || ''
+config.googleAuth.client_x509_cert_url = process.env.GAUTH_CLIENT_X509_CERT_URL || ''
 
 module.exports = config
