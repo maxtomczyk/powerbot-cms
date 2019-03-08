@@ -44,6 +44,7 @@ config.settings.useModeratorHours = process.env.USE_MODERATOR_HOURS || false
 config.settings.cmsUrl = process.env.CMS_URL || 'http://localhost:3000'
 config.settings.useChatInProgressMessage = process.env.CHAT_IN_PROGRESS_MSG || false
 config.settings.dbDumpCron = process.env.DB_DUMP_CRON_EXPRESSION || '0 30 4 * * 2,5'
+config.settings.extendedSummary = process.env.EXTENDED_STARTUP_SUMMARY || false
 
 config.email.host = process.env.EMAIL_HOST || ''
 config.email.port = process.env.EMAIL_PORT || ''

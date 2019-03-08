@@ -25,10 +25,45 @@ const emails = require('./modules/emails')
 
 const stats = new Stats()
 
-const version  = JSON.parse(fs.readFileSync('./node_modules/powerbot-cms/package.json', 'utf8')).version
+const version = JSON.parse(fs.readFileSync('./node_modules/powerbot-cms/package.json', 'utf8')).version
+
+function convertBoolToReadable (s) {
+  if (s) return 'enabled'
+  else return 'disabled'
+}
+
+function logSummary () {
+  let mode = (process.env.NODE_ENV === 'production') ? 'production' : 'non-production'
+  logger.info(`Running in ${mode} mode.`)
+  logger.info(`Cron jobs timezone: ${config.settings.statsCollectorTimezone || 'Europe/London'}`)
+  if (config.s3.autoDbDump) logger.info(`Database auto-dump is enabled. Cron expression for dump: ${config.settings.dbDumpCron}`)
+  if (config.s3.streamLogs) logger.info(`Logs straming is enabled. Logs from CMS system will be stored on S3 instance in ${config.s3.logsCatalog}.`)
+  if (config.dialogflow.enable) logger.info(`Dialogflow integration is enabled. Session timeout: ${config.dialogflow.sessionTimeout} seconds`)
+  logger.info(`Moderator hours message usage is ${convertBoolToReadable(config.settings.useModeratorHours)}`)
+  logger.info(`Moderator chat in progress message usage is ${convertBoolToReadable(config.settings.useChatInProgressMessage)}`)
+  logger.info(`Gender fallback is ${config.settings.defaultGender}`)
+  if (config.settings.usersAdditionalData.length) logger.info(`Using following additional user data: ${config.settings.usersAdditionalData.replace(' ', ', ')}`)
+  console.log()
+}
+
+function logWarnings () {
+  console.log()
+  if (!config.facebook.access_token) logger.warn('No facebook access token defined.')
+  if (process.env.NODE_ENV === 'production') {
+    if (config.jwt.secret.length < 32) logger.warn('Configured JWT Secret String can be insecure (shorter than 32 chars).')
+    if (!config.s3.autoDbDump) logger.warn('Database auto-dump is disabled.')
+    if (!config.s3.streamLogs) logger.warn('Logs streaming is disabled. Logs from CMS will not be stored on S3')
+    if (!config.email.host || !config.email.port || !config.email.login || !config.email.password) logger.warn('No email account configured.')
+  }
+  console.log()
+}
 
 logger.info(`Welcome to Powerbot CMS ${version}. Loading amazing stuff...`)
 
+if (config.settings.extendedSummary) {
+  logSummary()
+  setTimeout(logWarnings, 2000)
+}
 startup()
 jobs.start()
 
