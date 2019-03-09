@@ -57,5 +57,6 @@ if (fs.existsSync('../../package.json')) {
   packageData.scripts.start = 'GOOGLE_APPLICATION_CREDENTIALS=./gapi_key.json node index.js'
   packageData.scripts.dev = 'GOOGLE_APPLICATION_CREDENTIALS=./gapi_key.json nodemon index.js'
   packageData.scripts['nanobox-start'] = 'DATA_POSTGRES_NAME=gonano GOOGLE_APPLICATION_CREDENTIALS=./storage/gapi_key.json forever index.js > ./storage/last_cms_log.log'
+  packageData.license = 'UNLICENSED'
   fs.writeFileSync('../../package.json', JSON.stringify(packageData, null, 2), 'utf-8')
 }
