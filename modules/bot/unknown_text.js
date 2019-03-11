@@ -39,6 +39,7 @@ function logDialogflowDebug (nlpData, message) {
 }
 
 function simplifyDialogflowResponse (nlpData) {
+  if (!nlpData) return
   let simple = {}
   simple.query = nlpData.queryText
   simple.intent = nlpData.intent.displayName
@@ -104,12 +105,18 @@ module.exports = async function (message, user) {
     if (success) return
 
     const nlpData = await useDialogflow(message, user)
-    logDialogflowDebug(nlpData[0].queryResult, message)
-    const simplified = simplifyDialogflowResponse(nlpData[0].queryResult)
-    const nlpHandled = await userNLP(simplified, message, user, nlpData)
-    if (nlpHandled) return
-    await registerPhrase(message)
-    await message.reply.raw(await messages.get('default', user))
+    const nlpResult = (nlpData) ? nlpData[0].queryResult : null
+
+    if (nlpResult) {
+      logDialogflowDebug(nlpResult, message)
+      const nlpHandled = await userNLP(simplifyDialogflowResponse(nlpResult), message, user, nlpData)
+      if (nlpHandled) return
+      await registerPhrase(message)
+      await message.reply.raw(await messages.get('default', user))
+    } else {
+      await registerPhrase(message)
+      await message.reply.raw(await messages.get('default', user))
+    }
   } catch (e) {
     throw e
   }
