@@ -196,6 +196,11 @@ class User {
 
   async removeFromDatabase () {
     try {
+      const channels = await knex('channels')
+      if (!this.id) await this.loadOrCreate()
+      for(const channel of channels){
+        await this.removeFromChannel(channel.name)
+      }
       await knex('users').where('messenger_id', this.messenger_id).del()
       const saved = await knex('users_removed').where('messenger_id', this.messenger_id).first()
       if (!saved) await knex('users_removed').insert({ messenger_id: this.messenger_id })
