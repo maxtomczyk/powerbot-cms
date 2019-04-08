@@ -83,18 +83,17 @@ app.use(auth.initialize())
 bot.on('text', async (message, raw) => {
   try {
     let user = await new User(message.sender_id).loadOrCreate()
-    if (user.bot_lock) return
     if (user.waiting_for_reason) {
       await knex('users').update({
         waiting_for_reason: false,
         chat_reason: message.text
       }).where('id', user.id)
       user.chat_reason = message.text
-      await message.reply.raw(await messages.get('contact_message_saved', user))
       emails.broadcastChatRequestMail(user)
       return
     }
 
+    if (user.bot_lock) return
     if (config.settings.useChatInProgressMessage && user.moderator_chat) await message.reply.raw(await messages.get('chat_in_progress', user))
 
     emitter.emit('text', message, user, raw)
@@ -103,10 +102,11 @@ bot.on('text', async (message, raw) => {
   }
 })
 
+const allowedPostbacks = ['CONTACT_UNLOCK_BOT', 'CONTACT_END']
 bot.on('payload', async (message, raw) => {
   try {
     let user = await new User(message.sender_id).loadOrCreate()
-    if (user.bot_lock) return
+    if (user.bot_lock && allowedPostbacks.indexOf(message.payload) === -1) return
 
     await postback(message, user)
     emitter.emit('payload', message, user, raw)

@@ -45,9 +45,24 @@ module.exports = async function (message, user) {
       break
 
     case 'CONTACT_CANCEL':
-
       await message.reply.raw(await messages.get('contact_canceled', user))
+      break
 
+    case 'CONTACT_END':
+      {
+        let u = new User(user.messenger_id)
+        await u.disableModeratorChat(true)
+        await message.reply.raw(await messages.get('contact_ended_by_user', user))
+      }
+      break
+
+    case 'CONTACT_UNLOCK_BOT':
+      {
+        console.log('xd')
+        let u = new User(user.messenger_id)
+        await u.disableChatLock()
+        await message.reply.raw(await messages.get('contact_bot_unlocked', user))
+      }
       break
 
     case 'CLEAR_USER_DATA':

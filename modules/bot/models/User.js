@@ -151,18 +151,29 @@ class User {
     }
   }
 
-  async enableModeratorChat () {
+  async disableChatLock () {
     try {
       await knex('users').update({
-        moderator_chat: true,
-        waiting_for_reason: true
+        bot_lock: false
       }).where('messenger_id', this.messenger_id).returning('*')
     } catch (e) {
       throw e
     }
   }
 
-  async disableModeratorChat () {
+  async enableModeratorChat () {
+    try {
+      await knex('users').update({
+        moderator_chat: true,
+        waiting_for_reason: true,
+        bot_lock: true
+      }).where('messenger_id', this.messenger_id).returning('*')
+    } catch (e) {
+      throw e
+    }
+  }
+
+  async disableModeratorChat (silent) {
     try {
       let [updated] = await knex('users').update({
         moderator_chat: false,
@@ -171,7 +182,7 @@ class User {
         waiting_for_reason: false
       }).where('messenger_id', this.messenger_id).returning('*')
       if (updated) {
-        await incredbot.send.raw(await messages.get('contact_ended', updated))
+        if (!silent) await incredbot.send.raw(await messages.get('contact_ended', updated))
       }
     } catch (e) {
       throw e
@@ -198,7 +209,7 @@ class User {
     try {
       const channels = await knex('channels')
       if (!this.id) await this.loadOrCreate()
-      for(const channel of channels){
+      for (const channel of channels) {
         await this.removeFromChannel(channel.name)
       }
       await knex('users').where('messenger_id', this.messenger_id).del()
