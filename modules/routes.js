@@ -126,6 +126,10 @@ router.get('/api/elements/list', auth.authenticate(), async (req, res) => {
   api.elements.list(req, res)
 })
 
+router.get('/api/version', auth.authenticate(), async (req, res) => {
+  api.stats.version(req, res)
+})
+
 router.put('/api/admins', auth.authenticate(), async (req, res) => {
   api.admins.create(req, res)
 })

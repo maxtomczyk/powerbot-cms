@@ -4,7 +4,7 @@ const knex = require('../knex.js')
 const redis = require('../redis.js')
 const logger = require('../logger.js')
 
-async function systemStatus(req, res) {
+async function systemStatus (req, res) {
   try {
     let status = {
       database: {},
@@ -35,7 +35,17 @@ async function systemStatus(req, res) {
   }
 }
 
-async function messagesChartData(req, res) {
+async function version (req, res) {
+  try {
+    const v = process.env.POWERBOT_CMS_VERSION
+    res.send(v)
+  } catch (e) {
+    logger.error(e)
+    res.sendStatus(500)
+  }
+}
+
+async function messagesChartData (req, res) {
   try {
     let now = new Date()
     let first = new Date(+new Date() - req.query.hours * 60 * 60 * 1000)
@@ -93,7 +103,7 @@ async function messagesChartData(req, res) {
   }
 }
 
-async function messagesData(req, res) {
+async function messagesData (req, res) {
   try {
     let data = null
 
@@ -123,7 +133,7 @@ async function messagesData(req, res) {
   }
 }
 
-async function usersData(req, res) {
+async function usersData (req, res) {
   try {
     const gendersCount = await knex('users').select('gender').groupBy('gender').count()
     const [awaitingCount] = await knex('users').where('moderator_chat', true).count()
@@ -161,7 +171,7 @@ async function usersData(req, res) {
   }
 }
 
-async function botData(req, res) {
+async function botData (req, res) {
   try {
     const [messagesCount] = await knex('messages').count()
     const [attachmentsCount] = await knex('attachments').count()
@@ -181,7 +191,7 @@ async function botData(req, res) {
   }
 }
 
-async function usersDailyChartData(req, res) {
+async function usersDailyChartData (req, res) {
   try {
     let now = new Date()
     let first = new Date(+new Date() - (parseInt(req.query.days) + 1) * 24 * 60 * 60 * 1000)
@@ -239,7 +249,7 @@ async function usersDailyChartData(req, res) {
   }
 }
 
-async function usersWeeklyChartData(req, res) {
+async function usersWeeklyChartData (req, res) {
   try {
     let now = new Date()
     let first = new Date(+new Date() - (parseInt(req.query.weeks)) * 7 * 24 * 60 * 60 * 1000)
@@ -272,7 +282,7 @@ async function usersWeeklyChartData(req, res) {
 
       for (let o = 0; o < dailyRows.length; o++) {
         let dailyRow = dailyRows[o]
-        if(+new Date(dailyRow.start) >= +new Date(row.start) && +new Date(dailyRow.start) <= +new Date(row.end)){
+        if (+new Date(dailyRow.start) >= +new Date(row.start) && +new Date(dailyRow.start) <= +new Date(row.end)) {
           rows[i].new_users += dailyRow.new_users
         }
       }
@@ -312,7 +322,7 @@ async function usersWeeklyChartData(req, res) {
   }
 }
 
-async function usersMonthlyChartData(req, res) {
+async function usersMonthlyChartData (req, res) {
   try {
     let now = new Date()
     let first = new Date(new Date().setMonth(new Date().getMonth() - parseInt(req.query.months), 1))
@@ -343,7 +353,7 @@ async function usersMonthlyChartData(req, res) {
 
       for (let o = 0; o < dailyRows.length; o++) {
         let dailyRow = dailyRows[o]
-        if(+new Date(dailyRow.start) >= +new Date(row.start) && +new Date(dailyRow.start) < +new Date(row.end)){
+        if (+new Date(dailyRow.start) >= +new Date(row.start) && +new Date(dailyRow.start) < +new Date(row.end)) {
           rows[i].new_users += dailyRow.new_users
         }
       }
@@ -386,6 +396,7 @@ async function usersMonthlyChartData(req, res) {
 
 module.exports = {
   systemStatus,
+  version,
   messagesChartData,
   messagesData,
   usersData,

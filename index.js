@@ -25,7 +25,7 @@ const emails = require('./modules/emails')
 
 const stats = new Stats()
 
-const version = JSON.parse(fs.readFileSync('./node_modules/powerbot-cms/package.json', 'utf8')).version
+process.env.POWERBOT_CMS_VERSION = JSON.parse(fs.readFileSync('./node_modules/powerbot-cms/package.json', 'utf8')).version
 
 function convertBoolToReadable (s) {
   if (s) return 'enabled'
@@ -58,7 +58,7 @@ function logWarnings () {
   console.log()
 }
 
-logger.info(`Welcome to Powerbot CMS ${version}. Loading amazing stuff...`)
+logger.info(`Welcome to Powerbot CMS ${process.env.POWERBOT_CMS_VERSION}. Loading amazing stuff...`)
 
 if (config.settings.extendedSummary) {
   logSummary()

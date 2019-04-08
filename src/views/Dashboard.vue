@@ -24,6 +24,13 @@
                         :class="assignStatusClass(status.system)"
                       >{{ (status.system.live === true) ? 'Running' : (status.system.live === false) ? 'Down' : 'Unknown' }}</span>
                     </div>
+                    <div
+                      class="status-panel__data-row"
+                      style="margin-top: 4px; margin-bottom: -4px;"
+                    >
+                      Version:
+                      <span class="status-panel__state">{{ version }}</span>
+                    </div>
                   </div>
                 </div>
                 <div class="status-panel__box">
@@ -341,9 +348,11 @@ import { EventBus } from '../event-bus'
 export default {
   data () {
     return {
+      version: '0.0.0',
       statusInterval: null,
       messagesPanelRange: 72,
       status: {
+        version: '0.0.0',
         system: {
           live: null
         },
@@ -787,6 +796,20 @@ export default {
           10000
         )
       }
+    },
+
+    async getSystemVersion () {
+      try {
+        const version = await axios.get('/api/version')
+        this.version = version.data
+      } catch (e) {
+        this.$refs.notifier.pushNotification(
+          'cannot load!',
+          `An error occured during system version load. Error code: ${e.response.status}`,
+          'error',
+          10000
+        )
+      }
     }
   },
 
@@ -794,6 +817,7 @@ export default {
     try {
       axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token')
       let that = this
+      await this.getSystemVersion()
       await this.getSystemStatus()
       await this.setMessagesChartData(72)
       await this.setMessagesData(this.messagesPanelRange)
