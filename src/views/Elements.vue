@@ -80,7 +80,7 @@ export default {
         this.getStartedPayload.force_update = false
         this.greeting.force_update = false
         this.unsyncedN = 0
-        this.$refs.notifier.pushNotification(`syced!`, 'All static elements are now synced!', 'success', 6000)
+        this.$refs.notifier.pushNotification(`synced!`, 'All static elements are now synced!', 'success', 6000)
       } catch (e) {
         this.$refs.notifier.pushNotification('cannot load!', `An error occured during sync. Error code: ${e.response.status}`, 'error', 10000)
       }

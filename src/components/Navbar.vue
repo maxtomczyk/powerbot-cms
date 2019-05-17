@@ -7,7 +7,7 @@
         <div class="navbar__side navbar__side--flex">
           <font-awesome-icon @click="$refs.drawer.toggle()" icon="bars" size="lg" class="navbar__menu-icon" />
           <div class="navbar__view-title">
-            {{ $route.name.toLowerCase() }}
+            {{ routeName }}
           </div>
         </div>
         <div class="navbar__side">
@@ -32,17 +32,27 @@
 export default {
   data() {
     return {
-      user: {}
+      user: {},
+      routeName: ''
     }
   },
 
   methods: {
+    updateRouteName(){
+      if (this.$route && this.$route.name) this.routeName = this.$route.name.toLowerCase()
+    }
+  },
 
+  watch: {
+    '$route': function(to, from) {
+      this.routeName = to.name.toLowerCase()
+    }
   },
 
   created() {
     let data = JSON.parse(localStorage.getItem('user'))
     this.user = data
+    this.updateRouteName()
   }
 }
 </script>
