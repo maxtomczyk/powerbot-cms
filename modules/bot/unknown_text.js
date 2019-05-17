@@ -91,7 +91,7 @@ async function useDialogflow (message, user) {
   }
 }
 
-module.exports = async function (message, user) {
+module.exports = async function (message, user, cms, postbacks) {
   try {
     const patterns = await preMessages.loadRegexMessages()
     let success = false
@@ -111,7 +111,7 @@ module.exports = async function (message, user) {
 
     if (nlpResult) {
       logDialogflowDebug(nlpResult, message)
-      const nlpHandled = await userNLP(simplifyDialogflowResponse(nlpResult), message, user, nlpData)
+      const nlpHandled = await userNLP(cms, postbacks, simplifyDialogflowResponse(nlpResult), message, user, nlpData)
       if (nlpHandled) return
       await registerPhrase(message)
       await message.reply.raw(await messages.get('default', user))

@@ -22,6 +22,7 @@ const messages = require('./modules/messages')
 const attachments = require('./modules/attachments')
 const jobs = require('./modules/jobs')
 const emails = require('./modules/emails')
+const PostbackSimulator = require('./modules/bot/models/PostbackSimulator')
 
 const stats = new Stats()
 
@@ -198,5 +199,6 @@ module.exports = {
   logger: logger,
   User: User,
   messages: messages,
-  attachments: attachments
+  attachments: attachments,
+  PostbackSimulator
 }
