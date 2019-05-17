@@ -1,6 +1,7 @@
 <template>
 <div class="attachments view-with-navbar">
   <notifier ref="notifier"></notifier>
+  <loader ref="loader"></loader>
 
   <div class="view-actions">
     <div class="button button--blue" :class="(unsyncedN) ? '' : 'button--disabled'" @click="syncAll">
@@ -95,19 +96,23 @@ export default {
 
     async syncAll() {
       try {
+        this.$refs.loader.open('Uploading attachments...')
         const updated = await axios.post('/api/sync_attachments', {})
         this.attachments = updated.data.attachments
         this.countUnsynced()
         this.$forceUpdate()
         if (!updated.data.errors) this.$refs.notifier.pushNotification('synced', 'All attachments are synced now.', 'success', 5000)
         else this.$refs.notifier.pushNotification('synced', `Attachment sync finished with ${updated.data.errors} error(s)`, 'warning', 5000)
+        this.$refs.loader.close()
       } catch (e) {
         this.$refs.notifier.pushNotification('cannot sync', `An error occured during synchronization. Error code: ${e.response.status}.`, 'error')
+        this.$refs.loader.close()
       }
     },
 
     async syncAttachment(id, i) {
       try {
+        this.$refs.loader.open('Uploading attachment...')
         const updated = await axios.post('/api/sync_attachment', {
           id
         })
@@ -115,8 +120,10 @@ export default {
         this.$refs.notifier.pushNotification('saved', 'Changes to attachment has been saved.', 'success', 5000)
         this.countUnsynced()
         this.$forceUpdate()
+        this.$refs.loader.close()
       } catch (e) {
         this.$refs.notifier.pushNotification('cannot sync', `An error occured during synchronization. Error code: ${e.response.status}.`, 'error')
+        this.$refs.loader.close()
       }
     },
 

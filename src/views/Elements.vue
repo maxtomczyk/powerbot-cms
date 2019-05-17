@@ -1,5 +1,6 @@
 <template>
 <div class="elements view-with-navbar">
+  <loader ref="loader"></loader>
   <notifier ref="notifier"></notifier>
   <div class="view-actions">
     <div class="button button--blue" @click="saveAll">
@@ -75,14 +76,17 @@ export default {
   methods: {
     async syncAll() {
       try {
+        this.$refs.loader.open('Pushing elements to server...')
         await axios.post('/api/elements/sync')
         this.menu.force_update = false
         this.getStartedPayload.force_update = false
         this.greeting.force_update = false
         this.unsyncedN = 0
         this.$refs.notifier.pushNotification(`synced!`, 'All static elements are now synced!', 'success', 6000)
+        this.$refs.loader.close()
       } catch (e) {
         this.$refs.notifier.pushNotification('cannot load!', `An error occured during sync. Error code: ${e.response.status}`, 'error', 10000)
+        this.$refs.loader.close()
       }
     },
 

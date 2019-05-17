@@ -368,10 +368,6 @@ export default {
     margin: 15px 0;
   }
 
-  &__text-variant{
-
-  }
-
   &__variant-remove{
     color: $orange;
     position: relative;

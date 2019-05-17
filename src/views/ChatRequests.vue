@@ -1,5 +1,6 @@
 <template>
 <div class="view-with-navbar">
+  <loader ref="loader"></loader>
   <notifier ref="notifier"></notifier>
   <custom-dialog ref="unlockDialog">
     <div slot="custom-dialog-header">
@@ -90,6 +91,7 @@ export default {
   methods: {
     async unlockUser(id) {
       try {
+        this.$refs.loader.open('Unlocking user...')
         await axios.post('/api/chat_request', {
           id: id
         })
@@ -99,9 +101,11 @@ export default {
         })
 
         this.$refs.unlockDialog.closeDialog()
+        this.$refs.loader.close()
         this.$refs.notifier.pushNotification('unlocked!', `Bot is now active for this user.`, 'success', 10000)
       } catch (e) {
         this.$refs.unlockDialog.closeDialog()
+        this.$refs.loader.close()
         this.$refs.notifier.pushNotification('cannot unlock!', `There was an error during request. Error code: ${e.response.status}`, 'error', 10000)
       }
     },

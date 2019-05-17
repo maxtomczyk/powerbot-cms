@@ -30,6 +30,8 @@ import Radio from '@/components/Radio'
 import MessagePreview from '@/components/MessagePreview'
 import Checkbox from '@/components/Checkbox'
 import DateRange from '@/components/DateRange'
+import Loader from '@/components/Loader'
+import Spinner from '@/components/Spinner'
 
 library.add(fas)
 
@@ -52,6 +54,8 @@ Vue.component('message-preview', MessagePreview)
 Vue.component('checkbox', Checkbox)
 Vue.component('apexchart', VueApexCharts)
 Vue.component('date-range', DateRange)
+Vue.component('loader', Loader)
+Vue.component('spinner', Spinner)
 
 Vue.config.productionTip = false
 
