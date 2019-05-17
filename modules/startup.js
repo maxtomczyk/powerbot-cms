@@ -20,40 +20,6 @@ async function createGoogleAuthFile () {
   }
 }
 
-async function checkAttachments () {
-  try {
-    let attachments = await knex('attachments').where('force_update', true).orWhere('attachment_id', null)
-    if (!attachments.length > 0) return logger.info(`All attachment's up to date`)
-    logger.info(`${attachments.length} attachment(s) to update. Starting update process...`)
-
-    let errors = 0
-    for (let attachment of attachments) {
-      try {
-        let attachment_id = null
-        let ext = /.\w*$/gmi.exec(attachment.url)[0]
-
-        if (ext === '.jpg' || ext === '.jpeg' || ext === '.png' || ext === '.gif') attachment_id = await incredbot.upload.fromUrl('image', attachment.url)
-        else attachment_id = await incredbot.upload.fromUrl('video', attachment.url)
-
-        await knex('attachments').update({
-          attachment_id: attachment_id,
-          force_update: false
-        }).where('id', attachment.id)
-
-        logger.info(`${attachment.name} : Uploaded`)
-      } catch (e) {
-        logger.error(`${attachment.name} : ${e.response.data.error.message}`)
-        errors++
-      }
-    }
-
-    if (errors === 0) logger.info('All attachments updates finished')
-    else logger.warn(`Finished attachments updates with ${errors} error(s). Details are logged above`)
-  } catch (e) {
-    throw e
-  }
-}
-
 async function checkChannels () {
   try {
     let start = await knex('settings').where('name', 'channels_check').first()
@@ -117,7 +83,7 @@ async function checkChannelsSync () {
         await user.syncChannelsWithRemote()
       } catch (e) {
         logger.error(e)
-        errors++;
+        errors++
       }
     }
     await knex('settings').update('value', 'false').where('name', 'channels_sync_check')
