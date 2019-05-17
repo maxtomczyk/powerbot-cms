@@ -140,6 +140,7 @@ export default {
       const attachments = await axios.get('/api/attachments/')
 
       this.attachments = attachments.data
+      this.countUnsynced()
     } catch (e) {
       this.$refs.notifier.pushNotification('cannot load', `An error occured during data load. Error code: ${e.response.status}.`, 'error')
     }
