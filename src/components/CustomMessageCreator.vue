@@ -61,7 +61,7 @@
                   </div>
                   <div class="message-creator__qr-row">
                     <label class="label label--centered">Title
-                      <input type="text" v-model="qr.title" class="input" @input="refreshPreview">
+                      <input type="text" v-model="qr.title" class="input" @input="QrOrBtnInput">
                     </label>
                     <label class="label label--centered">Payload
                       <input type="text" v-model="qr.payload" class="input">
@@ -80,7 +80,7 @@
                   </div>
                   <div class="message-creator__qr-row">
                     <label class="label label--centered">Title
-                      <input type="text" v-model="btn.title" class="input" @input="refreshPreview">
+                      <input type="text" v-model="btn.title" class="input" @input="QrOrBtnInput">
                     </label>
                     <label class="label label--centered">Payload / URL
                       <input type="text" v-model="btn.payload" class="input">
@@ -297,6 +297,21 @@ export default {
         if (!this.message[lang].raw) this.message[lang].raw = ''
         if (!this.message[lang].texts) this.message[lang].texts = ['']
       }
+    },
+
+    QrOrBtnInput(e){
+      const valid = this.validateQrOrButton(e)
+      if (!valid) return
+      this.refreshPreview()
+    },
+
+    validateQrOrButton(e){
+      if (!e.data) return true
+      if (e.target.value.length > 20){
+        e.target.value = e.target.value.substring(0, 20)
+        return false
+      }
+      return true
     }
   },
 
