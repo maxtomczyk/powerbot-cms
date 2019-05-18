@@ -58,7 +58,6 @@ module.exports = async function (message, user) {
 
     case 'CONTACT_UNLOCK_BOT':
       {
-        console.log('xd')
         let u = new User(user.messenger_id)
         await u.disableChatLock()
         await message.reply.raw(await messages.get('contact_bot_unlocked', user))

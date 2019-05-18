@@ -77,9 +77,6 @@ export default {
             &__wrapper {
                 border: 2px solid $green;
             }
-
-            &__inside {
-                }
         }
     }
 

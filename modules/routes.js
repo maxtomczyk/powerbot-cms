@@ -218,4 +218,8 @@ router.delete('/api/keyword', auth.authenticate(), async (req, res) => {
   api.keywords.remove(req, res)
 })
 
+router.delete('/api/messages/cache', auth.authenticate(), async (req, res) => {
+  api.messages.flushCache(req, res)
+})
+
 module.exports = router

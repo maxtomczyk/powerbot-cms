@@ -1,5 +1,7 @@
 const knex = require('../knex')
+const redis = require('../redis')
 const logger = require('../logger')
+const config = require('../../config/config')
 
 async function listPlugs (req, res) {
   try {
@@ -112,11 +114,28 @@ async function createPlug (req, res) {
   }
 }
 
+async function flushCache (req, res) {
+  try {
+    const keys = await redis.keysAsync(`${config.redis.prefix}message:*`)
+    await redis.delAsync('pattern-messages')
+    await redis.delAsync('default-lang')
+    await redis.delAsync('custom-postbacks')
+    for (let key of keys) {
+      await redis.delAsync(key.replace(config.redis.prefix, ''))
+    }
+    res.sendStatus(200)
+  } catch (e) {
+    logger.error(e)
+    res.sendStatus(500)
+  }
+}
+
 module.exports = {
   listPlugs,
   listGroups,
   update,
   remove,
   listUnknownPhrases,
-  createPlug
+  createPlug,
+  flushCache
 }
