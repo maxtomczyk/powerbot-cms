@@ -17,7 +17,7 @@ async function listPlugs (req, res) {
 
 async function listGroups (req, res) {
   try {
-    const groups = await knex('messages_groups')
+    const groups = await knex('messages_groups').orderBy('sort_index', 'asc')
     res.json(groups)
   } catch (e) {
     logger.error(e)
