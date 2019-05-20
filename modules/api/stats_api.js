@@ -357,31 +357,6 @@ async function usersMonthlyChartData (req, res) {
           rows[i].new_users += dailyRow.new_users
         }
       }
-
-      if (nextRow) {
-        if (nextRow.start - row.start > (7 * 24 * 60 * 60 * 1000) + 10000) {
-          let startDate = row.end
-          let insertData = []
-          while (startDate < nextRow.start) {
-            insertData.push({
-              all_users: null,
-              unique_users: null,
-              start: startDate,
-              new_users: null,
-              end: new Date(+new Date(startDate) + 7 * 24 * 60 * 60 * 1000)
-            })
-            startDate = new Date(+new Date(startDate) + 7 * 24 * 60 * 60 * 1000)
-          }
-          insertData.reverse()
-          for (insert of insertData) {
-            let o = i + 1
-            rows.splice(o, 0, insert)
-            o++
-          }
-
-          i = i + insertData.length
-        }
-      }
     }
 
     res.json({
