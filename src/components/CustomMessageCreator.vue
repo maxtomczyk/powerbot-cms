@@ -1,123 +1,254 @@
 <template>
-<div class="message-creator__wrapper">
-  <notifier ref="notifier"></notifier>
-  <custom-dialog ref="messageDialog" class="dialog--no-header-margin dialog--no-overflow">
-    <div slot="custom-dialog-header">
-      <h1>Edit message</h1>
-      <span style="display: block">{{ name }}</span>
-    </div>
-    <div slot="custom-dialog-content">
-      <div class="container message-creator__dialog-container">
-        <tabs style="width: 100%; margin-bottom: 0;" @change="tabsChange($event)">
-          <div v-for="(langMessage, lang) in message" :id="lang" :key="lang">{{ langNames[lang].toUpperCase() }}</div>
-        </tabs>
-        <div class="message-creator__type">
-          <radio :actual="type" v-model="type" val="text">Text</radio>
-          <radio :actual="type" v-model="type" val="buttons">Buttons</radio>
-          <radio :actual="type" v-model="type" val="quick_replies">Quick replies</radio>
-          <radio :actual="type" v-model="type" val="raw">Raw JSON</radio>
-        </div>
-        <div v-show="activeLang === lang" v-for="(langMessage, lang) in message" :key="`${lang}-row`">
-          <div class="row" v-if="type === 'text'">
-            <div class="col-xs-12 col-lg-8">
-              <div class="message-creator__column">
-                <h3>Text variants</h3>
-                <div v-for="(text, i) in langMessage.texts" :key="`${lang}${i}`" class="message-creator__text-variant">
-                    <label class="label label--centered">Variant {{ i + 1 }} <span class="message-creator__variant-remove" @click="deleteText(i)" v-tooltip.top-center="'Remove text variant.'">remove</span>
-                      <textarea v-model="langMessage.texts[i]" class="message-creator__textarea textarea input" style="width: 100%;" rows="3"></textarea>
-                    </label>
-                </div>
-                <div style="text-align: center">
-                  <font-awesome-icon @click="addText()" icon="plus" size="lg" class="message-creator__icon" v-tooltip.top-center="'Add new text variant.'" />
-                </div>
-              </div>
-            </div>
-            <div class="col-xs-12 col-lg-4">
-              <div class="message-creator__column">
-                <message-preview :message="langMessage" ref="mPreview1" :type="type"></message-preview>
-              </div>
-            </div>
+  <div class="message-creator__wrapper">
+    <notifier ref="notifier"></notifier>
+    <custom-dialog ref="messageDialog" class="dialog--no-header-margin dialog--no-overflow">
+      <div slot="custom-dialog-header">
+        <h1>Edit message</h1>
+        <span style="display: block">{{ name }}</span>
+      </div>
+      <div slot="custom-dialog-content">
+        <div class="container message-creator__dialog-container">
+          <tabs style="width: 100%; margin-bottom: 0;" @change="tabsChange($event)">
+            <div
+              v-for="(langMessage, lang) in message"
+              :id="lang"
+              :key="lang"
+            >{{ langNames[lang].toUpperCase() }}</div>
+          </tabs>
+          <div class="message-creator__type">
+            <radio :actual="type" v-model="type" val="text">Text</radio>
+            <radio :actual="type" v-model="type" val="buttons">Buttons</radio>
+            <radio :actual="type" v-model="type" val="quick_replies">Quick replies</radio>
+            <radio :actual="type" v-model="type" val="raw">Raw JSON</radio>
           </div>
-          <div class="row" v-if="type === 'buttons' || type === 'quick_replies'" style="width: 100%;">
-            <div class="col-xs-12 col-lg-4">
-              <div class="message-creator__column">
-                <h3>Text variants</h3>
-                  <div v-for="(text, i) in langMessage.texts" :key="`${lang}${i}`" class="message-creator__text-variant">
-                    <label class="label label--centered">Variant {{ i + 1 }} <span class="message-creator__variant-remove" @click="deleteText(i)" v-tooltip.top-center="'Remove text variant.'">remove</span>
-                      <textarea v-model="langMessage.texts[i]" class="message-creator__textarea textarea input" style="width: 100%;" rows="3"></textarea>
+          <div
+            v-show="activeLang === lang"
+            v-for="(langMessage, lang) in message"
+            :key="`${lang}-row`"
+          >
+            <div class="row" v-if="type === 'text'">
+              <div class="col-xs-12 col-lg-8">
+                <div class="message-creator__column">
+                  <h3>Text variants</h3>
+                  <div
+                    v-for="(text, i) in langMessage.texts"
+                    :key="`${lang}${i}`"
+                    class="message-creator__text-variant"
+                  >
+                    <label class="label label--centered">
+                      Variant {{ i + 1 }}
+                      <span
+                        class="message-creator__variant-remove"
+                        @click="deleteText(i)"
+                        v-tooltip.top-center="'Remove text variant.'"
+                      >remove</span>
+                      <textarea
+                        v-model="langMessage.texts[i]"
+                        class="message-creator__textarea textarea input"
+                        style="width: 100%;"
+                        rows="3"
+                      ></textarea>
                     </label>
                   </div>
                   <div style="text-align: center">
-                    <font-awesome-icon @click="addText()" icon="plus" size="lg" class="message-creator__icon" v-tooltip.top-center="'Add new text variant.'" />
+                    <font-awesome-icon
+                      @click="addText()"
+                      icon="plus"
+                      size="lg"
+                      class="message-creator__icon"
+                      v-tooltip.top-center="'Add new text variant.'"
+                    />
                   </div>
-              </div>
-            </div>
-            <div class="col-xs-12 col-lg-4">
-              <div v-if="type === 'quick_replies'" class="message-creator__column">
-                <h3>Quick Replies</h3>
-                <div class="message-creator__qr-row-wrapper" v-for="(qr, i) in langMessage.quick_replies" :key="hash(createHashString(i+1, 'qr'))">
-                  <div class="label">Reply {{ i + 1 }}
-                    <span class="message-creator__variant-remove" @click="deleteQr(i)" v-tooltip.top-center="'Remove quick reply.'">remove</span>
-                  </div>
-                  <div class="message-creator__qr-row">
-                    <label class="label label--centered">Title
-                      <input type="text" v-model="qr.title" class="input" @input="QrOrBtnInput">
-                    </label>
-                    <label class="label label--centered">Payload
-                      <input type="text" v-model="qr.payload" class="input">
-                    </label>
-                  </div>
-                </div>
-                <div style="text-align: center">
-                  <font-awesome-icon v-if="langMessage.quick_replies.length < 10" @click="addQr()" icon="plus" size="lg" class="message-creator__icon" v-tooltip.top-center="'Add quick reply.'" />
                 </div>
               </div>
-              <div v-if="type === 'buttons'" class="message-creator__column">
-                <h3>Buttons</h3>
-                <div class="message-creator__qr-row-wrapper" v-for="(btn, i) in langMessage.buttons" :key="hash(createHashString(i+1, 'qr'))">
-                  <div class="label">Button {{ i + 1 }}
-                    <span class="message-creator__variant-remove" @click="deleteBtn(i)" v-tooltip.top-center="'Remove button.'">remove</span>
-                  </div>
-                  <div class="message-creator__qr-row">
-                    <label class="label label--centered">Title
-                      <input type="text" v-model="btn.title" class="input" @input="QrOrBtnInput">
-                    </label>
-                    <label class="label label--centered">Payload / URL
-                      <input type="text" v-model="btn.payload" class="input">
-                    </label>
-                  </div>
-                </div>
-                <div style="text-align: center">
-                  <font-awesome-icon v-if="langMessage.buttons.length < 3" @click="addButton()" icon="plus" size="lg" class="message-creator__icon" v-tooltip.top-center="'Add button.'" />
+              <div class="col-xs-12 col-lg-4">
+                <div class="message-creator__column">
+                  <message-preview :message="langMessage" ref="mPreview1" :type="type"></message-preview>
                 </div>
               </div>
             </div>
-            <div class="col-xs-12 col-lg-4">
-              <div class="message-creator__column">
-                <message-preview ref="mPreview2" :message="langMessage" :type="type"></message-preview>
+            <div
+              class="row"
+              v-if="type === 'buttons' || type === 'quick_replies'"
+              style="width: 100%;"
+            >
+              <div class="col-xs-12 col-lg-4">
+                <div class="message-creator__column">
+                  <h3>Text variants</h3>
+                  <div
+                    v-for="(text, i) in langMessage.texts"
+                    :key="`${lang}${i}`"
+                    class="message-creator__text-variant"
+                  >
+                    <label class="label label--centered">
+                      Variant {{ i + 1 }}
+                      <span
+                        class="message-creator__variant-remove"
+                        @click="deleteText(i)"
+                        v-tooltip.top-center="'Remove text variant.'"
+                      >remove</span>
+                      <textarea
+                        v-model="langMessage.texts[i]"
+                        class="message-creator__textarea textarea input"
+                        style="width: 100%;"
+                        rows="3"
+                      ></textarea>
+                    </label>
+                  </div>
+                  <div style="text-align: center">
+                    <font-awesome-icon
+                      @click="addText()"
+                      icon="plus"
+                      size="lg"
+                      class="message-creator__icon"
+                      v-tooltip.top-center="'Add new text variant.'"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="col-xs-12 col-lg-4">
+                <div v-if="type === 'quick_replies'" class="message-creator__column">
+                  <h3>Quick Replies</h3>
+                  <div
+                    class="message-creator__qr-row-wrapper"
+                    v-for="(qr, i) in langMessage.quick_replies"
+                    :key="hash(createHashString(i+1, 'qr'))"
+                  >
+                    <div class="label message-creator__label">
+                      <div class="message-creator__label-title">Reply {{ i + 1 }}</div>
+                      <div class="message-creator__sort-icons">
+                        <font-awesome-icon
+                          :class="{ 'sort-icon--disabled': (i === 0) }"
+                          icon="sort-up"
+                          size="lg"
+                          @click="sortBtnOrQr('up', i, langMessage.quick_replies)"
+                        />
+                        <font-awesome-icon
+                          :class="{ 'sort-icon--disabled': (i === langMessage.quick_replies.length - 1) }"
+                          icon="sort-down"
+                          size="lg"
+                          @click="sortBtnOrQr('down', i, langMessage.quick_replies)"
+                        />
+                      </div>
+                      <span
+                        class="message-creator__variant-remove"
+                        @click="deleteQr(i)"
+                        v-tooltip.top-center="'Remove quick reply.'"
+                      >remove</span>
+                    </div>
+                    <div class="message-creator__qr-row">
+                      <label class="label label--centered">
+                        Title
+                        <input
+                          type="text"
+                          v-model="qr.title"
+                          class="input"
+                          @input="QrOrBtnInput"
+                        >
+                      </label>
+                      <label class="label label--centered">
+                        Payload
+                        <input type="text" v-model="qr.payload" class="input">
+                      </label>
+                    </div>
+                  </div>
+                  <div style="text-align: center">
+                    <font-awesome-icon
+                      v-if="langMessage.quick_replies.length < 10"
+                      @click="addQr()"
+                      icon="plus"
+                      size="lg"
+                      class="message-creator__icon"
+                      v-tooltip.top-center="'Add quick reply.'"
+                    />
+                  </div>
+                </div>
+                <div v-if="type === 'buttons'" class="message-creator__column">
+                  <h3>Buttons</h3>
+                  <div
+                    class="message-creator__qr-row-wrapper"
+                    v-for="(btn, i) in langMessage.buttons"
+                    :key="hash(createHashString(i+1, 'qr'))"
+                  >
+                    <div class="label message-creator__label">
+                      <div class="message-creator__label-title">Button {{ i + 1 }}</div>
+                      <div class="message-creator__sort-icons">
+                        <font-awesome-icon
+                          :class="{ 'sort-icon--disabled': (i === 0) }"
+                          icon="sort-up"
+                          size="lg"
+                          @click="sortBtnOrQr('up', i, langMessage.buttons)"
+                        />
+                        <font-awesome-icon
+                          :class="{ 'sort-icon--disabled': (i === langMessage.buttons.length - 1) }"
+                          icon="sort-down"
+                          size="lg"
+                          @click="sortBtnOrQr('down', i, langMessage.buttons)"
+                        />
+                      </div>
+                      <span
+                        class="message-creator__variant-remove"
+                        @click="deleteBtn(i)"
+                        v-tooltip.top-center="'Remove button.'"
+                      >remove</span>
+                    </div>
+                    <div class="message-creator__qr-row">
+                      <label class="label label--centered">
+                        Title
+                        <input
+                          type="text"
+                          v-model="btn.title"
+                          class="input"
+                          @input="QrOrBtnInput"
+                        >
+                      </label>
+                      <label class="label label--centered">
+                        Payload / URL
+                        <input type="text" v-model="btn.payload" class="input">
+                      </label>
+                    </div>
+                  </div>
+                  <div style="text-align: center">
+                    <font-awesome-icon
+                      v-if="langMessage.buttons.length < 3"
+                      @click="addButton()"
+                      icon="plus"
+                      size="lg"
+                      class="message-creator__icon"
+                      v-tooltip.top-center="'Add button.'"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="col-xs-12 col-lg-4">
+                <div class="message-creator__column">
+                  <message-preview ref="mPreview2" :message="langMessage" :type="type"></message-preview>
+                </div>
               </div>
             </div>
-          </div>
-          <div v-if="type === 'raw'" style="width: 100%;">
-            <div class="col-xs-12">
-              <div class="message-creator__column">
-                <h3>JSON</h3>
-                <label class="label label--centered">
-                  <textarea v-model="langMessage.raw" class="message-creator__textarea textarea textarea--bordered input" style="width: 100%;" rows="12"></textarea>
-                </label>
+            <div v-if="type === 'raw'" style="width: 100%;">
+              <div class="col-xs-12">
+                <div class="message-creator__column">
+                  <h3>JSON</h3>
+                  <label class="label label--centered">
+                    <textarea
+                      v-model="langMessage.raw"
+                      class="message-creator__textarea textarea textarea--bordered input"
+                      style="width: 100%;"
+                      rows="12"
+                    ></textarea>
+                  </label>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-    <div slot="custom-dialog-buttons">
-      <div class="dialog__button dialog__button--blue" @click="create">
-        SAVE
+      <div slot="custom-dialog-buttons">
+        <div class="dialog__button dialog__button--blue" @click="create">SAVE</div>
       </div>
-    </div>
-  </custom-dialog>
-</div>
+    </custom-dialog>
+  </div>
 </template>
 
 <script>
@@ -126,7 +257,7 @@ import hash from 'object-hash'
 
 export default {
   props: ['active', 'langs', 'message', 'mType', 'id', 'name'],
-  data() {
+  data () {
     return {
       activeLang: null,
       error: false,
@@ -152,15 +283,15 @@ export default {
   },
 
   methods: {
-    openDialog(){
+    openDialog () {
       this.$refs.messageDialog.openDialog()
     },
 
-    tabsChange(e){
+    tabsChange (e) {
       this.activeLang = e
     },
 
-    addButton() {
+    addButton () {
       for (let lang in this.message) {
         this.message[lang].buttons.push(Object.assign({}, this.elements.button))
       }
@@ -169,7 +300,7 @@ export default {
       this.refreshPreview()
     },
 
-    deleteBtn(i) {
+    deleteBtn (i) {
       for (let lang in this.message) {
         this.message[lang].buttons.splice(i, 1)
       }
@@ -177,7 +308,7 @@ export default {
       this.refreshPreview()
     },
 
-    addQr() {
+    addQr () {
       for (let lang in this.message) {
         this.message[lang].quick_replies.push(Object.assign({}, this.elements.quick_reply))
       }
@@ -186,7 +317,7 @@ export default {
       this.refreshPreview()
     },
 
-    deleteQr(i) {
+    deleteQr (i) {
       for (let lang in this.message) {
         this.message[lang].quick_replies.splice(i, 1)
       }
@@ -194,25 +325,25 @@ export default {
       this.refreshPreview()
     },
 
-    refreshPreview(){
+    refreshPreview () {
       this.$refs.mPreview2[0].refresh()
     },
 
-    addText() {
+    addText () {
       for (let lang in this.message) {
         this.message[lang].texts.push('')
       }
       this.$forceUpdate()
     },
 
-    deleteText(i) {
+    deleteText (i) {
       for (let lang in this.message) {
         this.message[lang].texts.splice(i, 1)
       }
       this.$forceUpdate()
     },
 
-    async create() {
+    async create () {
       try {
         switch (this.type) {
           case 'text':
@@ -270,22 +401,22 @@ export default {
       }
     },
 
-    isUrl(str) {
+    isUrl (str) {
       // eslint-disable-next-line
       const pattern = /^(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,}))\.?)(?::\d{2,5})?(?:[/?#]\S*)?$/gmi
       return pattern.test(str)
     },
 
-    createHashString(i, c){
+    createHashString (i, c) {
       let els = []
-      for (let o = 0; o < i; o++){
+      for (let o = 0; o < i; o++) {
         els.push(c)
       }
       els.push(i)
       return els.join('')
     },
 
-    setProps(){
+    setProps () {
       for (let lang in this.message) {
         if (!this.message[lang].quick_replies) this.message[lang].quick_replies = [Object.assign({}, this.elements.quick_reply), Object.assign({}, this.elements.quick_reply)]
         if (!this.message[lang].buttons) this.message[lang].buttons = [Object.assign({}, this.elements.button)]
@@ -294,24 +425,32 @@ export default {
       }
     },
 
-    QrOrBtnInput(e){
+    QrOrBtnInput (e) {
       const valid = this.validateQrOrButton(e)
       if (!valid) return
       this.refreshPreview()
     },
 
-    validateQrOrButton(e){
+    validateQrOrButton (e) {
       if (!e.data) return true
-      if (e.target.value.length > 20){
+      if (e.target.value.length > 20) {
         e.target.value = e.target.value.substring(0, 20)
         return false
       }
       return true
+    },
+
+    sortBtnOrQr (direction, index, arr) {
+      const swapIndex = (direction === 'up') ? index - 1 : index + 1
+      if (swapIndex < 0 || swapIndex > arr.length - 1) return
+      [arr[index], arr[swapIndex]] = [arr[swapIndex], arr[index]]
+      this.$forceUpdate()
+      this.refreshPreview()
     }
   },
 
   computed: {
-    previewData(){
+    previewData () {
       return {
         type: this.type,
         elements: this.elements
@@ -319,7 +458,7 @@ export default {
     }
   },
 
-  created() {
+  created () {
     for (let lang of this.langs) {
       this.langNames[lang.locale] = lang.name
       this.temp[lang.locale] = {}
@@ -340,35 +479,47 @@ export default {
 </script>
 
 <style lang="scss">
-@import '../styles/variables';
+@import "../styles/variables";
 
-.message-creator{
-  &__column{
+.message-creator {
+  &__column {
     overflow-y: scroll;
     height: 45vh;
 
     &::-webkit-scrollbar {
-        width: 2px;
+      width: 2px;
     }
 
     &::-webkit-scrollbar-thumb {
-        background-color: $font-primary;
-        border-radius: 2px;
+      background-color: $font-primary;
+      border-radius: 2px;
     }
   }
 
-  &__textarea{
+  &__label {
+    display: flex;
+    align-items: center;
+
+    > .message-creator__label-title {
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      margin-right: 5px;
+    }
+  }
+
+  &__textarea {
     resize: vertical;
   }
 
-  &__type{
+  &__type {
     display: flex;
     justify-content: center;
     align-items: center;
     margin: 15px 0;
   }
 
-  &__variant-remove{
+  &__variant-remove {
     color: $orange;
     position: relative;
     width: 100%;
@@ -376,47 +527,71 @@ export default {
     font-weight: 400;
     text-decoration: underline;
     cursor: pointer;
-    font-size: .9em;
+    font-size: 0.9em;
 
-    &:hover{
+    &:hover {
       color: $orange-hover;
     }
   }
 
-  &__qr-row{
+  &__sort-icons {
+    display: inline-flex;
+    margin-left: 5px;
+    margin-right: -14px;
+    color: $blue;
+    cursor: pointer;
+
+    & > * {
+      font-size: 28px;
+
+      &:hover {
+        color: $blue-hover;
+      }
+      &:last-child {
+        margin-left: -50%;
+        margin-top: 2px;
+      }
+    }
+
+    & > .sort-icon--disabled {
+      color: $borders-focus;
+    }
+  }
+
+  &__qr-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
     width: 100%;
 
-    label{
+    label {
       width: 45%;
     }
   }
 
-  &__icon{
+  &__icon {
     color: $blue;
     cursor: pointer;
 
-    &:hover{
+    &:hover {
       color: $blue-hover;
     }
   }
 
-  &__dialog-container{
+  &__dialog-container {
     width: 90vw;
     min-width: 1100px;
   }
 }
 
 @media only screen and (max-width: 768px) {
-  .message-creator{
-    &__dialog-container{
+  .message-creator {
+    &__dialog-container {
       width: 100vw;
       min-width: 0;
     }
 
-    &__column{
+    &__column {
       max-height: 65vh;
       width: 95vw;
       margin-bottom: 40px;
