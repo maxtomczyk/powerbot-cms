@@ -203,8 +203,24 @@
                         >
                       </label>
                       <label class="label label--centered">
-                        Payload / URL
-                        <input type="text" v-model="btn.payload" class="input">
+                        <div>
+                          <span>Payload / URL</span>
+                          <font-awesome-icon
+                            :class="{ 'message-creator__link-convert--hidden': (!isUrl(btn.payload)) }"
+                            class="message-creator__link-convert"
+                            icon="link"
+                            size="md"
+                            @click="convertLink(btn)"
+                          />
+                        </div>
+                        <input
+                          type="text"
+                          v-model="btn.payload"
+                          class="input"
+                          data-prev-value
+                          @focus="btnFocusHandler"
+                          @input="btnInputHandler"
+                        >
                       </label>
                     </div>
                   </div>
@@ -446,6 +462,26 @@ export default {
       [arr[index], arr[swapIndex]] = [arr[swapIndex], arr[index]]
       this.$forceUpdate()
       this.refreshPreview()
+    },
+
+    btnInputHandler (e) {
+      const prev = e.target.dataset.prevValue
+      const actual = e.target.value
+      e.target.dataset.prevValue = actual
+      if (this.isUrl(prev) !== this.isUrl(actual)) this.$forceUpdate()
+    },
+
+    btnFocusHandler (e) {
+      e.target.dataset.prevValue = e.target.value
+    },
+
+    convertLink (btn) {
+      if (/\/open_url\?url=.*/.test(btn.payload.replace(window.location.origin, ''))){
+        btn.payload = btn.payload.replace(/^.*\/open_url\?url=/, '')
+        return
+      }
+      btn.payload = `${window.location.origin}/open_url?url=${btn.payload}`
+      this.$forceUpdate()
     }
   },
 
@@ -581,6 +617,17 @@ export default {
   &__dialog-container {
     width: 90vw;
     min-width: 1100px;
+  }
+
+  &__link-convert {
+    color: $blue;
+    cursor: pointer;
+    margin-left: 4px;
+    &--hidden {
+      opacity: 0;
+      pointer-events: none;
+      cursor: default;
+    }
   }
 }
 
