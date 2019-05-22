@@ -368,6 +368,17 @@ async function usersMonthlyChartData (req, res) {
   }
 }
 
+async function openUrl (req, res) {
+  const target = req.query.url
+  try {
+    redis.incr(`url-entry-counter:${target}`)
+    res.redirect(target)
+  } catch (e) {
+    logger.error(e)
+    res.redirect(target)
+  }
+}
+
 
 module.exports = {
   systemStatus,
@@ -378,5 +389,6 @@ module.exports = {
   botData,
   usersDailyChartData,
   usersWeeklyChartData,
-  usersMonthlyChartData
+  usersMonthlyChartData,
+  openUrl
 }

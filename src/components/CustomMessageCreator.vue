@@ -209,7 +209,7 @@
                             :class="{ 'message-creator__link-convert--hidden': (!isUrl(btn.payload)) }"
                             class="message-creator__link-convert"
                             icon="link"
-                            size="md"
+                            size="sm"
                             @click="convertLink(btn)"
                           />
                         </div>
@@ -476,11 +476,12 @@ export default {
     },
 
     convertLink (btn) {
-      if (/\/open_url\?url=.*/.test(btn.payload.replace(window.location.origin, ''))){
-        btn.payload = btn.payload.replace(/^.*\/open_url\?url=/, '')
+      if (/\/api\/open_url\?url=.*/.test(btn.payload.replace(window.location.origin, ''))) {
+        btn.payload = btn.payload.replace(/^.*\/api\/open_url\?url=/, '')
+        this.$forceUpdate()
         return
       }
-      btn.payload = `${window.location.origin}/open_url?url=${btn.payload}`
+      btn.payload = `${window.location.origin}/api/open_url?url=${btn.payload}`
       this.$forceUpdate()
     }
   },

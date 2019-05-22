@@ -130,6 +130,10 @@ router.get('/api/version', auth.authenticate(), async (req, res) => {
   api.stats.version(req, res)
 })
 
+router.get('/api/open_url', async (req, res) => {
+  api.stats.openUrl(req, res)
+})
+
 router.put('/api/admins', auth.authenticate(), async (req, res) => {
   api.admins.create(req, res)
 })
