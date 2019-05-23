@@ -2,6 +2,7 @@ const CronJob = require('cron').CronJob
 const Stats = require('./models/Stats')
 const dbDumper = require('./db_dump')
 const logger = require('./logger')
+const count = require('./clicks_counter.js')
 const config = require('../config/config')
 
 const cronTimezone = config.settings.statsCollectorTimezone || 'Europe/London'
@@ -61,12 +62,21 @@ function start () {
     }
   }, null, true, cronTimezone)
 
+  let cliksCount = new CronJob('0 0 */2 * * *', async function () {
+    try {
+      logger.debug('Saving URL entries to database')
+      await count.webEntries()
+    } catch (e) {
+      console.error(e)
+    }
+  }, null, true, cronTimezone)
 
   logger.silly(`Medium resolution stats collector cron job status: ${mediumResolutionStatsSave.running}`)
   logger.silly(`Daily stats collector cron job status: ${dailyResolutionStatsSave.running}`)
   logger.silly(`Weekly stats collector cron job status: ${weeklyResolutionStatsSave.running}`)
   logger.silly(`Montlhy resolution stats collector cron job status: ${monthlyResolutionStatsSave.running}`)
   logger.silly(`Automatic database dump to S3 cron job status: ${dbDump.running}`)
+  logger.silly(`Click counters job status: ${cliksCount.running}`)
 }
 
 module.exports = {

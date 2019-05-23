@@ -371,7 +371,7 @@ async function usersMonthlyChartData (req, res) {
 async function openUrl (req, res) {
   const target = req.query.url
   try {
-    redis.incr(`url-entry-counter:${target}`)
+    redis.incr(`url-entries-counter:${target}`)
     res.redirect(target)
   } catch (e) {
     logger.error(e)
