@@ -15,7 +15,7 @@ router.post('/api/auth', async (req, res) => {
         let payload = {
           id: user.id
         }
-        let token = jwt.sign(payload, config.jwt.secret, {expiresIn: '2h'})
+        let token = jwt.sign(payload, config.jwt.secret, { expiresIn: '2h' })
         res.json({
           token: token,
           user: JSON.stringify(user)
@@ -32,7 +32,7 @@ router.get('/api/token_refresh', auth.authenticate(), async (req, res) => {
   let payload = {
     id: req.user.id
   }
-  let token = jwt.sign(payload, config.jwt.secret, {expiresIn: '2h'})
+  let token = jwt.sign(payload, config.jwt.secret, { expiresIn: '2h' })
   res.json({
     token: token
   })
@@ -134,6 +134,10 @@ router.get('/api/open_url', async (req, res) => {
   api.stats.openUrl(req, res)
 })
 
+router.get('/api/stats/url_clicks', auth.authenticate(), async (req, res) => {
+  api.stats.urlClicks(req, res)
+})
+
 router.put('/api/admins', auth.authenticate(), async (req, res) => {
   api.admins.create(req, res)
 })
@@ -202,6 +206,10 @@ router.post('/api/admins/notifications', auth.authenticate(), async (req, res) =
   api.admins.notificationsSettings(req, res)
 })
 
+router.post('/api/stats/url_entry', auth.authenticate(), async (req, res) => {
+  api.stats.editUrlData(req, res)
+})
+
 router.delete('/api/admins', auth.authenticate(), async (req, res) => {
   api.admins.deleteAdmin(req, res)
 })
@@ -224,6 +232,10 @@ router.delete('/api/keyword', auth.authenticate(), async (req, res) => {
 
 router.delete('/api/messages/cache', auth.authenticate(), async (req, res) => {
   api.messages.flushCache(req, res)
+})
+
+router.delete('/api/stats/url_entry', auth.authenticate(), async (req, res) => {
+  api.stats.resetUrlCounter(req, res)
 })
 
 module.exports = router

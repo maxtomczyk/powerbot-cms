@@ -14,6 +14,7 @@
           <drawer-item icon="paperclip" target="/attachments" @clicked="close()">Attachments</drawer-item>
           <drawer-item icon="user-shield" target="/admins" @clicked="close()">Admins</drawer-item>
           <drawer-item icon="list" target="/elements" @clicked="close()">Bot elements</drawer-item>
+          <drawer-item icon="mouse-pointer" target="/clicks" @clicked="close()">Clicks</drawer-item>
           <drawer-item v-for="route in customRoutes" :key="`DRAWER-${route.name}`" :icon="route.icon" :target="route.route" @clicked="close()">{{ route.name }}</drawer-item>
         </div>
 
@@ -28,6 +29,7 @@
           <drawer-list-item icon="paperclip" target="/attachments" @clicked="close()">Attachments</drawer-list-item>
           <drawer-list-item icon="user-shield" target="/admins" @clicked="close()">Admins</drawer-list-item>
           <drawer-list-item icon="list" target="/elements" @clicked="close()">Bot elements</drawer-list-item>
+          <drawer-list-item icon="mouse-pointer" target="/clicks" @clicked="close()">Clicks</drawer-list-item>
           <drawer-list-item v-for="route in customRoutes" :key="`DRAWER-LIST-${route.name}`" :icon="route.icon" :target="route.route" @clicked="close()">{{ route.name }}</drawer-list-item>
         </div>
       </div>

@@ -379,6 +379,36 @@ async function openUrl (req, res) {
   }
 }
 
+async function urlClicks (req, res) {
+  try {
+    const clicks = await knex('url_entries').orderBy('friendly_name', 'asc')
+    res.json(clicks)
+  } catch (e) {
+    console.error(e)
+    res.sendStatus(500)
+  }
+}
+
+async function editUrlData (req, res) {
+  try {
+    await knex('url_entries').update('friendly_name', req.body.friendly_name).where('id', req.body.id)
+    res.sendStatus(200)
+  } catch (e) {
+    console.error(e)
+    res.sendStatus(500)
+  }
+}
+
+async function resetUrlCounter (req, res) {
+  try {
+    await knex('url_entries').where('id', req.body.id).del()
+    if (!req.body.leaveCache) await redis.delAsync(`url-entries-counter:${req.body.url}`)
+    res.sendStatus(200) 
+  } catch (e) {
+    console.error(e)
+    res.sendStatus(500)
+  }
+}
 
 module.exports = {
   systemStatus,
@@ -390,5 +420,8 @@ module.exports = {
   usersDailyChartData,
   usersWeeklyChartData,
   usersMonthlyChartData,
-  openUrl
+  openUrl,
+  urlClicks,
+  editUrlData,
+  resetUrlCounter
 }

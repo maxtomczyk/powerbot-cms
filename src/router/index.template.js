@@ -13,6 +13,7 @@ import Emissions from '@/views/Emissions'
 import Keywords from '@/views/Keywords'
 import Attachments from '@/views/Attachments'
 import Elements from '@/views/Elements'
+import Clicks from '@/views/Clicks'
 
 Vue.use(Router)
 
@@ -70,6 +71,11 @@ export default new Router({
     path: '/elements',
     name: 'Bot Elements',
     component: Elements,
+    beforeEnter: Guard.auth
+  }, {
+    path: '/clicks',
+    name: 'Clicks',
+    component: Clicks,
     beforeEnter: Guard.auth
   }, {
     path: '*',
