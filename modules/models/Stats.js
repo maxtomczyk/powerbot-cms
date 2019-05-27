@@ -3,15 +3,21 @@ const knex = require('../knex')
 const emails = require('../emails')
 
 class Stats {
-  incomingMessage (message) {
+  incomingMessage (message, user) {
     redis.incr('stats-med-incoming-messages')
     redis.sadd('stats-daily-unique-users-list', message.sender_id)
     redis.sadd('stats-weekly-unique-users-list', message.sender_id)
     redis.sadd('stats-monthly-unique-users-list', message.sender_id)
+    user.setInternalCacheKey('last-contact', +new Date())
   }
 
   outgoingMessage (message) {
     redis.incr('stats-med-outgoing-messages')
+  }
+
+  incomingPayload (message, user) {
+    redis.incr(`stats-payload-entries:${message.payload}`)
+    redis.rpush(`stats-user-payload-trace:${user.id}`, message.payload)
   }
 
   newUser (user) {

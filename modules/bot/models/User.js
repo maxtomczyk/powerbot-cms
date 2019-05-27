@@ -336,6 +336,10 @@ class User {
     return `user-data:${this.id}:${key}`
   }
 
+  createRedisInternalKeyName (key) {
+    return `internal-user-data:${this.id}:${key}`
+  }
+
   async getCacheKey (key) {
     try {
       if (!this.id) {
@@ -344,6 +348,21 @@ class User {
       }
 
       const data = await redis.getAsync(this.createRedisKeyName(key))
+      if (data) return JSON.parse(data).value
+      return undefined
+    } catch (e) {
+      throw e
+    }
+  }
+
+  async getInternalCacheKey (key) {
+    try {
+      if (!this.id) {
+        logger.warn(`Trying to get internal key '${key}' from cache users data for user without id!`)
+        return undefined
+      }
+
+      const data = await redis.getAsync(this.createRedisInternalKeyName(key))
       if (data) return JSON.parse(data).value
       return undefined
     } catch (e) {
@@ -369,6 +388,24 @@ class User {
     }
   }
 
+  setInternalCacheKey (key, value, expiration) {
+    try {
+      if (!this.id) {
+        logger.warn(`Trying to set key '${key}' to cache users data for user without id!`)
+        return null
+      }
+
+      let o = JSON.stringify({
+        value
+      })
+      if (!expiration) redis.set(this.createRedisInternalKeyName(key), o)
+      else redis.set(this.createRedisInternalKeyName(key), o, 'EX', expiration)
+      return
+    } catch (e) {
+      throw e
+    }
+  }
+
   async removeCacheKey (key) {
     try {
       if (!this.id) {
@@ -377,6 +414,20 @@ class User {
       }
 
       const del = await redis.delAsync(this.createRedisKeyName(key))
+      return !!del
+    } catch (e) {
+      throw e
+    }
+  }
+
+  async removeInternalCacheKey (key) {
+    try {
+      if (!this.id) {
+        logger.warn(`Trying to remove key '${key}' from cache users data for user without id!`)
+        return null
+      }
+
+      const del = await redis.delAsync(this.createRedisInternalKeyName(key))
       return !!del
     } catch (e) {
       throw e

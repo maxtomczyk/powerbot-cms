@@ -33,6 +33,74 @@ async function webEntries () {
   }
 }
 
+async function buttonsClicks () {
+  try {
+    let monitored = []
+    if (Array.isArray(config.stats.monitoredPayloads)) monitored = config.stats.monitoredPayloads
+    else monitored = config.stats.monitoredPayloads.split(',').map(el => el.trim())
+
+    let keys = await redisHandler.scan('stats-payload-entries:*')
+    const keysWithoutPrefixes = keys.map(k => k.replace(config.redis.prefix, ''))
+    if (!keys.length) return
+
+    let creationQueries = []
+    let updateQueries = []
+    let stored = {}
+    const storedRows = await knex('payloads_entries')
+
+    for (let row of storedRows) stored[row.payload] = row
+    const value = await redis.mgetAsync(...keysWithoutPrefixes)
+    let i = -1
+
+    for (let key of keys) {
+      ++i
+      const payload = key.replace(`${config.redis.prefix}stats-payload-entries:`, '')
+      if (monitored[0] !== '*' && monitored.indexOf(payload) === -1) continue
+      if (stored[payload]) updateQueries.push(knex('payloads_entries').update('entries', knex.raw('entries + ??', parseInt(value[i]))).where('payload', payload))
+      else creationQueries.push(knex('payloads_entries').insert({ payload, entries: value[i] }))
+    }
+
+    await Promise.all(creationQueries)
+    await Promise.all(updateQueries)
+    await redis.delAsync(...keysWithoutPrefixes)
+  } catch (e) {
+    throw e
+  }
+}
+
+async function collectPayloadTraces () {
+  try {
+    let keys = await redisHandler.scan('stats-user-payload-trace:*')
+    if (!keys.length) return
+    let users = keys.map(k => `internal-user-data:${parseInt(k.replace(`${config.redis.prefix}stats-user-payload-trace:`, ''))}:last-contact`)
+    const lastContacts = await redis.mgetAsync(...users)
+    users = users
+      .filter((u, i) => +new Date() - JSON.parse(lastContacts[i]).value >= 5 * 60 * 1000)
+      .map(u => u.replace('internal-user-data:', '').replace(':last-contact', ''))
+    keys = keys
+      .map(k => k.replace(config.redis.prefix, ''))
+      .filter(k => users.indexOf(k.replace('stats-user-payload-trace:', '')) !== -1)
+    if (!keys.length) return
+    let multi = redis.multi()
+    for (let key of keys) multi.lrange(key, 0, -1)
+    const replies = await multi.execAsync()
+    let data = []
+    for (let i = 0; i < keys.length; i++) {
+      if (replies[i].length <= 1) continue
+      data.push({
+        user_id: users[i],
+        payloads: replies[i]
+      })
+    }
+    await redis.delAsync(...keys)
+    await knex.batchInsert('payloads_traces', data)
+  } catch (e) {
+    throw e
+  }
+}
+
 module.exports = {
-  webEntries
+  webEntries,
+  buttonsClicks,
+  collectPayloadTraces
 }

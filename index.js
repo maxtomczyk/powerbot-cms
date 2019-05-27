@@ -109,6 +109,7 @@ bot.on('payload', async (message, raw) => {
     let user = await new User(message.sender_id).loadOrCreate()
     if (user.bot_lock && allowedPostbacks.indexOf(message.payload) === -1) return
 
+    stats.incomingPayload(message, user)
     await postback(message, user)
     emitter.emit('payload', message, user, raw)
   } catch (e) {
@@ -145,8 +146,9 @@ bot.on('entry', async (entry) => {
 
 bot.on('message', async (message, raw) => {
   try {
+    let user = await new User(message.sender_id).loadOrCreate()
     emitter.emit('message', message, raw)
-    stats.incomingMessage(message)
+    stats.incomingMessage(message, user)
   } catch (e) {
     logger.error(e)
   }

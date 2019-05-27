@@ -12,6 +12,7 @@ config.hosting = {}
 config.dialogflow = {}
 config.googleAuth = {}
 config.s3 = {}
+config.stats = {}
 
 config.facebook.access_token = process.env.FB_ACCESS || ''
 
@@ -78,5 +79,7 @@ config.s3.streamLogs = process.env.S3_STREAM_LOGS || false
 config.s3.autoDbDump = process.env.S3_AUTO_DB_DUMP || false
 config.s3.logsCatalog = process.env.S3_LOGS_CATALOG || ''
 config.s3.dumpsCatalog = process.env.S3_DUMPS_CATALOG || ''
+
+config.stats.monitoredPayloads = process.env.MONITORED_PAYLOADS || ['*']
 
 module.exports = config

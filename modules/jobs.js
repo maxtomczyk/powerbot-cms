@@ -64,10 +64,21 @@ function start () {
 
   let cliksCount = new CronJob('0 0 */2 * * *', async function () {
     try {
-      logger.debug('Saving URL entries to database')
+      logger.debug('Saving URL\'s and payloads clicks to database')
       await count.webEntries()
+      await count.buttonsClicks()
     } catch (e) {
       console.error(e)
+    }
+  }, null, true, cronTimezone)
+
+  let tracesCollector = new CronJob('0 */2 * * * *', async function () {
+    try {
+      logger.debug('Starting payloads traces collector.')
+      await count.collectPayloadTraces()      
+      logger.debug('Finished payloads traces save.')
+    } catch (e) {
+      console.error(e)      
     }
   }, null, true, cronTimezone)
 
@@ -77,6 +88,7 @@ function start () {
   logger.silly(`Montlhy resolution stats collector cron job status: ${monthlyResolutionStatsSave.running}`)
   logger.silly(`Automatic database dump to S3 cron job status: ${dbDump.running}`)
   logger.silly(`Click counters job status: ${cliksCount.running}`)
+  logger.silly(`Payload traces collector job status: ${tracesCollector.running}`)
 }
 
 module.exports = {
