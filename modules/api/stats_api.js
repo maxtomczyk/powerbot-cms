@@ -403,7 +403,25 @@ async function resetUrlCounter (req, res) {
   try {
     await knex('url_entries').where('id', req.body.id).del()
     if (!req.body.leaveCache) await redis.delAsync(`url-entries-counter:${req.body.url}`)
-    res.sendStatus(200) 
+    res.sendStatus(200)
+  } catch (e) {
+    console.error(e)
+    res.sendStatus(500)
+  }
+}
+
+async function payloadTraces (req, res) {
+  try {
+    let query = knex('payloads_traces').orderBy('id', 'desc').whereRaw('? = ANY(payloads)', req.query.payload)
+    if (parseInt(req.query.limit)) query.andWhere('created_at', '>', new Date(+new Date() - parseInt(req.query.limit) * 24 * 60 * 60 * 1000))
+    const rows = await query
+    let traces = []
+    for (let row of rows) {
+      let i = row.payloads.indexOf(req.query.payload)
+      let arr = row.payloads.slice(i, i + parseInt(req.query.depth))
+      if (arr.length > 1) traces.push(arr)
+    }
+    res.json(traces)
   } catch (e) {
     console.error(e)
     res.sendStatus(500)
@@ -423,5 +441,6 @@ module.exports = {
   openUrl,
   urlClicks,
   editUrlData,
-  resetUrlCounter
+  resetUrlCounter,
+  payloadTraces
 }

@@ -138,6 +138,10 @@ router.get('/api/stats/url_clicks', auth.authenticate(), async (req, res) => {
   api.stats.urlClicks(req, res)
 })
 
+router.get('/api/stats/payload_traces', auth.authenticate(), async (req, res) => {
+  api.stats.payloadTraces(req, res)
+})
+
 router.put('/api/admins', auth.authenticate(), async (req, res) => {
   api.admins.create(req, res)
 })

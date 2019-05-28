@@ -46,10 +46,46 @@
     </custom-dialog>
 
     <tabs @change="tabChange" ref="tabs">
-      <div id="1">CHATBOT BUTTONS</div>
+      <div id="1">PAYLOADS TRACES</div>
       <div id="2">WEB LINKS</div>
     </tabs>
-    <div class="clicks__wrapper" v-show="activeTab === '1'"></div>
+    <div class="clicks__wrapper" v-show="activeTab === '1'">
+      <div class="clicks__chart-control">
+        <label class="label label--centered clicks__chart-select">
+          Starting payload
+          <select class="input select" v-model="chartDataSettings.payload">
+            <option value="MENU">MENU</option>
+          </select>
+        </label>
+
+        <label class="label label--centered clicks__chart-select">
+          Depth
+          <select class="input select" v-model="chartDataSettings.depth">
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+          </select>
+        </label>
+
+        <label class="label label--centered clicks__chart-select">
+          Records limit
+          <select class="input select" v-model="chartDataSettings.limit">
+            <option value="0">All</option>
+            <option value="7">1 week</option>
+            <option value="14">2 weeks</option>
+            <option value="30">1 Month</option>
+            <option value="90">3 Month</option>
+          </select>
+        </label>
+      </div>
+      <div class="clicks__chart">
+        <chart-sankey :data="chartData" :config="chartConfig"></chart-sankey>
+      </div>
+    </div>
     <div class="clicks__wrapper" v-show="activeTab === '2'">
       <empty-state
         v-show="!webEntries.length"
@@ -92,9 +128,8 @@
 
 <script>
 import axios from 'axios'
-import {
-  EventBus
-} from '../event-bus'
+import { ChartSankey } from 'vue-d2b'
+import { EventBus } from '../event-bus'
 
 export default {
   data () {
@@ -102,21 +137,91 @@ export default {
       activeTab: '1',
       webEntries: [],
       editUrlEntry: {},
-      restartUrlEntry: {}
+      restartUrlEntry: {},
+      chartDataSettings: {
+        limit: 0,
+        depth: 5,
+        payload: 'MENU'
+      },
+      chartLayersRecords: {},
+      chartData: {
+        nodes: [],
+        links: []
+      }
     }
   },
-
+  components: {
+    ChartSankey
+  },
   async created () {
     try {
       axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token')
       const urlClicks = await axios.get('/api/stats/url_clicks')
       this.webEntries = urlClicks.data
+      await this.loadPayloadTraces()
     } catch (e) {
       this.$refs.notifier.pushNotification('cannot load!', `There was an error during data load. Error code: ${e.response.status}`, 'error', 10000)
     }
   },
 
   methods: {
+    chartConfig (config) {
+      config
+        .sankey()
+        .sankey()
+        .nodePadding(3)
+
+      config
+        .sankey()
+        .nodeDraggableY(true)
+    },
+
+    invisibleString (length) {
+      let str = ''
+      for (let i = 0; i < length; i++) {
+        str += '\u2029'
+      }
+      return str
+    },
+
+    async loadPayloadTraces () {
+      const payload = this.chartDataSettings.payload
+      const depth = this.chartDataSettings.depth
+      const limit = this.chartDataSettings.limit
+      const request = await axios.get(`/api/stats/payload_traces?payload=${payload}&depth=${depth}&limit=${limit}`)
+      const traces = request.data
+      let nodes = new Set()
+      let links = []
+      this.chartLayersRecords = []
+
+      for (let i = 0; i < depth; i++) {
+        let linksToNextLayer = {}
+        for (let trace of traces) {
+          const payload = trace[i]
+          const next = trace[i + 1]
+          if (!payload) continue
+          nodes.add(`${payload}${this.invisibleString(i)}`)
+          if (!next) continue
+          if (!linksToNextLayer[`${payload}${this.invisibleString(i)}-->${next}${this.invisibleString(i + 1)}`]) linksToNextLayer[`${payload}${this.invisibleString(i)}-->${next}${this.invisibleString(i + 1)}`] = 1
+          else linksToNextLayer[`${payload}${this.invisibleString(i)}-->${next}${this.invisibleString(i + 1)}`]++
+        }
+        let sum = 0
+        for (let link in linksToNextLayer) {
+          const linkNodes = link.split('-->')
+          const value = linksToNextLayer[link]
+          sum += parseInt(value)
+          links.push({
+            source: linkNodes[0],
+            target: linkNodes[1],
+            value
+          })
+        }
+        this.chartLayersRecords[i] = sum
+      }
+      nodes = Array.from(nodes, (name) => { return { name } })
+      this.chartData.nodes = nodes
+      this.chartData.links = links
+    },
     tabChange (e) {
       this.activeTab = e
       this.$forceUpdate()
@@ -169,15 +274,51 @@ export default {
   },
   destroyed () {
     EventBus.$off('token_refresh')
+  },
+  watch: {
+    chartDataSettings: {
+      deep: true,
+      handler: function (u) {
+        this.loadPayloadTraces()
+      }
+    }
   }
 }
 </script>
 
 <style lang="scss">
+@import "../styles/variables";
+
 .clicks {
   &__dialog-checkbox {
     margin-left: 0 !important;
     margin-top: 8px !important;
+  }
+
+  &__chart {
+    width: 85vw;
+    height: 70vh;
+    margin: 0 auto;
+
+    text {
+      fill: #f2f2f2;
+    }
+  }
+
+  &__chart-select {
+    width: 10vw;
+    color: $font-primary;
+
+    select {
+      margin-top: 5px;
+    }
+  }
+
+  &__chart-control {
+    display: flex;
+    width: 40vw;
+    min-width: 700px;
+    margin: 0 auto;
   }
 }
 </style>
