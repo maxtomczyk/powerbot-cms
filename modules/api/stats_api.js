@@ -428,6 +428,37 @@ async function payloadTraces (req, res) {
   }
 }
 
+async function payloadClicks (req, res) {
+  try {
+    const clicks = await knex('payloads_entries')
+    res.json(clicks)
+  } catch (e) {
+    console.error(e)
+    res.sendStatus(500)
+  }
+}
+
+async function editPayloadClick (req, res) {
+  try {
+    await knex('payloads_entries').update('friendly_name', req.body.friendly_name).where('id', req.body.id)
+    res.sendStatus(200)
+  } catch (e) {
+    console.error(e)
+    res.sendStatus(500)
+  }
+}
+
+async function resetPayloadClicks (req, res) {
+  try {
+    await knex('payloads_entries').where('id', req.body.id).del()
+    if (!req.body.leaveCache) await redis.delAsync(`stats-payload-entries:${req.body.payload}`)
+    res.sendStatus(200)
+  } catch (e) {
+    console.error(e)
+    res.sendStatus(500)
+  }
+}
+
 module.exports = {
   systemStatus,
   version,
@@ -442,5 +473,8 @@ module.exports = {
   urlClicks,
   editUrlData,
   resetUrlCounter,
-  payloadTraces
+  payloadTraces,
+  payloadClicks,
+  editPayloadClick,
+  resetPayloadClicks
 }

@@ -7,7 +7,7 @@
         <h1>Edit URL</h1>
       </div>
       <div slot="custom-dialog-content">
-        <label class="label label--centered" for="login">
+        <label class="label label--centered" for="friendly_name">
           Name
           <input
             class="input"
@@ -19,6 +19,26 @@
       </div>
       <div slot="custom-dialog-buttons">
         <div class="dialog__button dialog__button--orange" @click="saveURLChanges">SAVE</div>
+      </div>
+    </custom-dialog>
+
+    <custom-dialog ref="payloadEditDialog">
+      <div slot="custom-dialog-header">
+        <h1>Edit payload</h1>
+      </div>
+      <div slot="custom-dialog-content">
+        <label class="label label--centered" for="friendly_name">
+          Name
+          <input
+            class="input"
+            type="text"
+            name="friendly_name"
+            v-model="editPayloadClick.friendly_name"
+          >
+        </label>
+      </div>
+      <div slot="custom-dialog-buttons">
+        <div class="dialog__button dialog__button--orange" @click="savePayloadChanges">SAVE</div>
       </div>
     </custom-dialog>
 
@@ -45,9 +65,33 @@
       </div>
     </custom-dialog>
 
+        <custom-dialog ref="payloadRestartDialog">
+      <div slot="custom-dialog-header">
+        <h1>Remove payload counter</h1>
+      </div>
+      <div slot="custom-dialog-content">
+        <div style="max-width: 800px;">
+          You are about removing counted clicks for payload
+          <b>
+            <i>{{ restartPayloadClick.payload }}</i>
+          </b>. This can't be undone, continue?
+          <br>Remember, counter will appear here again when payload entry will be performed.
+        </div>
+        <checkbox
+          v-model="restartPayloadClick.leaveCache"
+          :val="restartPayloadClick.leaveCache"
+          class="clicks__dialog-checkbox"
+        >Don't remove cached entries</checkbox>
+      </div>
+      <div slot="custom-dialog-buttons">
+        <div class="dialog__button dialog__button--orange" @click="resetPayloadClicks">DELETE</div>
+      </div>
+    </custom-dialog>
+
     <tabs @change="tabChange" ref="tabs">
       <div id="1">PAYLOADS TRACES</div>
-      <div id="2">WEB LINKS</div>
+      <div id="2">BUTTONS CLICKS</div>
+      <div id="3">WEB LINKS</div>
     </tabs>
     <div class="clicks__wrapper" v-show="activeTab === '1'">
       <div class="clicks__chart-control">
@@ -87,6 +131,43 @@
       </div>
     </div>
     <div class="clicks__wrapper" v-show="activeTab === '2'">
+      <empty-state
+        v-show="!payloadClicks.length"
+        icon="unlink"
+        title="No counters saved in database"
+        text="Data is refreshed every 2 hours"
+      ></empty-state>
+      <table class="table admins__table">
+        <tr class="table__row">
+          <th class="table__head">Name</th>
+          <th class="table__head">Payload</th>
+          <th class="table__head">Clicks</th>
+          <th class="table__head">Actions</th>
+        </tr>
+        <tr class="table__row" v-for="entry in payloadClicks" :key="entry.id">
+          <td class="table__cell">{{ entry.friendly_name || '-' }}</td>
+          <td class="table__cell">{{ entry.payload }}</td>
+          <td class="table__cell">{{ entry.entries }}</td>
+          <td class="table__cell">
+            <font-awesome-icon
+              @click="openPayloadEditDialog(entry)"
+              v-tooltip.top-center="'Edit data'"
+              icon="cog"
+              size="lg"
+              class="table__icon"
+            />
+            <font-awesome-icon
+              @click="openPayloadRestartDialog(entry)"
+              v-tooltip.top-center="'Delete counter'"
+              icon="trash-alt"
+              size="lg"
+              class="table__icon"
+            />
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div class="clicks__wrapper" v-show="activeTab === '3'">
       <empty-state
         v-show="!webEntries.length"
         icon="unlink"
@@ -136,8 +217,11 @@ export default {
     return {
       activeTab: '1',
       webEntries: [],
+      payloadClicks: [],
       editUrlEntry: {},
+      editPayloadClick: {},
       restartUrlEntry: {},
+      restartPayloadClick: {},
       chartDataSettings: {
         limit: 0,
         depth: 5,
@@ -157,7 +241,9 @@ export default {
     try {
       axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token')
       const urlClicks = await axios.get('/api/stats/url_clicks')
+      const payloadClicks = await axios.get('/api/stats/payload_clicks')
       this.webEntries = urlClicks.data
+      this.payloadClicks = payloadClicks.data
       await this.loadPayloadTraces()
     } catch (e) {
       this.$refs.notifier.pushNotification('cannot load!', `There was an error during data load. Error code: ${e.response.status}`, 'error', 10000)
@@ -232,10 +318,21 @@ export default {
       this.$refs.urlEditDialog.openDialog()
     },
 
+    openPayloadEditDialog (entry) {
+      this.editPayloadClick = entry
+      this.$refs.payloadEditDialog.openDialog()
+    },
+
     openURLRestartDialog (entry) {
       this.restartUrlEntry = entry
       this.restartUrlEntry.leaveCache = false
       this.$refs.urlRestartDialog.openDialog()
+    },
+
+    openPayloadRestartDialog (entry) {
+      this.restartPayloadClick = entry
+      this.restartPayloadClick.leaveCache = false
+      this.$refs.payloadRestartDialog.openDialog()
     },
 
     async saveURLChanges () {
@@ -248,12 +345,21 @@ export default {
       }
     },
 
+    async savePayloadChanges () {
+      try {
+        await axios.post('/api/stats/payload_click', this.editPayloadClick)
+        this.$refs.payloadEditDialog.closeDialog()
+        this.$refs.notifier.pushNotification('saved!', `Payload data has been saved.`, 'success', 6000)
+      } catch (e) {
+        this.$refs.notifier.pushNotification('cannot save!', `There was an error during data save. Error code: ${e.response.status}`, 'error', 10000)
+      }
+    },
+
     async resetUrlCounter () {
       try {
         await axios.delete('/api/stats/url_entry', { data: this.restartUrlEntry })
         let i = 0
         for (let entry of this.webEntries) {
-          console.log(entry)
           if (entry.id === this.restartUrlEntry.id) {
             this.webEntries.splice(i, 1)
             break
@@ -264,6 +370,24 @@ export default {
         this.$refs.notifier.pushNotification('cleared!', `URL counter has been cleared.`, 'success', 6000)
       } catch (e) {
         this.$refs.notifier.pushNotification('cannot reset!', `There was an error during counter resetting. Error code: ${e.response.status}`, 'error', 10000)
+      }
+    },
+
+    async resetPayloadClicks(){
+      try {
+        await axios.delete('/api/stats/payload_clicks', { data: this.restartPayloadClick })
+        let i = 0
+        for (let entry of this.payloadClicks) {
+          if (entry.id === this.restartPayloadClick.id) {
+            this.payloadClicks.splice(i, 1)
+            break
+          }
+          i++
+        }
+        this.$refs.payloadRestartDialog.closeDialog()
+        this.$refs.notifier.pushNotification('cleared!', `Payload counter has been cleared.`, 'success', 6000)
+      } catch (e) {
+        this.$refs.notifier.pushNotification('cannot reset!', `There was an error during counter resetting. Error code: ${e.response.status}`, 'error', 10000)        
       }
     }
   },

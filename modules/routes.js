@@ -142,6 +142,10 @@ router.get('/api/stats/payload_traces', auth.authenticate(), async (req, res) =>
   api.stats.payloadTraces(req, res)
 })
 
+router.get('/api/stats/payload_clicks', auth.authenticate(), async (req, res) => {
+  api.stats.payloadClicks(req, res)
+})
+
 router.put('/api/admins', auth.authenticate(), async (req, res) => {
   api.admins.create(req, res)
 })
@@ -214,6 +218,10 @@ router.post('/api/stats/url_entry', auth.authenticate(), async (req, res) => {
   api.stats.editUrlData(req, res)
 })
 
+router.post('/api/stats/payload_click', auth.authenticate(), async (req, res) => {
+  api.stats.editPayloadClick(req, res)
+})
+
 router.delete('/api/admins', auth.authenticate(), async (req, res) => {
   api.admins.deleteAdmin(req, res)
 })
@@ -240,6 +248,10 @@ router.delete('/api/messages/cache', auth.authenticate(), async (req, res) => {
 
 router.delete('/api/stats/url_entry', auth.authenticate(), async (req, res) => {
   api.stats.resetUrlCounter(req, res)
+})
+
+router.delete('/api/stats/payload_clicks', auth.authenticate(), async (req, res) => {
+  api.stats.resetPayloadClicks(req, res)
 })
 
 module.exports = router
