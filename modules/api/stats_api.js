@@ -1,8 +1,10 @@
 const axios = require('axios')
 
-const knex = require('../knex.js')
-const redis = require('../redis.js')
-const logger = require('../logger.js')
+const knex = require('../knex')
+const redis = require('../redis')
+const logger = require('../logger')
+
+const config = require('../../config/config')
 
 async function systemStatus (req, res) {
   try {
@@ -450,9 +452,34 @@ async function editPayloadClick (req, res) {
 
 async function resetPayloadClicks (req, res) {
   try {
-    await knex('payloads_entries').where('id', req.body.id).del()
+    await knex('payloads_entries').update('entries', 0).where('id', req.body.id)
     if (!req.body.leaveCache) await redis.delAsync(`stats-payload-entries:${req.body.payload}`)
     res.sendStatus(200)
+  } catch (e) {
+    console.error(e)
+    res.sendStatus(500)
+  }
+}
+
+async function listPayloads (req, res) {
+  try {
+    let prioritized = []
+    let all = []
+    let friendlyNames = {}
+    if (Array.isArray(config.stats.monitoredPayloads)) prioritized = config.stats.payloadsFlowPrioritizedPayloads
+    else prioritized = config.stats.monitoredPayloads.split(',').map(el => el.trim())
+
+    const payloads = await knex('payloads_entries')
+    all = payloads.map(p => {
+      if (p.friendly_name) friendlyNames[p.payload] = p.friendly_name
+      return p.payload
+    })
+
+    res.json({
+      prioritized,
+      all,
+      friendlyNames
+    })
   } catch (e) {
     console.error(e)
     res.sendStatus(500)
@@ -476,5 +503,6 @@ module.exports = {
   payloadTraces,
   payloadClicks,
   editPayloadClick,
-  resetPayloadClicks
+  resetPayloadClicks,
+  listPayloads
 }

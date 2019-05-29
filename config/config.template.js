@@ -81,5 +81,6 @@ config.s3.logsCatalog = process.env.S3_LOGS_CATALOG || ''
 config.s3.dumpsCatalog = process.env.S3_DUMPS_CATALOG || ''
 
 config.stats.monitoredPayloads = process.env.MONITORED_PAYLOADS || ['*']
+config.stats.payloadsFlowPrioritizedPayloads = process.env.PAYLOADS_FLOW_PRIORITIZED_LIST || ['MENU', 'CONTACT', 'REMOVE_USER_DATA']
 
 module.exports = config

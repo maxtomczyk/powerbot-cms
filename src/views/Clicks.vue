@@ -51,7 +51,7 @@
           You are about removing counted clicks for URL
           <b>
             <i>{{ restartUrlEntry.url }}</i>
-          </b>. This can't be undone, continue?
+          </b>. This cannot be undone, continue?
           <br>Remember, counter will appear here again when monitored request will be performed.
         </div>
         <checkbox
@@ -65,17 +65,16 @@
       </div>
     </custom-dialog>
 
-        <custom-dialog ref="payloadRestartDialog">
+    <custom-dialog ref="payloadRestartDialog">
       <div slot="custom-dialog-header">
         <h1>Remove payload counter</h1>
       </div>
       <div slot="custom-dialog-content">
         <div style="max-width: 800px;">
-          You are about removing counted clicks for payload
+          You are about resetting counted clicks for payload
           <b>
             <i>{{ restartPayloadClick.payload }}</i>
-          </b>. This can't be undone, continue?
-          <br>Remember, counter will appear here again when payload entry will be performed.
+          </b>. This cannnot be undone, continue?
         </div>
         <checkbox
           v-model="restartPayloadClick.leaveCache"
@@ -84,7 +83,7 @@
         >Don't remove cached entries</checkbox>
       </div>
       <div slot="custom-dialog-buttons">
-        <div class="dialog__button dialog__button--orange" @click="resetPayloadClicks">DELETE</div>
+        <div class="dialog__button dialog__button--orange" @click="resetPayloadClicks">RESET</div>
       </div>
     </custom-dialog>
 
@@ -98,7 +97,12 @@
         <label class="label label--centered clicks__chart-select">
           Starting payload
           <select class="input select" v-model="chartDataSettings.payload">
-            <option value="MENU">MENU</option>
+            <optgroup>
+              <option v-for="payload in payloads.prior" :key="payload" :value="payload">{{ payloads.friendlyNames[payload] || payload }}</option>
+            </optgroup>
+            <optgroup>
+              <option v-for="payload in payloads.rest" :key="payload" :value="payload">{{ payloads.friendlyNames[payload] || payload }}</option>
+            </optgroup>
           </select>
         </label>
 
@@ -158,7 +162,7 @@
             />
             <font-awesome-icon
               @click="openPayloadRestartDialog(entry)"
-              v-tooltip.top-center="'Delete counter'"
+              v-tooltip.top-center="'Reset counter'"
               icon="trash-alt"
               size="lg"
               class="table__icon"
@@ -222,6 +226,11 @@ export default {
       editPayloadClick: {},
       restartUrlEntry: {},
       restartPayloadClick: {},
+      payloads: {
+        prior: [],
+        rest: [],
+        friendlyNames: {}
+      },
       chartDataSettings: {
         limit: 0,
         depth: 5,
@@ -244,6 +253,7 @@ export default {
       const payloadClicks = await axios.get('/api/stats/payload_clicks')
       this.webEntries = urlClicks.data
       this.payloadClicks = payloadClicks.data
+      await this.loadPayloadsList()
       await this.loadPayloadTraces()
     } catch (e) {
       this.$refs.notifier.pushNotification('cannot load!', `There was an error during data load. Error code: ${e.response.status}`, 'error', 10000)
@@ -270,44 +280,64 @@ export default {
       return str
     },
 
-    async loadPayloadTraces () {
-      const payload = this.chartDataSettings.payload
-      const depth = this.chartDataSettings.depth
-      const limit = this.chartDataSettings.limit
-      const request = await axios.get(`/api/stats/payload_traces?payload=${payload}&depth=${depth}&limit=${limit}`)
-      const traces = request.data
-      let nodes = new Set()
-      let links = []
-      this.chartLayersRecords = []
+    async loadPayloadsList () {
+      try {
+        const payloads = await axios.get('api/stats/payloads')
+        this.payloads.friendlyNames = payloads.data.friendlyNames
+        this.payloads.prior = payloads.data.prioritized
+        let rest = []
+        for (let payload of payloads.data.all) if (payloads.data.prioritized.indexOf(payload) === -1) rest.push(payload)
 
-      for (let i = 0; i < depth; i++) {
-        let linksToNextLayer = {}
-        for (let trace of traces) {
-          const payload = trace[i]
-          const next = trace[i + 1]
-          if (!payload) continue
-          nodes.add(`${payload}${this.invisibleString(i)}`)
-          if (!next) continue
-          if (!linksToNextLayer[`${payload}${this.invisibleString(i)}-->${next}${this.invisibleString(i + 1)}`]) linksToNextLayer[`${payload}${this.invisibleString(i)}-->${next}${this.invisibleString(i + 1)}`] = 1
-          else linksToNextLayer[`${payload}${this.invisibleString(i)}-->${next}${this.invisibleString(i + 1)}`]++
-        }
-        let sum = 0
-        for (let link in linksToNextLayer) {
-          const linkNodes = link.split('-->')
-          const value = linksToNextLayer[link]
-          sum += parseInt(value)
-          links.push({
-            source: linkNodes[0],
-            target: linkNodes[1],
-            value
-          })
-        }
-        this.chartLayersRecords[i] = sum
+        this.payloads.rest = rest
+        console.log(this.payloads)
+      } catch (e) {
+        this.$refs.notifier.pushNotification('cannot load!', `There was an error during data load. Error code: ${e.response.status}`, 'error', 10000)
       }
-      nodes = Array.from(nodes, (name) => { return { name } })
-      this.chartData.nodes = nodes
-      this.chartData.links = links
     },
+
+    async loadPayloadTraces () {
+      try {
+        const payload = this.chartDataSettings.payload
+        const depth = this.chartDataSettings.depth
+        const limit = this.chartDataSettings.limit
+        const request = await axios.get(`/api/stats/payload_traces?payload=${payload}&depth=${depth}&limit=${limit}`)
+        const traces = request.data
+        let nodes = new Set()
+        let links = []
+        this.chartLayersRecords = []
+
+        for (let i = 0; i < depth; i++) {
+          let linksToNextLayer = {}
+          for (let trace of traces) {
+            const payload = this.payloads.friendlyNames[trace[i]] || trace[i]
+            const next = this.payloads.friendlyNames[trace[i + 1]] || trace[i + 1]
+            if (!payload) continue
+            nodes.add(`${payload}${this.invisibleString(i)}`)
+            if (!next) continue
+            if (!linksToNextLayer[`${payload}${this.invisibleString(i)}-->${next}${this.invisibleString(i + 1)}`]) linksToNextLayer[`${payload}${this.invisibleString(i)}-->${next}${this.invisibleString(i + 1)}`] = 1
+            else linksToNextLayer[`${payload}${this.invisibleString(i)}-->${next}${this.invisibleString(i + 1)}`]++
+          }
+          let sum = 0
+          for (let link in linksToNextLayer) {
+            const linkNodes = link.split('-->')
+            const value = linksToNextLayer[link]
+            sum += parseInt(value)
+            links.push({
+              source: linkNodes[0],
+              target: linkNodes[1],
+              value
+            })
+          }
+          this.chartLayersRecords[i] = sum
+        }
+        nodes = Array.from(nodes, (name) => { return { name } })
+        this.chartData.nodes = nodes
+        this.chartData.links = links
+      } catch (e) {
+        this.$refs.notifier.pushNotification('cannot load!', `There was an error during data load. Error code: ${e.response.status}`, 'error', 10000)
+      }
+    },
+
     tabChange (e) {
       this.activeTab = e
       this.$forceUpdate()
@@ -373,13 +403,13 @@ export default {
       }
     },
 
-    async resetPayloadClicks(){
+    async resetPayloadClicks () {
       try {
         await axios.delete('/api/stats/payload_clicks', { data: this.restartPayloadClick })
         let i = 0
         for (let entry of this.payloadClicks) {
           if (entry.id === this.restartPayloadClick.id) {
-            this.payloadClicks.splice(i, 1)
+            entry.entries = 0
             break
           }
           i++
@@ -387,7 +417,7 @@ export default {
         this.$refs.payloadRestartDialog.closeDialog()
         this.$refs.notifier.pushNotification('cleared!', `Payload counter has been cleared.`, 'success', 6000)
       } catch (e) {
-        this.$refs.notifier.pushNotification('cannot reset!', `There was an error during counter resetting. Error code: ${e.response.status}`, 'error', 10000)        
+        this.$refs.notifier.pushNotification('cannot reset!', `There was an error during counter resetting. Error code: ${e.response.status}`, 'error', 10000)
       }
     }
   },
