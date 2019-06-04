@@ -55,6 +55,7 @@ let errorLogger = winston.createLogger({
       if (info instanceof Error && info.stack) {
         return `${info.timestamp} [${config.app.logPrefix}][${info.level}]: ${info.message}\n${info.stack}\n`
       }
+      return ''
     })
   ),
   exitOnError: false,
