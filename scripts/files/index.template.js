@@ -7,7 +7,7 @@ bot.on('text', async (message, user, raw) => {
   try {
     await cms.utils.handleText(message, user, cms, postbacks)
   } catch (e) {
-    console.error(e)
+    cms.logger.error(e)
   }
 })
 
@@ -15,7 +15,7 @@ bot.on('payload', async (message, user, raw) => {
   try {
     await postbacks(message, user)
   } catch (e) {
-    console.error(e)
+    cms.logger.error(e)
   }
 })
 

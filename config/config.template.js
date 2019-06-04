@@ -29,11 +29,11 @@ config.app.logPrefix = process.env.LOG_PREFIX || 'powerbot-cms'
 config.redis.url = process.env.REDIS_URL || process.env.DATA_REDIS_HOST || ''
 config.redis.prefix = process.env.REDIS_PREFIX || 'powerbot-cms::'
 config.redis.timeouts = {
-  messages: process.env.RT_MESSAGES || 15,
-  regexTable: process.env.RT_REGEX || 15,
-  postbacksTable: process.env.RT_POSTBACKS || 15,
-  defaultLanguage: process.env.RT_DEF_LANG || 15,
-  attachments: process.env.RT_ATTACHMENTS || 15
+  messages: process.env.RT_MESSAGES || process.env.RT_DEFAULT || 15,
+  regexTable: process.env.RT_REGEX || process.env.RT_DEFAULT || 15,
+  postbacksTable: process.env.RT_POSTBACKS || process.env.RT_DEFAULT || 15,
+  defaultLanguage: process.env.RT_DEF_LANG || process.env.RT_DEFAULT || 15,
+  attachments: process.env.RT_ATTACHMENTS || process.env.RT_DEFAULT || 15
 }
 
 config.features.registerUnknownPhrases = process.env.FEATURE_REGISTER_UNKNOWN_PHRASES || true
@@ -77,8 +77,8 @@ config.s3.accessKeyId = process.env.S3_ACCESS_KEY_ID || ''
 config.s3.secretAccessKey = process.env.S3_SECRET_ACCESS_KEY || ''
 config.s3.streamLogs = process.env.S3_STREAM_LOGS || false
 config.s3.autoDbDump = process.env.S3_AUTO_DB_DUMP || false
-config.s3.logsCatalog = process.env.S3_LOGS_CATALOG || ''
-config.s3.dumpsCatalog = process.env.S3_DUMPS_CATALOG || ''
+config.s3.logsCatalog = process.env.S3_LOGS_CATALOG || 'logs/'
+config.s3.dumpsCatalog = process.env.S3_DUMPS_CATALOG || 'backups/'
 
 config.stats.monitoredPayloads = process.env.MONITORED_PAYLOADS || ['*']
 config.stats.payloadsFlowPrioritizedPayloads = process.env.PAYLOADS_FLOW_PRIORITIZED_LIST || ['MENU', 'CONTACT', 'REMOVE_USER_DATA']
