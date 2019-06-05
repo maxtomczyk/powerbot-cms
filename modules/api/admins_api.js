@@ -70,12 +70,15 @@ async function deleteAdmin (req, res) {
   }
 }
 
-async function notificationsSettings (req, res) {
+async function accountSettings (req, res) {
   try {
     const id = req.body.id
     delete req.body.id
+    delete req.body.login
+    delete req.body.password
+    delete req.body.owner
     const [updated] = await knex('admins').update(req.body).where('id', id).returning('*')
-    apiLogger.info(`Changed notifications settings of account with id '${id}'.`, req)
+    apiLogger.info(`Changed admin account settings of account with id '${id}'.`, req)
     res.json(updated)
   } catch (e) {
     apiLogger.error(e)
@@ -88,5 +91,5 @@ module.exports = {
   create,
   changePassword,
   deleteAdmin,
-  notificationsSettings
+  accountSettings
 }

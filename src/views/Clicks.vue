@@ -406,13 +406,11 @@ export default {
     async resetPayloadClicks () {
       try {
         await axios.delete('/api/stats/payload_clicks', { data: this.restartPayloadClick })
-        let i = 0
         for (let entry of this.payloadClicks) {
           if (entry.id === this.restartPayloadClick.id) {
             entry.entries = 0
             break
           }
-          i++
         }
         this.$refs.payloadRestartDialog.closeDialog()
         this.$refs.notifier.pushNotification('cleared!', `Payload counter has been cleared.`, 'success', 6000)

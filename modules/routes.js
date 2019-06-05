@@ -221,8 +221,8 @@ router.post('/api/elements/sync', auth.authenticate(), async (req, res) => {
   api.elements.sync(req, res)
 })
 
-router.post('/api/admins/notifications', auth.authenticate(), async (req, res) => {
-  api.admins.notificationsSettings(req, res)
+router.post('/api/admins/account', auth.authenticate(), async (req, res) => {
+  api.admins.accountSettings(req, res)
 })
 
 router.post('/api/stats/url_entry', auth.authenticate(), async (req, res) => {
