@@ -1,6 +1,7 @@
 const knex = require('../knex')
 const redis = require('../redis')
-const logger = require('../logger')
+const redisHandler = require('../redis_handler')
+const apiLogger = require('../api_logger')
 const config = require('../../config/config')
 
 async function listPlugs (req, res) {
@@ -10,7 +11,7 @@ async function listPlugs (req, res) {
     else messages = await knex('messages').orderBy('friendly_name', 'asc')
     res.json(messages)
   } catch (e) {
-    logger.error(e)
+    apiLogger.error(e)
     res.sendStatus(500)
   }
 }
@@ -20,7 +21,7 @@ async function listGroups (req, res) {
     const groups = await knex('messages_groups').orderBy('sort_index', 'asc')
     res.json(groups)
   } catch (e) {
-    logger.error(e)
+    apiLogger.error(e)
     res.sendStatus(500)
   }
 }
@@ -68,9 +69,10 @@ async function update (req, res) {
     if (!valid) return res.sendStatus(403)
 
     const [updated] = await knex('messages').update(update).where('id', id).returning('*')
+    apiLogger.info(`Updated message with id '${id}'.`, req)
     res.json(updated)
   } catch (e) {
-    logger.error(e)
+    apiLogger.error(e)
     res.sendStatus(500)
   }
 }
@@ -78,10 +80,12 @@ async function update (req, res) {
 async function remove (req, res) {
   try {
     const removed = await knex('messages').where('id', req.body.id).del()
-    if (removed) res.sendStatus(200)
-    else res.sendStatus(400)
+    if (removed) {
+      apiLogger.info(`Removed message with id '${req.body.id}'.`, req)
+      res.sendStatus(200)
+    } else res.sendStatus(400)
   } catch (e) {
-    logger.error(e)
+    apiLogger.error(e)
     res.sendStatus(500)
   }
 }
@@ -91,7 +95,7 @@ async function listUnknownPhrases (req, res) {
     const phrases = await knex('unknown_phrases').limit(250)
     res.json(phrases)
   } catch (e) {
-    logger.error(e)
+    apiLogger.error(e)
     res.sendStatus(500)
   }
 }
@@ -107,25 +111,27 @@ async function createPlug (req, res) {
       }
     })
     const [created] = await knex('messages').insert(req.body).returning('*')
+    apiLogger.info(`Created new message plug named '${req.body.name}'.`, req)
     res.json(created)
   } catch (e) {
-    logger.error(e)
+    apiLogger.error(e)
     res.sendStatus(500)
   }
 }
 
 async function flushCache (req, res) {
   try {
-    const keys = await redis.keysAsync(`${config.redis.prefix}message:*`)
+    const keys = await redisHandler.scan(`message:*`)
     await redis.delAsync('pattern-messages')
     await redis.delAsync('default-lang')
     await redis.delAsync('custom-postbacks')
     for (let key of keys) {
       await redis.delAsync(key.replace(config.redis.prefix, ''))
     }
+    apiLogger.info(`Flushed cached messages.`, req)
     res.sendStatus(200)
   } catch (e) {
-    logger.error(e)
+    apiLogger.error(e)
     res.sendStatus(500)
   }
 }

@@ -1,19 +1,19 @@
 const argon2 = require('argon2')
 const knex = require('../knex.js')
 const validator = require('../validators')
-const logger = require('../logger.js')
+const apiLogger = require('../api_logger')
 
-async function list(req, res) {
+async function list (req, res) {
   try {
     let admins = await knex('admins').select('id', 'name', 'login', 'owner', 'email', 'chat_requests_notifications', 'weekly_email_reports', 'monthly_email_reports').orderBy('id', 'asc')
     res.json(admins)
   } catch (e) {
-    logger.error(e)
+    apiLogger.error(e)
     res.sendStatus(500)
   }
 }
 
-async function create(req, res) {
+async function create (req, res) {
   try {
     let body = req.body
     if (!validator.admin_account(body).valid) return res.sendStatus(400)
@@ -22,20 +22,20 @@ async function create(req, res) {
 
     body.password = await argon2.hash(body.password)
     let [created] = await knex('admins').insert(body).returning('*')
-    let admin_id = created.id
+    let adminId = created.id
     delete body.password
 
     body = created
-    body.id = admin_id
-
+    body.id = adminId
+    apiLogger.info(`Created new admin account with login '${body.login}'.`, req)
     res.json(body)
   } catch (e) {
-    logger.error(e)
+    apiLogger.error(e)
     res.sendStatus(500)
   }
 }
 
-async function changePassword(req, res) {
+async function changePassword (req, res) {
   try {
     let body = req.body
     if (!validator.admin_password(body).valid) return res.sendStatus(400)
@@ -44,38 +44,41 @@ async function changePassword(req, res) {
     let admin = await knex('admins').where('id', req.user.id).first()
     if (!await argon2.verify(admin.password, body.password)) return res.sendStatus(401)
 
-    let new_hash = await argon2.hash(body.new_password)
-    await knex('admins').update('password', new_hash).where('id', admin.id)
+    let newHash = await argon2.hash(body.new_password)
+    await knex('admins').update('password', newHash).where('id', admin.id)
+    apiLogger.info(`Changed password of account.`, req)
     res.sendStatus(200)
   } catch (e) {
-    logger.error(e)
+    apiLogger.error(e)
     res.sendStatus(500)
   }
 }
 
-async function deleteAdmin(req, res) {
+async function deleteAdmin (req, res) {
   try {
     let id = req.body.id
     let owner = await knex('admins').where('id', req.user.id).andWhere('owner', true).first()
-    let to_delete = await knex('admins').where('id', id).andWhere('owner', false).first()
+    let toDelete = await knex('admins').where('id', id).andWhere('owner', false).first()
 
-    if (!owner || !to_delete) return res.sendStatus(401)
+    if (!owner || !toDelete) return res.sendStatus(401)
     await knex('admins').where('id', id).del()
+    apiLogger.info(`Removed admin account with id '${id}'.`, req)
     res.sendStatus(200)
   } catch (e) {
-    logger.error(e)
+    apiLogger.error(e)
     res.sendStatus(500)
   }
 }
 
-async function notificationsSettings(req, res) {
+async function notificationsSettings (req, res) {
   try {
     const id = req.body.id
     delete req.body.id
     const [updated] = await knex('admins').update(req.body).where('id', id).returning('*')
+    apiLogger.info(`Changed notifications settings of account with id '${id}'.`, req)
     res.json(updated)
   } catch (e) {
-    logger.error(e)
+    apiLogger.error(e)
     res.sendStatus(500)
   }
 }

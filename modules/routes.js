@@ -5,7 +5,7 @@ const auth = require('./auth.js')()
 const config = require('../config/config.js')
 const Admin = require('./models/Admin.js')
 const api = require('./api')
-const logger = require('./logger.js')
+const apiLogger = require('./api_logger')
 
 router.post('/api/auth', async (req, res) => {
   try {
@@ -16,14 +16,21 @@ router.post('/api/auth', async (req, res) => {
           id: user.id
         }
         let token = jwt.sign(payload, config.jwt.secret, { expiresIn: '2h' })
+        apiLogger.info(`User '${req.body.login}' logged in successfully.`, req)
         res.json({
           token: token,
           user: JSON.stringify(user)
         })
-      } else res.status(401).end()
-    } else res.status(401).end()
+      } else {
+        apiLogger.info(`Unsuccessful authentication for login '${req.body.login}'`, req)
+        res.status(401).end()
+      }
+    } else {
+      apiLogger.info(`Unsuccessful authentication for login '${req.body.login}'`, req)
+      res.status(401).end()
+    }
   } catch (e) {
-    logger.error(e)
+    apiLogger.error(e)
     res.status(500).end()
   }
 })

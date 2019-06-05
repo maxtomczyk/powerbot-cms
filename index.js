@@ -75,6 +75,7 @@ const webhook = incredbot.Server.setup()
 const app = webhook.server
 const bot = webhook.bot
 
+app.set('trust proxy', true)
 app.use('/', express.static(path.join(__dirname, 'dist')))
 app.use('/static', express.static(path.join(__dirname, 'dist/static')))
 app.use('/custom_api', customRoutes)

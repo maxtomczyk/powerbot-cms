@@ -1,8 +1,6 @@
-const axios = require('axios')
-
 const knex = require('../knex')
 const redis = require('../redis')
-const logger = require('../logger')
+const apiLogger = require('../api_logger')
 
 const config = require('../../config/config')
 
@@ -17,14 +15,14 @@ async function systemStatus (req, res) {
     }
 
     try {
-      let db = await knex.raw('select 1+1 as result;');
+      await knex.raw('select 1+1 as result;')
       status.database.live = true
     } catch (e) {
       status.database.live = false
     }
 
     try {
-      let red = await redis.pingAsync()
+      await redis.pingAsync()
       status.cache.live = true
     } catch (e) {
       status.cache.live = false
@@ -32,7 +30,7 @@ async function systemStatus (req, res) {
 
     res.json(status)
   } catch (e) {
-    logger.error(e)
+    apiLogger.error(e)
     res.sendStatus(500)
   }
 }
@@ -42,7 +40,7 @@ async function version (req, res) {
     const v = process.env.POWERBOT_CMS_VERSION
     res.send(v)
   } catch (e) {
-    logger.error(e)
+    apiLogger.error(e)
     res.sendStatus(500)
   }
 }
@@ -61,7 +59,6 @@ async function messagesChartData (req, res) {
       end.setUTCHours(23, 59, 59, 0)
       data = await knex('stats_medium_resolution').select('*', knex.raw('(messages_incoming + messages_outgoing) as messages_total')).whereBetween('start', [start, end]).orderBy('id', 'asc')
     }
-
 
     for (let i = 0; i < data.length; i++) {
       let row = data[i]
@@ -84,7 +81,7 @@ async function messagesChartData (req, res) {
           }
           insertData.pop()
           insertData = insertData.reverse()
-          for (insert of insertData) {
+          for (let insert of insertData) {
             let o = i + 1
             data.splice(o, 0, insert)
             o++
@@ -98,9 +95,8 @@ async function messagesChartData (req, res) {
     res.json({
       stats: data
     })
-
   } catch (e) {
-    logger.error(e)
+    apiLogger.error(e)
     res.sendStatus(500)
   }
 }
@@ -130,7 +126,7 @@ async function messagesData (req, res) {
       ratio
     })
   } catch (e) {
-    logger.error(e)
+    apiLogger.error(e)
     res.sendStatus(500)
   }
 }
@@ -209,9 +205,6 @@ async function usersDailyChartData (req, res) {
 
       rows = await knex('stats_daily_resolution').whereBetween('start', [start, end]).orderBy('id', 'asc')
     }
-    let xaxis = []
-    let allUsers = []
-    let uniqueUsers = []
 
     for (let i = 0; i < rows.length; i++) {
       let row = rows[i]
@@ -232,7 +225,7 @@ async function usersDailyChartData (req, res) {
             startDate = new Date(+new Date(startDate) + 24 * 60 * 60 * 1000)
           }
           insertData.reverse()
-          for (insert of insertData) {
+          for (let insert of insertData) {
             let o = i + 1
             rows.splice(o, 0, insert)
             o++
@@ -272,11 +265,6 @@ async function usersWeeklyChartData (req, res) {
       dailyRows = await knex('stats_daily_resolution').whereBetween('start', [start, end])
     }
 
-
-    let xaxis = []
-    let allUsers = []
-    let uniqueUsers = []
-
     for (let i = 0; i < rows.length; i++) {
       let row = rows[i]
       let nextRow = rows[i + 1]
@@ -304,7 +292,7 @@ async function usersWeeklyChartData (req, res) {
             startDate = new Date(+new Date(startDate) + 7 * 24 * 60 * 60 * 1000)
           }
           insertData.reverse()
-          for (insert of insertData) {
+          for (let insert of insertData) {
             let o = i + 1
             rows.splice(o, 0, insert)
             o++
@@ -344,13 +332,9 @@ async function usersMonthlyChartData (req, res) {
       rows = await knex('stats_monthly_resolution').whereBetween('start', [start, end]).orderBy('id', 'asc')
       dailyRows = await knex('stats_daily_resolution').whereBetween('start', [start, end])
     }
-    let xaxis = []
-    let allUsers = []
-    let uniqueUsers = []
 
     for (let i = 0; i < rows.length; i++) {
       let row = rows[i]
-      let nextRow = rows[i + 1]
       rows[i].new_users = 0
 
       for (let o = 0; o < dailyRows.length; o++) {
@@ -376,7 +360,7 @@ async function openUrl (req, res) {
     redis.incr(`url-entries-counter:${target}`)
     res.redirect(target)
   } catch (e) {
-    logger.error(e)
+    apiLogger.error(e)
     res.redirect(target)
   }
 }
@@ -394,6 +378,7 @@ async function urlClicks (req, res) {
 async function editUrlData (req, res) {
   try {
     await knex('url_entries').update('friendly_name', req.body.friendly_name).where('id', req.body.id)
+    apiLogger.info(`Changed counter name ('${req.body.friendly_name}') for url '${req.body.url}'.`, req)
     res.sendStatus(200)
   } catch (e) {
     console.error(e)
@@ -405,6 +390,7 @@ async function resetUrlCounter (req, res) {
   try {
     await knex('url_entries').where('id', req.body.id).del()
     if (!req.body.leaveCache) await redis.delAsync(`url-entries-counter:${req.body.url}`)
+    apiLogger.info(`Removed entries counter for url '${req.body.url}'. Flush cache: ${!req.body.leaveCache}.`, req)
     res.sendStatus(200)
   } catch (e) {
     console.error(e)
@@ -443,6 +429,7 @@ async function payloadClicks (req, res) {
 async function editPayloadClick (req, res) {
   try {
     await knex('payloads_entries').update('friendly_name', req.body.friendly_name).where('id', req.body.id)
+    apiLogger.info(`Changed counter name ('${req.body.friendly_name}') for payload '${req.body.payload}'.`, req)
     res.sendStatus(200)
   } catch (e) {
     console.error(e)
@@ -454,6 +441,7 @@ async function resetPayloadClicks (req, res) {
   try {
     await knex('payloads_entries').update('entries', 0).where('id', req.body.id)
     if (!req.body.leaveCache) await redis.delAsync(`stats-payload-entries:${req.body.payload}`)
+    apiLogger.info(`Cleared clicks counter for payload '${req.body.payload}'. Cleared cache: ${!req.body.leaveCache}.`, req)
     res.sendStatus(200)
   } catch (e) {
     console.error(e)
