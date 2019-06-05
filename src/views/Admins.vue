@@ -158,7 +158,7 @@
             v-tooltip.top-center="'Change password'"
           />
           <font-awesome-icon
-            @click="openDeleteDialog(admin)"
+            @click="openDeleteDialog($event, admin)"
             v-tooltip.top-center="'Remove administrator'"
             v-if="admin.id !== logged_admin.id && logged_admin.owner && !admin.owner"
             icon="trash-alt"
@@ -169,30 +169,44 @@
 
         <custom-dialog :ref="`notificationDialog_${admin.id}`">
           <div slot="custom-dialog-header">
-            <h1>Account data</h1>
+            <h1>Edit account</h1>
           </div>
-          <div slot="custom-dialog-content" style="min-width: 300px">
-            <label class="label label--centered" for="password_repeat">
-              Name
-              <input class="input" type="text" v-model="admin.name">
-            </label>
-            <label class="label label--centered" for="password_repeat">
-              Email
-              <input class="input" type="text" v-model="admin.email">
-            </label>
-            <h2>Email notifications</h2>
-            <checkbox
-              v-model="admin.chat_requests_notifications"
-              :val="admin.chat_requests_notifications"
-            >New chat requests</checkbox>
-            <checkbox
-              v-model="admin.weekly_email_reports"
-              :val="admin.weekly_email_reports"
-            >Weekly reports</checkbox>
-            <checkbox
-              v-model="admin.monthly_email_reports"
-              :val="admin.monthly_email_reports"
-            >Monthly reports</checkbox>
+          <div slot="custom-dialog-content" style="min-width: 600px">
+            <div style="display: flex">
+              <div style="margin-right: 30px; width: 50%">
+                <h2>Account data</h2>
+                <label class="label label--centered" for="password_repeat">
+                  Name
+                  <input class="input" type="text" v-model="admin.name">
+                </label>
+                <label class="label label--centered" for="password_repeat">
+                  Email
+                  <input class="input" type="text" v-model="admin.email">
+                </label>
+                <h2>Email notifications</h2>
+                <checkbox
+                  v-model="admin.chat_requests_notifications"
+                  :val="admin.chat_requests_notifications"
+                >New chat requests</checkbox>
+                <checkbox
+                  v-model="admin.weekly_email_reports"
+                  :val="admin.weekly_email_reports"
+                >Weekly reports</checkbox>
+                <checkbox
+                  v-model="admin.monthly_email_reports"
+                  :val="admin.monthly_email_reports"
+                >Monthly reports</checkbox>
+              </div>
+              <div style="width: 50%">
+                <h2>Views access</h2>
+                <checkbox
+                  @click="allowedViewsChange(view.name, $event, admin)"
+                  v-for="view in views"
+                  :key="view.path"
+                  :val="admin.allowed_views.indexOf(view.name) !== -1"
+                >{{ view.name }}</checkbox>
+              </div>
+            </div>
           </div>
           <div slot="custom-dialog-buttons">
             <div
@@ -252,7 +266,8 @@ export default {
         }
       },
       admins: [],
-      logged_admin: JSON.parse(localStorage.getItem('user'))
+      logged_admin: JSON.parse(localStorage.getItem('user')),
+      views: []
     }
   },
 
@@ -330,6 +345,10 @@ export default {
       this.delete_dialog.name = admin.name
       this.delete_dialog.id = admin.id
       this.$refs.removeDialog.openDialog()
+    },
+    allowedViewsChange (view, val, admin) {
+      if (val) admin.allowed_views.push(view)
+      else admin.allowed_views.splice(admin.allowed_views.indexOf(view), 1)
     }
   },
 
@@ -346,6 +365,12 @@ export default {
           monthlyRaports: admin.monthly_email_raports
         }
       }
+
+      this.views = this.$router.options.routes.filter(r => {
+        const basics = ['Login', 'Logout', 'Dashboard', 'Admins']
+        if (basics.indexOf(r.name) !== -1) return false
+        else return true
+      })
     } catch (e) {
       this.$refs.notifier.pushNotification('cannot load!', `There was an error during data load. Error code: ${e.response.status}`, 'error', 10000)
     }
