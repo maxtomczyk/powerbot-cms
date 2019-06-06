@@ -1,7 +1,8 @@
 const argon2 = require('argon2')
-const knex = require('../knex.js')
+const knex = require('../knex')
 const validator = require('../validators')
 const apiLogger = require('../api_logger')
+const redisHandler = require('../redis_handler')
 
 async function list (req, res) {
   try {
@@ -73,13 +74,29 @@ async function deleteAdmin (req, res) {
 async function accountSettings (req, res) {
   try {
     const id = req.body.id
+    const admin = await knex('admins').where('id', req.user.id).first()
     delete req.body.id
     delete req.body.login
     delete req.body.password
     delete req.body.owner
+    if (!admin.owner) delete req.body.allowed_views
+    else await redisHandler.set(`admin-views:${id}`, JSON.stringify(req.body.allowed_views), 60 * 60 * 48)
     const [updated] = await knex('admins').update(req.body).where('id', id).returning('*')
     apiLogger.info(`Changed admin account settings of account with id '${id}'.`, req)
     res.json(updated)
+  } catch (e) {
+    apiLogger.error(e)
+    res.sendStatus(500)
+  }
+}
+
+async function adminViews (req, res) {
+  try {
+    const cachedData = await redisHandler.get(`admin-views:${req.user.id}`)
+    if (cachedData) return res.json(JSON.parse(cachedData))
+    const admin = await knex('admins').select('allowed_views').where('id', req.user.id).first()
+    redisHandler.set(`admin-views:${req.user.id}`, JSON.stringify(admin.allowed_views), 60 * 60 * 48)
+    res.json(admin.allowed_views)
   } catch (e) {
     apiLogger.error(e)
     res.sendStatus(500)
@@ -91,5 +108,6 @@ module.exports = {
   create,
   changePassword,
   deleteAdmin,
-  accountSettings
+  accountSettings,
+  adminViews
 }

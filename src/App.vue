@@ -72,12 +72,6 @@ export default {
     setInterval(function () {
       that.refreshToken()
     }, 15 * 60 * 1000)
-  },
-
-  watch: {
-    async $route (to, from) {
-      const basics = ['Login', 'Logout', 'Dashboard', 'Admins']
-    }
   }
 }
 </script>

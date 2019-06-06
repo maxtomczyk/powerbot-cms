@@ -158,7 +158,7 @@
             v-tooltip.top-center="'Change password'"
           />
           <font-awesome-icon
-            @click="openDeleteDialog($event, admin)"
+            @click="openDeleteDialog(admin)"
             v-tooltip.top-center="'Remove administrator'"
             v-if="admin.id !== logged_admin.id && logged_admin.owner && !admin.owner"
             icon="trash-alt"
@@ -171,9 +171,9 @@
           <div slot="custom-dialog-header">
             <h1>Edit account</h1>
           </div>
-          <div slot="custom-dialog-content" style="min-width: 600px">
+          <div slot="custom-dialog-content">
             <div style="display: flex">
-              <div style="margin-right: 30px; width: 50%">
+              <div style="margin-right: 30px; min-width: 200px;">
                 <h2>Account data</h2>
                 <label class="label label--centered" for="password_repeat">
                   Name
@@ -197,13 +197,13 @@
                   :val="admin.monthly_email_reports"
                 >Monthly reports</checkbox>
               </div>
-              <div style="width: 50%">
+              <div v-if="logged_admin.owner" style="min-width: 250px">
                 <h2>Views access</h2>
                 <checkbox
                   @click="allowedViewsChange(view.name, $event, admin)"
                   v-for="view in views"
                   :key="view.path"
-                  :val="admin.allowed_views.indexOf(view.name) !== -1"
+                  :val="(admin.allowed_views) ? admin.allowed_views.indexOf(view.name) !== -1 : false"
                 >{{ view.name }}</checkbox>
               </div>
             </div>
@@ -344,6 +344,7 @@ export default {
       this.delete_dialog.login = admin.login
       this.delete_dialog.name = admin.name
       this.delete_dialog.id = admin.id
+      console.log(admin)
       this.$refs.removeDialog.openDialog()
     },
     allowedViewsChange (view, val, admin) {

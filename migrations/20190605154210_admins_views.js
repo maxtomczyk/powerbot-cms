@@ -1,6 +1,6 @@
 exports.up = function (knex, Promise) {
   return knex.schema.alterTable('admins', function (t) {
-    t.specificType('allowed_views', 'TEXT[]')
+    t.specificType('allowed_views', 'TEXT[]').defaultTo('{}').notNullable()
   })
 }
 

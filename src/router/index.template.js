@@ -15,9 +15,12 @@ import Attachments from '@/views/Attachments'
 import Elements from '@/views/Elements'
 import Clicks from '@/views/Clicks'
 
+import axios from 'axios'
+axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token')
+
 Vue.use(Router)
 
-export default new Router({
+let router = new Router({
   routes: [{
     path: '/login',
     name: 'Login',
@@ -84,3 +87,18 @@ export default new Router({
     beforeEnter: Guard.auth
   }]
 })
+
+router.beforeEach(async (to, from, next) => {
+  try {
+    const basics = ['Login', 'Logout', 'Dashboard', 'Admins']
+    if (basics.indexOf(to.name) !== -1) return next()
+    const adminViewsReq = await axios.get('/api/admins/views')
+    const adminViews = adminViewsReq.data
+    if (adminViews.indexOf(to.name) === -1) return next(from.path)
+    next()
+  } catch (e) {
+    console.error(e)
+  }
+})
+
+export default router

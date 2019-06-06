@@ -287,9 +287,7 @@ export default {
         this.payloads.prior = payloads.data.prioritized
         let rest = []
         for (let payload of payloads.data.all) if (payloads.data.prioritized.indexOf(payload) === -1) rest.push(payload)
-
         this.payloads.rest = rest
-        console.log(this.payloads)
       } catch (e) {
         this.$refs.notifier.pushNotification('cannot load!', `There was an error during data load. Error code: ${e.response.status}`, 'error', 10000)
       }
