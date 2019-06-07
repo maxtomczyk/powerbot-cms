@@ -112,7 +112,7 @@ export default {
     &__content {
         overflow-x: hidden;
         overflow-y: scroll;
-        // max-height: 80vh;
+        max-height: 75vh;
 
         &::-webkit-scrollbar {
             width: 2px;

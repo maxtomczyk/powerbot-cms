@@ -243,25 +243,29 @@
                 </div>
               </div>
             </div>
-              <label class="label label--centered" v-if="type === 'carousel'" style="text-align: center; margin-top: 15px;">
-                Aspect ratio
-                <div class="message-creator__image-types">
-                  <radio
-                    :actual="langMessage.settings.aspect_ratio"
-                    v-model="langMessage.settings.aspect_ratio"
-                    val="horizontal"
-                    @click="$forceUpdate(); refreshPreview()"
-                  >Horizontal</radio>
-                  <radio
-                    :actual="langMessage.settings.aspect_ratio"
-                    v-model="langMessage.settings.aspect_ratio"
-                    val="square"
-                    @click="$forceUpdate(); refreshPreview()"
-                  >Square</radio>
-                </div>
-              </label>
             <div v-if="type === 'carousel'" style="width: 100%; display: flex;">
               <div class="col-xs-8">
+                <label
+                  class="label label--centered"
+                  v-if="type === 'carousel'"
+                  style="text-align: center; margin-top: 15px;"
+                >
+                  Aspect ratio
+                  <div class="message-creator__image-types">
+                    <radio
+                      :actual="langMessage.settings.aspect_ratio"
+                      v-model="langMessage.settings.aspect_ratio"
+                      val="horizontal"
+                      @click="$forceUpdate(); refreshPreview()"
+                    >Horizontal</radio>
+                    <radio
+                      :actual="langMessage.settings.aspect_ratio"
+                      v-model="langMessage.settings.aspect_ratio"
+                      val="square"
+                      @click="$forceUpdate(); refreshPreview()"
+                    >Square</radio>
+                  </div>
+                </label>
                 <div class="message-creator__column">
                   <h3>
                     Cards
@@ -487,7 +491,9 @@
                 </div>
               </div>
               <div class="col-xs-4">
-                <message-preview :message="langMessage" ref="mCarouselPreview" :type="type"></message-preview>
+                <div class="message-creator__column">
+                  <message-preview :message="langMessage" ref="mCarouselPreview" :type="type"></message-preview>
+                </div>
               </div>
             </div>
             <div v-if="type === 'raw'" style="width: 100%;">
