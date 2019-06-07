@@ -23,7 +23,7 @@
         </div>
       </div>
       <div class="message-preview__message-wrapper" v-if="type === 'carousel'" style="width: 100%;">
-        <div class="message-preview__carousel">
+        <div class="message-preview__carousel" ref="carousel">
           <div
             class="message-preview__carousel-card"
             v-for="(card, i) in message.cards"
@@ -116,7 +116,7 @@ export default {
     },
 
     swipeCarousel (n) {
-      const carousel = document.querySelector('.message-preview__carousel')
+      const carousel = this.$refs.carousel
       const min = 0
       const max = this.message.cards.length * -103 + 103
       carousel.style.marginLeft = (carousel.style.marginLeft === '') ? '0%' : carousel.style.marginLeft
