@@ -32,6 +32,7 @@
             <div class="message-preview__card-image-wrapper" v-show="card.image_type !== 'empty'">
               <div
                 class="message-preview__card-image"
+                :class="{'message-preview__card-image--square': message.settings.aspect_ratio === 'square'}"
                 :style="`background: url(${card.image_url})`"
               ></div>
             </div>
@@ -269,6 +270,10 @@ export default {
     background-size: cover !important;
     border-top-left-radius: 1.3em;
     border-top-right-radius: 1.3em;
+
+    &--square{
+      padding-bottom: 100%;
+    }
   }
 
   &__card-image-wrapper {

@@ -243,6 +243,23 @@
                 </div>
               </div>
             </div>
+              <label class="label label--centered" v-if="type === 'carousel'" style="text-align: center; margin-top: 15px;">
+                Aspect ratio
+                <div class="message-creator__image-types">
+                  <radio
+                    :actual="langMessage.settings.aspect_ratio"
+                    v-model="langMessage.settings.aspect_ratio"
+                    val="horizontal"
+                    @click="$forceUpdate(); refreshPreview()"
+                  >Horizontal</radio>
+                  <radio
+                    :actual="langMessage.settings.aspect_ratio"
+                    v-model="langMessage.settings.aspect_ratio"
+                    val="square"
+                    @click="$forceUpdate(); refreshPreview()"
+                  >Square</radio>
+                </div>
+              </label>
             <div v-if="type === 'carousel'" style="width: 100%; display: flex;">
               <div class="col-xs-8">
                 <div class="message-creator__column">
@@ -539,6 +556,9 @@ export default {
             payload: '',
             title: 'Button'
           }]
+        },
+        settings: {
+          aspect_ratio: 'landscape'
         }
       }
     }
@@ -812,6 +832,7 @@ export default {
       if (!this.message[lang].raw) this.message[lang].raw = ''
       if (!this.message[lang].texts) this.message[lang].texts = ['']
       if (!this.message[lang].cards) this.message[lang].cards = [Object.assign({}, this.elements.card)]
+      if (!this.message[lang].settings) this.message[lang].settings = [Object.assign({}, this.elements.settings)]
     }
     this.activeLang = this.langs[0].locale
     this.hash = hash
