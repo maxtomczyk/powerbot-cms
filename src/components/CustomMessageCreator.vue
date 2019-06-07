@@ -19,6 +19,7 @@
             <radio :actual="type" v-model="type" val="text">Text</radio>
             <radio :actual="type" v-model="type" val="buttons">Buttons</radio>
             <radio :actual="type" v-model="type" val="quick_replies">Quick replies</radio>
+            <radio :actual="type" v-model="type" val="carousel">Carousel</radio>
             <radio :actual="type" v-model="type" val="raw">Raw JSON</radio>
           </div>
           <div
@@ -143,7 +144,7 @@
                           type="text"
                           v-model="qr.title"
                           class="input"
-                          @input="QrOrBtnInput"
+                          @keyup="QrOrBtnInput(qr)"
                         >
                       </label>
                       <label class="label label--centered">
@@ -199,7 +200,7 @@
                           type="text"
                           v-model="btn.title"
                           class="input"
-                          @input="QrOrBtnInput"
+                          @keyup="QrOrBtnInput(btn)"
                         >
                       </label>
                       <label class="label label--centered">
@@ -242,6 +243,236 @@
                 </div>
               </div>
             </div>
+            <div v-if="type === 'carousel'" style="width: 100%; display: flex;">
+              <div class="col-xs-8">
+                <div class="message-creator__column">
+                  <h3>
+                    Cards
+                    <font-awesome-icon
+                      v-if="langMessage.cards.length < 10"
+                      @click="addCard()"
+                      icon="plus"
+                      size="xs"
+                      class="message-creator__icon"
+                      v-tooltip.top-center="'Add card.'"
+                      style="margin-left: 3px; font-size: 1em;"
+                    />
+                  </h3>
+
+                  <div
+                    v-for="(card, i) in langMessage.cards"
+                    :key="hash(createHashString(i+1, 'card'))"
+                    class="message-creator__card"
+                  >
+                    <div class="label message-creator__label">
+                      <div class="message-creator__label-title">Card {{ i + 1 }}</div>
+                      <div class="message-creator__sort-icons">
+                        <font-awesome-icon
+                          :class="{ 'sort-icon--disabled': (i === 0) }"
+                          icon="sort-up"
+                          size="lg"
+                          @click="sortBtnOrQr('up', i, langMessage.cards)"
+                        />
+                        <font-awesome-icon
+                          :class="{ 'sort-icon--disabled': (i === langMessage.cards.length - 1) }"
+                          icon="sort-down"
+                          size="lg"
+                          @click="sortBtnOrQr('down', i, langMessage.cards)"
+                        />
+                      </div>
+                      <span
+                        class="message-creator__variant-remove"
+                        @click="deleteCard(i)"
+                        v-tooltip.top-center="'Remove card.'"
+                      >remove</span>
+                    </div>
+
+                    <div style="display: flex;">
+                      <div style="width: 50%">
+                        <label class="label label--centered">
+                          Title
+                          <input
+                            type="text"
+                            v-model="card.title"
+                            class="input"
+                            @keyup="cardCopyInput(card, 'title')"
+                          >
+                        </label>
+                        <label class="label label--centered">
+                          Subtitle
+                          <input
+                            type="text"
+                            v-model="card.subtitle"
+                            class="input"
+                            @keyup="cardCopyInput(card, 'subtitle')"
+                          >
+                        </label>
+                        <label class="label label--centered">
+                          Image
+                          <div class="message-creator__image-types">
+                            <radio
+                              :actual="card.image_type"
+                              v-model="card.image_type"
+                              val="empty"
+                              @click="$forceUpdate(); refreshPreview()"
+                            >Empty</radio>
+                            <radio
+                              :actual="card.image_type"
+                              v-model="card.image_type"
+                              val="remote"
+                              @click="$forceUpdate(); refreshPreview()"
+                            >Remote</radio>
+                            <radio
+                              :actual="card.image_type"
+                              v-model="card.image_type"
+                              val="upload"
+                              @click="$forceUpdate(); refreshPreview(); cardImageFile(`.image-file-input-${i}`, card)"
+                            >Upload</radio>
+                          </div>
+                          <div v-show="card.image_type === 'remote'">
+                            <label
+                              class="label label--centered"
+                              style="font-size: .85em; margin-top: 8px;"
+                            >
+                              Image URL
+                              <input
+                                type="text"
+                                v-model="card.image_url"
+                                class="input"
+                                @change="cardImageUrlChange()"
+                              >
+                            </label>
+                          </div>
+                          <div v-show="card.image_type === 'upload'">
+                            <div style="display: flex; text-align: center;">
+                              <checkbox
+                                style="margin-top: 4px; font-size: .8em; text-align: center;"
+                                v-model="card.fetch_image"
+                                :val="card.fetch_image"
+                                @click="$forceUpdate()"
+                              >Fetch from URL</checkbox>
+                              <checkbox
+                                style="margin-top: 4px; font-size: .8em; text-align: center;"
+                                v-model="card.resize_image"
+                                :val="card.resize_image"
+                                @click="$forceUpdate()"
+                              >Resize</checkbox>
+                            </div>
+                            <div v-show="card.fetch_image">
+                              <label
+                                class="label label--centered"
+                                style="font-size: .85em; margin-top: 8px;"
+                              >
+                                Image URL
+                                <input
+                                  type="text"
+                                  v-model="card.image_url"
+                                  class="input"
+                                  @change="cardImageUrlChange()"
+                                >
+                              </label>
+                            </div>
+                            <div v-show="!card.fetch_image">
+                              <label
+                                class="label label--centered"
+                                style="font-size: .85em; margin-top: 8px;"
+                              >
+                                File
+                                <input
+                                  type="file"
+                                  accept="image/png, image/jpeg"
+                                  class="input"
+                                  :class="`image-file-input-${i}`"
+                                  @change="cardImageFile(`.image-file-input-${i}`, card)"
+                                >
+                              </label>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+                      <div style="width: 50%">
+                        <label class="label label--centered">
+                          Buttons
+                          <font-awesome-icon
+                            v-if="card.buttons.length < 3"
+                            @click="addCardBtn(i)"
+                            icon="plus"
+                            size="xs"
+                            class="message-creator__icon"
+                            v-tooltip.top-center="'Add button.'"
+                            style="margin-left: 3px; font-size: 1em;"
+                          />
+                          <div
+                            class="message-creator__qr-row-wrapper"
+                            v-for="(btn, o) in card.buttons"
+                            :key="hash(createHashString(o+1, 'card-btn'))"
+                          >
+                            <div class="label message-creator__label" style="font-size: 0.85em;">
+                              <div class="message-creator__label-title">Button {{ o + 1 }}</div>
+                              <div class="message-creator__sort-icons">
+                                <font-awesome-icon
+                                  :class="{ 'sort-icon--disabled': (o === 0) }"
+                                  icon="sort-up"
+                                  size="lg"
+                                  @click="sortBtnOrQr('up', o, card.buttons)"
+                                />
+                                <font-awesome-icon
+                                  :class="{ 'sort-icon--disabled': (o === card.buttons.length - 1) }"
+                                  icon="sort-down"
+                                  size="lg"
+                                  @click="sortBtnOrQr('down', o, card.buttons)"
+                                />
+                              </div>
+                              <span
+                                class="message-creator__variant-remove"
+                                @click="deleteCardBtn(i, o)"
+                                v-tooltip.top-center="'Remove button.'"
+                              >remove</span>
+                            </div>
+                            <div class="message-creator__qr-row" style="font-size: 0.85em;">
+                              <label class="label label--centered">
+                                Title
+                                <input
+                                  type="text"
+                                  v-model="btn.title"
+                                  class="input"
+                                  @keyup="QrOrBtnInput(btn)"
+                                  @click.prevent
+                                >
+                              </label>
+                              <label class="label label--centered">
+                                <div>
+                                  <span>Payload / URL</span>
+                                  <font-awesome-icon
+                                    :class="{ 'message-creator__link-convert--hidden': (!isUrl(btn.payload)) }"
+                                    class="message-creator__link-convert"
+                                    icon="link"
+                                    size="sm"
+                                    @click="convertLink(btn)"
+                                  />
+                                </div>
+                                <input
+                                  type="text"
+                                  v-model="btn.payload"
+                                  class="input"
+                                  data-prev-value
+                                  @focus="btnFocusHandler"
+                                  @input="btnInputHandler"
+                                  @click.prevent
+                                >
+                              </label>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xs-4">
+                <message-preview :message="langMessage" ref="mCarouselPreview" :type="type"></message-preview>
+              </div>
+            </div>
             <div v-if="type === 'raw'" style="width: 100%;">
               <div class="col-xs-12">
                 <div class="message-creator__column">
@@ -270,6 +501,7 @@
 <script>
 import axios from 'axios'
 import hash from 'object-hash'
+import { setTimeout } from 'timers'
 
 export default {
   props: ['active', 'langs', 'message', 'mType', 'id', 'name'],
@@ -293,6 +525,20 @@ export default {
           content_type: 'text',
           title: 'QR',
           payload: ''
+        },
+        card: {
+          title: 'Card title',
+          subtitle: 'Card subtitle',
+          image_type: 'upload',
+          fetch_image: false,
+          resize_image: false,
+          image_url: '',
+          image_display_url: '',
+          buttons: [{
+            type: 'postback',
+            payload: '',
+            title: 'Button'
+          }]
         }
       }
     }
@@ -333,6 +579,43 @@ export default {
       this.refreshPreview()
     },
 
+    deleteCard (i) {
+      for (let lang in this.message) {
+        this.message[lang].cards.splice(i, 1)
+      }
+      this.$forceUpdate()
+      this.refreshPreview()
+    },
+
+    deleteCardBtn (i, o) {
+      for (let lang in this.message) {
+        this.message[lang].cards[i].buttons.splice(o, 1)
+      }
+      this.$forceUpdate()
+      this.refreshPreview()
+    },
+
+    addCard () {
+      for (let lang in this.message) {
+        this.message[lang].cards.push(JSON.parse(JSON.stringify(this.elements.card)))
+      }
+
+      this.$forceUpdate()
+      this.refreshPreview()
+    },
+
+    addCardBtn (i) {
+      for (let lang in this.message) {
+        this.message[lang].cards[i].buttons.push({
+          type: 'postback',
+          payload: '',
+          title: 'Button'
+        })
+      }
+      this.refreshPreview()
+      this.$forceUpdate()
+    },
+
     deleteQr (i) {
       for (let lang in this.message) {
         this.message[lang].quick_replies.splice(i, 1)
@@ -342,7 +625,8 @@ export default {
     },
 
     refreshPreview () {
-      this.$refs.mPreview2[0].refresh()
+      if (this.$refs.mPreview2 && this.$refs.mPreview2[0]) this.$refs.mPreview2[0].refresh()
+      if (this.$refs.mCarouselPreview && this.$refs.mCarouselPreview[0]) this.$refs.mCarouselPreview[0].refresh()
     },
 
     addText () {
@@ -441,19 +725,13 @@ export default {
       }
     },
 
-    QrOrBtnInput (e) {
-      const valid = this.validateQrOrButton(e)
-      if (!valid) return
-      this.refreshPreview()
-    },
-
-    validateQrOrButton (e) {
-      if (!e.data) return true
-      if (e.target.value.length > 20) {
-        e.target.value = e.target.value.substring(0, 20)
-        return false
+    QrOrBtnInput (o) {
+      const valid = o.title.length < 20
+      if (!valid) {
+        o.title = o.title.substring(0, 20)
       }
-      return true
+      this.refreshPreview()
+      this.$forceUpdate()
     },
 
     sortBtnOrQr (direction, index, arr) {
@@ -483,6 +761,31 @@ export default {
       }
       btn.payload = `${window.location.origin}/api/open_url?url=${btn.payload}`
       this.$forceUpdate()
+    },
+
+    focusTarget (e) { // Safari walk-around
+      console.log(e)
+      setTimeout(() => {
+        e.target.focus()
+      }, 1)
+    },
+
+    cardImageFile (selector, card) {
+      card.image_url = URL.createObjectURL(document.querySelector(selector).files[0])
+      this.refreshPreview()
+    },
+
+    cardImageUrlChange () {
+      this.refreshPreview()
+    },
+
+    cardCopyInput (o, key) {
+      const valid = o[key].length < 80
+      if (!valid) {
+        o[key] = o[key].substring(0, 80)
+      }
+      this.refreshPreview()
+      this.$forceUpdate()
     }
   },
 
@@ -508,6 +811,7 @@ export default {
       if (!this.message[lang].buttons) this.message[lang].buttons = [Object.assign({}, this.elements.button)]
       if (!this.message[lang].raw) this.message[lang].raw = ''
       if (!this.message[lang].texts) this.message[lang].texts = ['']
+      if (!this.message[lang].cards) this.message[lang].cards = [Object.assign({}, this.elements.card)]
     }
     this.activeLang = this.langs[0].locale
     this.hash = hash
@@ -521,7 +825,7 @@ export default {
 .message-creator {
   &__column {
     overflow-y: scroll;
-    height: 45vh;
+    height: 50vh;
 
     &::-webkit-scrollbar {
       width: 2px;
@@ -559,7 +863,6 @@ export default {
   &__variant-remove {
     color: $orange;
     position: relative;
-    width: 100%;
     margin-left: 6px;
     font-weight: 400;
     text-decoration: underline;
@@ -629,6 +932,18 @@ export default {
       pointer-events: none;
       cursor: default;
     }
+  }
+
+  &__image-types {
+    display: flex;
+    justify-content: center;
+    font-size: 0.8em;
+    margin-top: 5px;
+  }
+
+  &__card {
+    padding: 15px 0 10px 0;
+    border-bottom: 1px solid $borders-focus;
   }
 }
 

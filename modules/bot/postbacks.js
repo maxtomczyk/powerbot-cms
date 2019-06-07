@@ -2,6 +2,8 @@ const User = require('./models/User')
 const BotData = require('./models/BotData')
 
 const messages = require('../messages')
+const knex = require('../knex')
+const incredbot = require('../incredbot')
 const config = require('../../config/config.js')
 const botData = new BotData()
 
@@ -78,6 +80,17 @@ module.exports = async function (message, user) {
 
     case 'CLEAR_USER_DATA_CANCEL':
       await message.reply.raw(await messages.get('user_data_remove_canceled', user))
+      break
+
+    case /^NOTIFICATIONS_CHANNELS_[0-9]*$/.test(payload) && payload:
+      const page = parseInt(payload.replace('NOTIFICATIONS_CHANNELS_', ''))
+      const channels = await knex('channels').orderBy('friendly_name', 'asc').whereNot('hidden', true).limit(10).offset(page * 10)
+      // let cards = channels.map(ch => {
+      //   return new incredbot.Helpers.Generic({
+      //     title: ch.friendly_name,
+      //     subtitle: 
+      //   })
+      // })
       break
 
     default:
