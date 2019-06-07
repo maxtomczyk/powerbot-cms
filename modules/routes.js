@@ -1,4 +1,6 @@
 const jwt = require('jsonwebtoken')
+const multer = require('multer')
+const crypto = require('crypto')
 const router = require('express').Router()
 
 const auth = require('./auth.js')()
@@ -6,6 +8,18 @@ const config = require('../config/config.js')
 const Admin = require('./models/Admin.js')
 const api = require('./api')
 const apiLogger = require('./api_logger')
+
+const storage = multer.diskStorage({
+  destination: './uploads',
+  filename: function (req, file, cb) {
+    crypto.pseudoRandomBytes(8, function (err, raw) {
+      if (err) apiLogger.error(err)
+      cb(null, `${raw.toString('hex')}-${+new Date()}.${file.mimetype.replace('image/', '')}`)
+    })
+  }
+})
+
+const carouselImage = multer({ storage })
 
 router.post('/api/auth', async (req, res) => {
   try {
@@ -235,6 +249,10 @@ router.post('/api/stats/url_entry', auth.authenticate(), async (req, res) => {
 
 router.post('/api/stats/payload_click', auth.authenticate(), async (req, res) => {
   api.stats.editPayloadClick(req, res)
+})
+
+router.post('/api/messages/upload_image', auth.authenticate(), carouselImage.single('image'), async (req, res) => {
+  api.messages.uploadImage(req, res)
 })
 
 router.delete('/api/admins', auth.authenticate(), async (req, res) => {

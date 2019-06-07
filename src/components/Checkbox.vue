@@ -1,6 +1,6 @@
 <template>
 <div class="checkbox__row">
-  <div class="checkbox" @click="val = !val; $emit('input', val); $emit('click', val)" :class="(val) ? 'checkbox--checked' : ''">
+  <div class="checkbox" @click="val = !val; $emit('change', val); $emit('input', val); $emit('click', val)" :class="(val) ? 'checkbox--checked' : ''">
     <div class="checkbox__wrapper">
       <div class="checkbox__inside">
 

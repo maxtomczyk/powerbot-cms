@@ -341,13 +341,13 @@
                               :actual="card.image_type"
                               v-model="card.image_type"
                               val="remote"
-                              @click="$forceUpdate(); refreshPreview()"
+                              @click="$forceUpdate(); refreshPreview(); card.image_url = ''"
                             >Remote</radio>
                             <radio
                               :actual="card.image_type"
                               v-model="card.image_type"
                               val="upload"
-                              @click="$forceUpdate(); refreshPreview(); cardImageFile(`.image-file-input-${i}`, card)"
+                              @click="$forceUpdate(); refreshPreview(); clearImageFileInput(`.image-file-input-${i}`, card)"
                             >Upload</radio>
                           </div>
                           <div v-show="card.image_type === 'remote'">
@@ -360,7 +360,7 @@
                                 type="text"
                                 v-model="card.image_url"
                                 class="input"
-                                @change="cardImageUrlChange()"
+                                @change="cardImageUrlChange(card)"
                               >
                             </label>
                           </div>
@@ -389,7 +389,7 @@
                                   type="text"
                                   v-model="card.image_url"
                                   class="input"
-                                  @change="cardImageUrlChange()"
+                                  @change="cardImageUrlChange(card)"
                                 >
                               </label>
                             </div>
@@ -524,6 +524,7 @@
 <script>
 import axios from 'axios'
 import hash from 'object-hash'
+import jimp from 'jimp'
 import { setTimeout } from 'timers'
 
 export default {
@@ -556,7 +557,7 @@ export default {
           fetch_image: false,
           resize_image: false,
           image_url: '',
-          image_display_url: '',
+          image_changed: false,
           buttons: [{
             type: 'postback',
             payload: '',
@@ -564,7 +565,7 @@ export default {
           }]
         },
         settings: {
-          aspect_ratio: 'landscape'
+          aspect_ratio: 'horizontal'
         }
       }
     }
@@ -677,6 +678,8 @@ export default {
               delete this.message[lang].quick_replies
               delete this.message[lang].buttons
               delete this.message[lang].raw
+              delete this.message[lang].cards
+              delete this.message[lang].settings.aspect_ratio
             }
             break
 
@@ -684,6 +687,8 @@ export default {
             for (let lang in this.message) {
               delete this.message[lang].buttons
               delete this.message[lang].raw
+              delete this.message[lang].cards
+              delete this.message[lang].settings.aspect_ratio
             }
             break
 
@@ -691,6 +696,8 @@ export default {
             for (let lang in this.message) {
               delete this.message[lang].quick_replies
               delete this.message[lang].raw
+              delete this.message[lang].cards
+              delete this.message[lang].settings.aspect_ratio
               this.message[lang].buttons.map(button => {
                 if (this.isUrl(button.payload)) {
                   button.type = 'web_url'
@@ -709,6 +716,38 @@ export default {
               delete this.message[lang].quick_replies
               delete this.message[lang].buttons
               delete this.message[lang].texts
+              delete this.message[lang].cards
+              delete this.message[lang].settings
+            }
+            break
+
+          case 'carousel':
+            for (let lang in this.message) {
+              delete this.message[lang].quick_replies
+              delete this.message[lang].buttons
+              delete this.message[lang].texts
+              delete this.message[lang].raw
+
+              let cards = this.message[lang].cards
+              cards = cards.map(async (card, i) => {
+                if (!card.image_changed || card.image_type === 'empty' || card.omage_type === 'remote') {
+                  return {
+                    title: card.title,
+                    subtitle: card.subtitle,
+                    image_url: card.image_url,
+                    buttons: card.buttons
+                  }
+                }
+                const formData = new FormData()
+                formData.append('fetch', card.fetch_image)
+                formData.append('resize', card.resize_image)
+
+                if (!card.fetch_image) {
+                  const blob = await fetch(card.image_url).then(r => r.blob())
+                  formData.append('image', blob)
+                } else formData.append('url', card.image_url)
+                await axios.post('/api/messages/upload_image', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+              })
             }
             break
         }
@@ -797,11 +836,19 @@ export default {
     },
 
     cardImageFile (selector, card) {
+      card.image_changed = true
       card.image_url = URL.createObjectURL(document.querySelector(selector).files[0])
       this.refreshPreview()
     },
 
-    cardImageUrlChange () {
+    clearImageFileInput (selector, card) {
+      card.image_url = ''
+      document.querySelector(selector).value = ''
+      this.refreshPreview()
+    },
+
+    cardImageUrlChange (card) {
+      card.image_changed = true
       this.refreshPreview()
     },
 

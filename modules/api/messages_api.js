@@ -1,8 +1,22 @@
+const AWS = require('aws-sdk')
+const util = require('util')
+const fs = require('fs')
+const crypto = require('crypto')
 const knex = require('../knex')
 const redis = require('../redis')
 const redisHandler = require('../redis_handler')
 const apiLogger = require('../api_logger')
+const utils = require('../utilities')
 const config = require('../../config/config')
+
+const readFile = util.promisify(fs.readFile)
+const randomBytes = util.promisify(crypto.randomBytes)
+
+const S3 = new AWS.S3({
+  accessKeyId: config.s3.accessKeyId,
+  secretAccessKey: config.s3.secretAccessKey,
+  Bucket: config.s3.bucketName
+})
 
 async function listPlugs (req, res) {
   try {
@@ -136,6 +150,50 @@ async function flushCache (req, res) {
   }
 }
 
+async function uploadImage (req, res) {
+  try {
+    let file = null
+    let filePath = null
+    let mimeType = null
+    if (!req.body.fetch) {
+      filePath = req.file.path
+      file = await readFile(filePath)
+      mimeType = req.file.mimetype
+    } else {
+      const rand = await randomBytes(8)
+      filePath = `uploads/${rand.toString('hex')}-${+new Date()}`
+      await utils.downloadFile(req.body.url, filePath)
+      file = await readFile(filePath)
+      const format = utils.detectFileFormat(file)
+      if (format === 'jpeg' || format === 'png') {
+        mimeType = `image/${format}`
+        filePath += `.${format}`
+      }
+    }
+
+    if (!mimeType) return res.sendStatus(403)
+
+    S3.upload({
+      ACL: 'public-read',
+      Body: file,
+      Key: `uploads/images/generic_templates/${filePath.replace('uploads/', '')}`,
+      Bucket: config.s3.bucketName,
+      ContentType: mimeType
+    }, (err, uploaded) => {
+      if (err) {
+        apiLogger.error(err)
+        res.sendStatus(500)
+        return
+      }
+
+      apiLogger.info(`Uploaded to S3: uploads/images/generic_templates/${filePath.replace('uploads/', '')}`, req)
+    })
+  } catch (e) {
+    apiLogger.error(e)
+    res.sendStatus(500)
+  }
+}
+
 module.exports = {
   listPlugs,
   listGroups,
@@ -143,5 +201,6 @@ module.exports = {
   remove,
   listUnknownPhrases,
   createPlug,
-  flushCache
+  flushCache,
+  uploadImage
 }
