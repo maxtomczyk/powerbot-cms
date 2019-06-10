@@ -16,7 +16,6 @@ import Elements from '@/views/Elements'
 import Clicks from '@/views/Clicks'
 
 import axios from 'axios'
-axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token')
 
 Vue.use(Router)
 
@@ -90,6 +89,7 @@ let router = new Router({
 
 router.beforeEach(async (to, from, next) => {
   try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token')
     const basics = ['Login', 'Logout', 'Dashboard', 'Admins']
     if (basics.indexOf(to.name) !== -1) return next()
     const adminViewsReq = await axios.get('/api/admins/views')
