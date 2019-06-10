@@ -68,18 +68,78 @@ function isUpdateValid (json) {
         return false
       }
     }
+
+    if (message.cards && message.cards.length) {
+      let valid = true
+      for (let card of message.cards) {
+        if (!card.title || card.title.length > 80 || card.title.length < 0) {
+          valid = false
+          break
+        }
+
+        if (card.subtitle && card.subtitle.length > 80) {
+          valid = false
+          break
+        }
+
+        if (card.buttons && card.buttons.length) {
+          if (card.buttons.length > 3 || card.buttons.length < 0) {
+            valid = false
+            break
+          }
+
+          for (let btn of card.buttons) {
+            if (btn.title.length < 1 || btn.title.length > 20) {
+              valid = false
+              break
+            }
+            if (btn.type === 'postback' && (btn.payload.length > 1000 || btn.payload.length < 1)) {
+              valid = false
+              break
+            }
+            if (btn.type === 'web_url' && btn.url.length < 1) {
+              valid = false
+              break
+            }
+          }
+
+          if (!valid) break
+        }
+      }
+      if (!valid) return false
+    }
   }
   return true
+}
+
+function clearTempValues (json, type) {
+  for (const lang in json) {
+    const message = json[lang]
+    if (type === 'carousel' && message.cards && message.cards.length) {
+      for (let card of message.cards) {
+        delete card.image_type
+        delete card.fetch_image
+        delete card.resize_image
+        delete card.image_changed
+        delete card.prev_image_url
+        if (card.subtitle && card.subtitle.length === 0) delete card.subtitle
+        if (card.image_url && card.image_url.length === 0) delete card.image_url
+        if (card.buttons && card.buttons.length === 0) delete card.buttons
+      }
+    }
+  }
+  return json
 }
 
 async function update (req, res) {
   try {
     const id = req.body.id
-    const update = {
+    let update = {
       json: req.body.json,
       type: req.body.type
     }
     const valid = isUpdateValid(update.json)
+    update.json = clearTempValues(update.json, update.type)
     if (!valid) return res.sendStatus(403)
 
     const [updated] = await knex('messages').update(update).where('id', id).returning('*')
@@ -155,6 +215,7 @@ async function uploadImage (req, res) {
     let file = null
     let filePath = null
     let mimeType = null
+    req.body.fetch = (req.body.fetch && req.body.fetch !== 'undefined') ? JSON.parse(req.body.fetch) : null
     if (!req.body.fetch) {
       filePath = req.file.path
       file = await readFile(filePath)
@@ -185,8 +246,10 @@ async function uploadImage (req, res) {
         res.sendStatus(500)
         return
       }
-
       apiLogger.info(`Uploaded to S3: uploads/images/generic_templates/${filePath.replace('uploads/', '')}`, req)
+      res.json({
+        url: uploaded.Location
+      })
     })
   } catch (e) {
     apiLogger.error(e)

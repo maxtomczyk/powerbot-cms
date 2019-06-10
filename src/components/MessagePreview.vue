@@ -40,13 +40,13 @@
               <div class="message-preview__card-title" v-show="card.title.length">{{ card.title }}</div>
               <div
                 class="message-preview__card-subtitle"
-                v-show="card.subtitle.length"
+                v-show="card.subtitle && card.subtitle.length"
               >{{ card.subtitle }}</div>
             </div>
             <div class="message-preview__buttons">
               <div
                 class="message-preview__button"
-                v-if="card.buttons[0]"
+                v-if="card.buttons && card.buttons[0]"
                 :class="{
           'message-preview__button--only-one': card.buttons.length === 1,
           'message-preview__button--first': card.buttons.length !== 1,
@@ -54,7 +54,7 @@
               >{{ card.buttons[0].title }}</div>
               <div
                 class="message-preview__button"
-                v-if="card.buttons[1]"
+                v-if="card.buttons && card.buttons[1]"
                 :class="{
           'message-preview__button--mid': card.buttons.length === 3,
           'message-preview__button--last': card.buttons.length === 2,
@@ -62,7 +62,7 @@
               >{{ card.buttons[1].title }}</div>
               <div
                 class="message-preview__button message-preview__button--last"
-                v-if="card.buttons[2]"
+                v-if="card.buttons && card.buttons[2]"
               >{{ card.buttons[2].title }}</div>
             </div>
           </div>

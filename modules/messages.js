@@ -93,6 +93,12 @@ async function getCoreMessage (name, user) {
         })
         break
 
+      case 'carousel':
+        const aspectRatio = message.settings.aspect_ratio || null
+        message = new incredbot.Message.Generic(message.cards)
+        if (aspectRatio) message.attachment.payload.image_aspect_ratio = aspectRatio
+        break
+
       case 'raw':
         message = JSON.parse(message.raw)
         break

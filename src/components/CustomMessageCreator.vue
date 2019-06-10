@@ -1,5 +1,6 @@
 <template>
   <div class="message-creator__wrapper">
+    <loader ref="loader"></loader>
     <notifier ref="notifier"></notifier>
     <custom-dialog ref="messageDialog" class="dialog--no-header-margin dialog--no-overflow">
       <div slot="custom-dialog-header">
@@ -376,7 +377,9 @@
                                 style="margin-top: 4px; font-size: .8em; text-align: center;"
                                 v-model="card.resize_image"
                                 :val="card.resize_image"
+                                v-show="!card.fetch_image"
                                 @click="$forceUpdate()"
+                                @change="imageResizeChange($event, card, langMessage.settings.aspect_ratio)"
                               >Resize</checkbox>
                             </div>
                             <div v-show="card.fetch_image">
@@ -404,7 +407,8 @@
                                   accept="image/png, image/jpeg"
                                   class="input"
                                   :class="`image-file-input-${i}`"
-                                  @change="cardImageFile(`.image-file-input-${i}`, card)"
+                                  :ref="`fileInput-${i}`"
+                                  @change="cardImageFile(i, card)"
                                 >
                               </label>
                             </div>
@@ -415,7 +419,7 @@
                         <label class="label label--centered">
                           Buttons
                           <font-awesome-icon
-                            v-if="card.buttons.length < 3"
+                            v-if="card.buttons && card.buttons.length < 3"
                             @click="addCardBtn(i)"
                             icon="plus"
                             size="xs"
@@ -524,8 +528,7 @@
 <script>
 import axios from 'axios'
 import hash from 'object-hash'
-import jimp from 'jimp'
-import { setTimeout } from 'timers'
+import jimp from 'jimp/es'
 
 export default {
   props: ['active', 'langs', 'message', 'mType', 'id', 'name'],
@@ -672,6 +675,7 @@ export default {
 
     async create () {
       try {
+        this.$refs.loader.open('Saving changes...')
         switch (this.type) {
           case 'text':
             for (let lang in this.message) {
@@ -729,29 +733,29 @@ export default {
               delete this.message[lang].raw
 
               let cards = this.message[lang].cards
-              cards = cards.map(async (card, i) => {
-                if (!card.image_changed || card.image_type === 'empty' || card.omage_type === 'remote') {
-                  return {
-                    title: card.title,
-                    subtitle: card.subtitle,
-                    image_url: card.image_url,
-                    buttons: card.buttons
-                  }
+
+              for (let i = 0; i < cards.length; i++) {
+                let card = cards[i]
+                if (!card.image_changed || card.image_type === 'empty' || card.image_type === 'remote') {
+                  if (card.image_type === 'empty') delete card.image_url
+                  break
                 }
                 const formData = new FormData()
                 formData.append('fetch', card.fetch_image)
-                formData.append('resize', card.resize_image)
 
                 if (!card.fetch_image) {
                   const blob = await fetch(card.image_url).then(r => r.blob())
                   formData.append('image', blob)
                 } else formData.append('url', card.image_url)
-                await axios.post('/api/messages/upload_image', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
-              })
+
+                if (!card.image_url.length || card.image_changed) {
+                  const uploadReq = await axios.post('/api/messages/upload_image', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+                  card.image_url = uploadReq.data.url
+                }
+              }
             }
             break
         }
-
         const updated = await axios.put('/api/messages', {
           json: this.message,
           type: this.type,
@@ -759,9 +763,12 @@ export default {
         })
 
         this.$emit('saved', updated.data)
+        this.$refs.loader.close()
         this.$refs.messageDialog.closeDialog()
       } catch (e) {
+        this.$refs.loader.close()
         this.$refs.messageDialog.closeDialog()
+        console.error(e)
         this.$refs.notifier.pushNotification('cannot save!', `An error occured durinig message change request. Error code: ${e.response.status}`, 'error')
       }
     },
@@ -828,16 +835,9 @@ export default {
       this.$forceUpdate()
     },
 
-    focusTarget (e) { // Safari walk-around
-      console.log(e)
-      setTimeout(() => {
-        e.target.focus()
-      }, 1)
-    },
-
-    cardImageFile (selector, card) {
+    cardImageFile (i, card) {
       card.image_changed = true
-      card.image_url = URL.createObjectURL(document.querySelector(selector).files[0])
+      card.image_url = URL.createObjectURL(this.$refs[`fileInput-${i}`][0].files[0])
       this.refreshPreview()
     },
 
@@ -859,6 +859,40 @@ export default {
       }
       this.refreshPreview()
       this.$forceUpdate()
+    },
+
+    async imageResizeChange (e, card, ar) {
+      if (e) {
+        const arSizes = {
+          horizontal: [978, 512],
+          square: [768, 768]
+        }
+        this.$refs.loader.open(`Resizing image for ${ar} aspect ratio...`)
+        let that = this
+        jimp.read(card.image_url).then(image => {
+          image.background(0xFFFFFFFF)
+          image.contain(...arSizes[ar], jimp.HORIZONTAL_ALIGN_CENTER | jimp.VERTICAL_ALIGN_MIDDLE)
+          image.getBuffer(image._originalMime, (err, buff) => {
+            if (err) {
+              throw err
+            }
+            const blob = new Blob([buff], { type: image._originalMime })
+            card.prev_image_url = card.image_url
+            card.image_url = URL.createObjectURL(blob)
+            this.refreshPreview()
+            this.$forceUpdate()
+            that.$refs.loader.close()
+          })
+        }).catch(e => {
+          that.$refs.loader.close()
+          console.error(e)
+          that.$refs.notifier.pushNotification('cannot resize!', `An error occured durinig image resize. Check console for more informations.`, 'error')
+        })
+      } else {
+        card.image_url = card.prev_image_url
+        this.refreshPreview()
+        this.$forceUpdate()
+      }
     }
   },
 
@@ -885,7 +919,13 @@ export default {
       if (!this.message[lang].raw) this.message[lang].raw = ''
       if (!this.message[lang].texts) this.message[lang].texts = ['']
       if (!this.message[lang].cards) this.message[lang].cards = [Object.assign({}, this.elements.card)]
-      if (!this.message[lang].settings) this.message[lang].settings = [Object.assign({}, this.elements.settings)]
+      if (!this.message[lang].settings) this.message[lang].settings = Object.assign({}, this.elements.settings)
+
+      if (!this.message[lang].settings.aspect_ratio) this.message[lang].settings.aspect_ratio = 'horizontal'
+
+      for (let card of this.message[lang].cards) {
+        if (!card.image_url || !card.image_url.length) card.image_type = 'empty'
+      }
     }
     this.activeLang = this.langs[0].locale
     this.hash = hash
