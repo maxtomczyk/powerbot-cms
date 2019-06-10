@@ -29,7 +29,6 @@ async function downloadFile (url, target) {
 }
 
 async function downloadFileToBuffer (url) {
-
   const response = await axios({
     url,
     method: 'GET',

@@ -1,7 +1,6 @@
 const AWS = require('aws-sdk')
 const util = require('util')
 const fs = require('fs')
-const crypto = require('crypto')
 const knex = require('../knex')
 const redis = require('../redis')
 const redisHandler = require('../redis_handler')
@@ -10,7 +9,6 @@ const utils = require('../utilities')
 const config = require('../../config/config')
 
 const readFile = util.promisify(fs.readFile)
-const randomBytes = util.promisify(crypto.randomBytes)
 
 const S3 = new AWS.S3({
   accessKeyId: config.s3.accessKeyId,

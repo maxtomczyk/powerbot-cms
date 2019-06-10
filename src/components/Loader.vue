@@ -39,7 +39,7 @@ export default {
 
 .loader {
   &__overlay {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     z-index: 150;

@@ -64,6 +64,7 @@ async function getCoreMessage (name, user) {
       user.gender = user.gender || defaultGender
       const genderInt = (user.gender === 'male') ? 0 : 1
       message.text = format(getRandom(message.texts), user)
+      // eslint-disable-next-line
       const genderMatches = utilities.matchAll(/\(\(\(([^\x00-\x7F]+|\w+|\s+)+\|([^\x00-\x7F]+|\w+|\s+)+\)\)\)/gi, message.text)
 
       for (const toReplace of genderMatches) {

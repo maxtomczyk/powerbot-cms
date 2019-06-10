@@ -740,8 +740,6 @@ export default {
                   continue
                 }
                 const formData = new FormData()
-                formData.append('fetch', card.fetch_image)
-
                 const blob = await fetch(card.image_url).then(r => r.blob())
                 formData.append('image', blob)
 
