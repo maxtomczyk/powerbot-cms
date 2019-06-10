@@ -546,65 +546,65 @@
                       </div>
                     </div>
                   </div>
-                                  <checkbox
-                  style="margin-top: 10px; width: 100%; margin-bottom: 15px;"
-                  v-model="langMessage.settings.quick_replies"
-                  :val="langMessage.settings.quick_replies"
-                  @click="$forceUpdate(); refreshPreview()"
-                >Quick replies</checkbox>
-                <div v-if="langMessage.settings.quick_replies" class="message-creator__column">
-                  <div
-                    class="message-creator__qr-row-wrapper"
-                    v-for="(qr, i) in langMessage.quick_replies"
-                    :key="hash(createHashString(i+1, 'qr'))"
-                  >
-                    <div class="label message-creator__label">
-                      <div class="message-creator__label-title">Reply {{ i + 1 }}</div>
-                      <div class="message-creator__sort-icons">
-                        <div
-                          class="message-creator__icon-up"
-                          :class="{ 'sort-icon--disabled': (i === 0) }"
-                          @click="sortBtnOrQr('up', i, langMessage.quick_replies)"
-                        ></div>
-                        <div
-                          class="message-creator__icon-down"
-                          :class="{ 'sort-icon--disabled': (i === langMessage.quick_replies.length - 1) }"
-                          @click="sortBtnOrQr('down', i, langMessage.quick_replies)"
-                        ></div>
+                  <checkbox
+                    style="margin-top: 10px; width: 100%; margin-bottom: 15px;"
+                    v-model="langMessage.settings.quick_replies"
+                    :val="langMessage.settings.quick_replies"
+                    @click="$forceUpdate(); refreshPreview()"
+                  >Quick replies</checkbox>
+                  <div v-if="langMessage.settings.quick_replies" class="message-creator__column">
+                    <div
+                      class="message-creator__qr-row-wrapper"
+                      v-for="(qr, i) in langMessage.quick_replies"
+                      :key="hash(createHashString(i+1, 'qr'))"
+                    >
+                      <div class="label message-creator__label">
+                        <div class="message-creator__label-title">Reply {{ i + 1 }}</div>
+                        <div class="message-creator__sort-icons">
+                          <div
+                            class="message-creator__icon-up"
+                            :class="{ 'sort-icon--disabled': (i === 0) }"
+                            @click="sortBtnOrQr('up', i, langMessage.quick_replies)"
+                          ></div>
+                          <div
+                            class="message-creator__icon-down"
+                            :class="{ 'sort-icon--disabled': (i === langMessage.quick_replies.length - 1) }"
+                            @click="sortBtnOrQr('down', i, langMessage.quick_replies)"
+                          ></div>
+                        </div>
+                        <span
+                          class="message-creator__variant-remove"
+                          @click="deleteQr(i)"
+                          v-tooltip.top-center="'Remove quick reply.'"
+                        >remove</span>
                       </div>
-                      <span
-                        class="message-creator__variant-remove"
-                        @click="deleteQr(i)"
-                        v-tooltip.top-center="'Remove quick reply.'"
-                      >remove</span>
+                      <div class="message-creator__qr-row">
+                        <label class="label label--centered">
+                          Title
+                          <input
+                            type="text"
+                            v-model="qr.title"
+                            class="input"
+                            @keyup="QrOrBtnInput(qr)"
+                          >
+                        </label>
+                        <label class="label label--centered">
+                          Payload
+                          <input type="text" v-model="qr.payload" class="input">
+                        </label>
+                      </div>
                     </div>
-                    <div class="message-creator__qr-row">
-                      <label class="label label--centered">
-                        Title
-                        <input
-                          type="text"
-                          v-model="qr.title"
-                          class="input"
-                          @keyup="QrOrBtnInput(qr)"
-                        >
-                      </label>
-                      <label class="label label--centered">
-                        Payload
-                        <input type="text" v-model="qr.payload" class="input">
-                      </label>
+                    <div style="text-align: center">
+                      <font-awesome-icon
+                        v-if="langMessage.quick_replies.length < 10"
+                        @click="addQr()"
+                        icon="plus"
+                        size="lg"
+                        class="message-creator__icon"
+                        v-tooltip.top-center="'Add quick reply.'"
+                      />
                     </div>
                   </div>
-                  <div style="text-align: center">
-                    <font-awesome-icon
-                      v-if="langMessage.quick_replies.length < 10"
-                      @click="addQr()"
-                      icon="plus"
-                      size="lg"
-                      class="message-creator__icon"
-                      v-tooltip.top-center="'Add quick reply.'"
-                    />
-                  </div>
-                </div>
                 </div>
               </div>
               <div class="col-xs-4">
@@ -1095,7 +1095,7 @@ export default {
       }
     }
 
-    &--disabled{
+    &--disabled {
       border-top: 11px solid $font-primary;
     }
   }
@@ -1123,12 +1123,10 @@ export default {
       }
     }
 
-    &--disabled{
+    &--disabled {
       border-top: 11px solid $font-primary;
     }
   }
-
-  
 
   &__label {
     display: flex;
