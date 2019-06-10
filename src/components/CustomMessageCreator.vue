@@ -361,7 +361,7 @@
                                 type="text"
                                 v-model="card.image_url"
                                 class="input"
-                                @change="cardImageUrlChange(card)"
+                                @change="cardImageUrlChange(card, false)"
                               >
                             </label>
                           </div>
@@ -377,7 +377,6 @@
                                 style="margin-top: 4px; font-size: .8em; text-align: center;"
                                 v-model="card.resize_image"
                                 :val="card.resize_image"
-                                v-show="!card.fetch_image"
                                 @click="$forceUpdate()"
                                 @change="imageResizeChange($event, card, langMessage.settings.aspect_ratio)"
                               >Resize</checkbox>
@@ -392,7 +391,7 @@
                                   type="text"
                                   v-model="card.image_url"
                                   class="input"
-                                  @change="cardImageUrlChange(card)"
+                                  @change="cardImageUrlChange(card, true)"
                                 >
                               </label>
                             </div>
@@ -738,20 +737,16 @@ export default {
                 let card = cards[i]
                 if (!card.image_changed || card.image_type === 'empty' || card.image_type === 'remote') {
                   if (card.image_type === 'empty') delete card.image_url
-                  break
+                  continue
                 }
                 const formData = new FormData()
                 formData.append('fetch', card.fetch_image)
 
-                if (!card.fetch_image) {
-                  const blob = await fetch(card.image_url).then(r => r.blob())
-                  formData.append('image', blob)
-                } else formData.append('url', card.image_url)
+                const blob = await fetch(card.image_url).then(r => r.blob())
+                formData.append('image', blob)
 
-                if (!card.image_url.length || card.image_changed) {
-                  const uploadReq = await axios.post('/api/messages/upload_image', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
-                  card.image_url = uploadReq.data.url
-                }
+                const uploadReq = await axios.post('/api/messages/upload_image', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+                card.image_url = uploadReq.data.url
               }
             }
             break
@@ -847,8 +842,9 @@ export default {
       this.refreshPreview()
     },
 
-    cardImageUrlChange (card) {
+    cardImageUrlChange (card, download) {
       card.image_changed = true
+      if (download && card.image_url.substring(0, 4).toLowerCase() !== 'blob') this.fetchImageViaServer(card)
       this.refreshPreview()
     },
 
@@ -861,6 +857,23 @@ export default {
       this.$forceUpdate()
     },
 
+    async fetchImageViaServer (card) {
+      try {
+        this.$refs.loader.open(`Fetching image via server...`)
+        const req = await axios({
+          method: 'get',
+          url: `/api/download_buffer?url=${card.image_url}`,
+          responseType: 'blob'
+        })
+        card.image_url = URL.createObjectURL(req.data)
+        this.$refs.loader.close()
+      } catch (e) {
+        this.$refs.loader.close()
+        console.error(e)
+        this.$refs.notifier.pushNotification('cannot resize!', `An error occured durinig image download. Check console for more informations.`, 'error')
+      }
+    },
+
     async imageResizeChange (e, card, ar) {
       if (e) {
         const arSizes = {
@@ -869,6 +882,7 @@ export default {
         }
         this.$refs.loader.open(`Resizing image for ${ar} aspect ratio...`)
         let that = this
+
         jimp.read(card.image_url).then(image => {
           image.background(0xFFFFFFFF)
           image.contain(...arSizes[ar], jimp.HORIZONTAL_ALIGN_CENTER | jimp.VERTICAL_ALIGN_MIDDLE)

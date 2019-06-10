@@ -175,6 +175,10 @@ router.get('/api/admins/views', auth.authenticate(), async (req, res) => {
   api.admins.adminViews(req, res)
 })
 
+router.get('/api/download_buffer', auth.authenticate(), async (req, res) => {
+  api.messages.downloadBuffer(req, res)
+})
+
 router.put('/api/admins', auth.authenticate(), async (req, res) => {
   api.admins.create(req, res)
 })

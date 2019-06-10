@@ -212,25 +212,9 @@ async function flushCache (req, res) {
 
 async function uploadImage (req, res) {
   try {
-    let file = null
-    let filePath = null
-    let mimeType = null
-    req.body.fetch = (req.body.fetch && req.body.fetch !== 'undefined') ? JSON.parse(req.body.fetch) : null
-    if (!req.body.fetch) {
-      filePath = req.file.path
-      file = await readFile(filePath)
-      mimeType = req.file.mimetype
-    } else {
-      const rand = await randomBytes(8)
-      filePath = `uploads/${rand.toString('hex')}-${+new Date()}`
-      await utils.downloadFile(req.body.url, filePath)
-      file = await readFile(filePath)
-      const format = utils.detectFileFormat(file)
-      if (format === 'jpeg' || format === 'png') {
-        mimeType = `image/${format}`
-        filePath += `.${format}`
-      }
-    }
+    let filePath = req.file.path
+    let file = await readFile(filePath)
+    let mimeType = req.file.mimetype
 
     if (!mimeType) return res.sendStatus(403)
 
@@ -257,6 +241,19 @@ async function uploadImage (req, res) {
   }
 }
 
+async function downloadBuffer (req, res) {
+  try {
+    const data = await utils.downloadFileToBuffer(req.query.url)
+    apiLogger.info(`Downloaded to buffer ${req.query.url}, declared content type: ${data.mimeType}.`, req)
+    if (data.mimeType !== 'image/jpeg' && data.mimeType !== 'image/png') return res.sendStatus(406)
+    res.set('Content-Type', data.mimeType)
+    res.end(new Buffer(data.buffer, 'binary'), 'binary')
+  } catch (e) {
+    apiLogger.error(e)
+    res.sendStatus(500)
+  }
+}
+
 module.exports = {
   listPlugs,
   listGroups,
@@ -265,5 +262,6 @@ module.exports = {
   listUnknownPhrases,
   createPlug,
   flushCache,
-  uploadImage
+  uploadImage,
+  downloadBuffer
 }
