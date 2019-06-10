@@ -67,6 +67,13 @@
             </div>
           </div>
         </div>
+        <div class="message-preview__quick-replies" v-show="message.settings.quick_replies">
+          <div
+            class="message-preview__qr"
+            v-for="(qr, i) in message.quick_replies"
+            :key="i"
+          >{{qr.title}}</div>
+        </div>
       </div>
       <div class="message-preview__message-wrapper" v-else>
         <div
@@ -95,7 +102,7 @@
             v-if="message.buttons[2]"
           >{{ message.buttons[2].title }}</div>
         </div>
-        <div class="message-preview__quick-replies" v-show="type === 'quick_replies'">
+        <div class="message-preview__quick-replies" v-show="message.settings.quick_replies">
           <div
             class="message-preview__qr"
             v-for="(qr, i) in message.quick_replies"
@@ -271,7 +278,7 @@ export default {
     border-top-left-radius: 1.3em;
     border-top-right-radius: 1.3em;
 
-    &--square{
+    &--square {
       padding-bottom: 100%;
     }
   }
@@ -301,7 +308,7 @@ export default {
     align-items: center;
     width: 100%;
     margin-left: 0px;
-    transition: margin-left .2s ease;
+    transition: margin-left 0.2s ease;
   }
 
   &__carousel-card {
