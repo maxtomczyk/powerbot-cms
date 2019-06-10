@@ -803,21 +803,12 @@ export default {
             }
             break
 
-          case 'quick_replies':
-            for (let lang in this.message) {
-              delete this.message[lang].buttons
-              delete this.message[lang].raw
-              delete this.message[lang].cards
-              delete this.message[lang].settings.aspect_ratio
-            }
-            break
-
           case 'buttons':
             for (let lang in this.message) {
-              delete this.message[lang].quick_replies
               delete this.message[lang].raw
               delete this.message[lang].cards
               delete this.message[lang].settings.aspect_ratio
+              if (!this.message[lang].settings.quick_replies) delete this.message[lang].quick_replies
               this.message[lang].buttons.map(button => {
                 if (this.isUrl(button.payload)) {
                   button.type = 'web_url'
@@ -843,10 +834,10 @@ export default {
 
           case 'carousel':
             for (let lang in this.message) {
-              delete this.message[lang].quick_replies
               delete this.message[lang].buttons
               delete this.message[lang].texts
               delete this.message[lang].raw
+              if (!this.message[lang].settings.quick_replies) delete this.message[lang].quick_replies
 
               let cards = this.message[lang].cards
 

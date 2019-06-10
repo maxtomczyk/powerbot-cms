@@ -77,27 +77,36 @@ async function getCoreMessage (name, user) {
 
     switch (messages.type) {
       case 'text':
-        message = new incredbot.Message.Text(message.text, {
-          recipient_id: user.messenger_id
-        })
-        break
-
-      case 'quick_replies':
-        message = new incredbot.Message.QuickReplies(message.text, message.quick_replies, {
-          recipient_id: user.messenger_id
-        })
+        {
+          const qrEnabled = message.settings.quick_replies
+          const qrs = message.quick_replies
+          message = new incredbot.Message.Text(message.text, {
+            recipient_id: user.messenger_id
+          })
+          if (qrEnabled) message.quick_replies = qrs
+        }
         break
 
       case 'buttons':
-        message = new incredbot.Message.Buttons(message.text, message.buttons, {
-          recipient_id: user.messenger_id
-        })
+        {
+          const qrEnabled = message.settings.quick_replies
+          const qrs = message.quick_replies
+          message = new incredbot.Message.Buttons(message.text, message.buttons, {
+            recipient_id: user.messenger_id
+          })
+          if (qrEnabled) message.quick_replies = qrs
+        }
         break
 
       case 'carousel':
-        const aspectRatio = message.settings.aspect_ratio || null
-        message = new incredbot.Message.Generic(message.cards)
-        if (aspectRatio) message.attachment.payload.image_aspect_ratio = aspectRatio
+        {
+          const qrEnabled = message.settings.quick_replies
+          const qrs = message.quick_replies
+          const aspectRatio = message.settings.aspect_ratio || null
+          message = new incredbot.Message.Generic(message.cards)
+          if (aspectRatio) message.attachment.payload.image_aspect_ratio = aspectRatio
+          if (qrEnabled) message.quick_replies = qrs
+        }
         break
 
       case 'raw':
