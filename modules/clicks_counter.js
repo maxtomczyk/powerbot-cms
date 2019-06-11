@@ -75,7 +75,10 @@ async function collectPayloadTraces () {
     let users = keys.map(k => `internal-user-data:${parseInt(k.replace(`${config.redis.prefix}stats-user-payload-trace:`, ''))}:last-contact`)
     const lastContacts = await redis.mgetAsync(...users)
     users = users
-      .filter((u, i) => +new Date() - JSON.parse(lastContacts[i]).value >= 5 * 60 * 1000)
+      .filter((u, i) => {
+        if (!lastContacts[i] || !lastContacts[i].value) return false
+        else return +new Date() - JSON.parse(lastContacts[i]).value >= 5 * 60 * 1000
+      })
       .map(u => u.replace('internal-user-data:', '').replace(':last-contact', ''))
     keys = keys
       .map(k => k.replace(config.redis.prefix, ''))

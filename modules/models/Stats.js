@@ -4,11 +4,12 @@ const emails = require('../emails')
 
 class Stats {
   incomingMessage (message, user) {
+    // User may be null if contacts for the fist time.
     redis.incr('stats-med-incoming-messages')
     redis.sadd('stats-daily-unique-users-list', message.sender_id)
     redis.sadd('stats-weekly-unique-users-list', message.sender_id)
     redis.sadd('stats-monthly-unique-users-list', message.sender_id)
-    user.setInternalCacheKey('last-contact', +new Date())
+    if (user) user.setInternalCacheKey('last-contact', +new Date())
   }
 
   outgoingMessage (message) {

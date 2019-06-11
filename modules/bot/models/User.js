@@ -28,29 +28,15 @@ class User {
       const labelId = row.label_id
       const channelId = row.id
 
-      return knex.transaction(trx => {
-        return incredbot.broadcast.labelToUser(labelId, this.messenger_id)
-          .then(async data => {
-            try {
-              if (data.success) {
-                const duplicate = await knex('users_channels').where('user_id', this.id).andWhere('channel_id', channelId).first()
-                if (!duplicate) {
-                  const o = {
-                    user_id: this.id,
-                    channel_id: channelId
-                  }
-                  await knex('users_channels').insert(o)
-                }
-              } else {
-                throw new Error('Adding user to label failed. Returned status other than success.')
-              }
-            } catch (e) {
-              throw e
-            }
-          }).catch(e => {
-            throw e
-          })
-      })
+      if (config.settings.autoSyncChannelsWithBroadcastApi) await incredbot.broadcast.labelToUser(labelId, this.messenger_id)
+      const duplicate = await knex('users_channels').where('user_id', this.id).andWhere('channel_id', channelId).first()
+      if (!duplicate) {
+        const o = {
+          user_id: this.id,
+          channel_id: channelId
+        }
+        await knex('users_channels').insert(o)
+      }
     } catch (e) {
       throw e
     }
@@ -62,35 +48,21 @@ class User {
       const labelId = row.label_id
       const channelId = row.id
 
-      return knex.transaction(trx => {
-        return incredbot.broadcast.removeLabelFromUser(labelId, this.messenger_id)
-          .then(async data => {
-            try {
-              if (data.success) {
-                await knex('users_channels').where('channel_id', channelId).andWhere('user_id', this.id).del()
-              } else {
-                throw new Error('Adding user to label failed. Returned status other than success.')
-              }
-            } catch (e) {
-              throw e
-            }
-          }).catch(e => {
-            throw e
-          })
-      })
+      if (config.settings.autoSyncChannelsWithBroadcastApi) await incredbot.broadcast.removeLabelFromUser(labelId, this.messenger_id)
+      await knex('users_channels').where('channel_id', channelId).andWhere('user_id', this.id).del()
     } catch (e) {
       throw e
     }
   }
 
-  async loadOrCreate () {
+  async loadOrCreate (noCreate) {
     try {
       let record = await knex('users').where('messenger_id', this.messenger_id).first()
 
       if (record) {
         Object.assign(this, record)
         return this
-      } else {
+      } else if (!noCreate) {
         let additionalData = (config.settings.usersAdditionalData) ? config.settings.usersAdditionalData.split(' ') : []
         let data = await incredbot.User(this.messenger_id).getData('first_name', 'last_name', 'id', ...additionalData)
         let defaultChannels = await this.getDefaultChannels()
@@ -145,7 +117,7 @@ class User {
         })
         Object.assign(this, createdUser)
         return this
-      }
+      } else return null
     } catch (e) {
       throw e
     }

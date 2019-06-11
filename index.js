@@ -147,7 +147,7 @@ bot.on('entry', async (entry) => {
 
 bot.on('message', async (message, raw) => {
   try {
-    let user = await new User(message.sender_id).loadOrCreate()
+    let user = await new User(message.sender_id).loadOrCreate(true)
     emitter.emit('message', message, raw)
     stats.incomingMessage(message, user)
   } catch (e) {
