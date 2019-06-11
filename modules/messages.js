@@ -70,10 +70,12 @@ function render (messages, user, renderData, defaultLanguage) {
     delete message.texts
   }
 
+  message.settings = message.settings || {}
+
   switch (messages.type) {
     case 'text':
       {
-        const qrEnabled = message.settings && message.settings.quick_replies
+        const qrEnabled = message.settings.quick_replies
         const qrs = message.quick_replies
         message = new incredbot.Message.Text(message.text, {
           recipient_id: user.messenger_id
@@ -84,7 +86,7 @@ function render (messages, user, renderData, defaultLanguage) {
 
     case 'buttons':
       {
-        const qrEnabled = message.settings && message.settings.quick_replies
+        const qrEnabled = message.settings.quick_replies
         const qrs = message.quick_replies
         message = new incredbot.Message.Buttons(message.text, message.buttons, {
           recipient_id: user.messenger_id
@@ -95,7 +97,7 @@ function render (messages, user, renderData, defaultLanguage) {
 
     case 'carousel':
       {
-        const qrEnabled = message.settings && message.settings.quick_replies
+        const qrEnabled = message.settings.quick_replies
         const qrs = message.quick_replies
         const aspectRatio = message.settings.aspect_ratio || null
         for (let card of message.cards) {
