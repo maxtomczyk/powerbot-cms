@@ -49,7 +49,7 @@ function getRandom (array) {
   return array[Math.floor(Math.random() * (array.length))]
 }
 
-async function getCoreMessage (name, user) {
+async function getCoreMessage (name, user, renderData) {
   try {
     const getByIdMode = !isNaN(parseInt(name))
     const messages = await getFromDbOrCache(name, getByIdMode)
@@ -63,7 +63,7 @@ async function getCoreMessage (name, user) {
       const defaultGender = config.settings.defaultGender || 'male'
       user.gender = user.gender || defaultGender
       const genderInt = (user.gender === 'male') ? 0 : 1
-      message.text = format(getRandom(message.texts), user)
+      message.text = format(getRandom(message.texts), renderData)
       // eslint-disable-next-line
       const genderMatches = utilities.matchAll(/\(\(\(([^\x00-\x7F]+|\w+|\s+)+\|([^\x00-\x7F]+|\w+|\s+)+\)\)\)/gi, message.text)
 
@@ -119,11 +119,13 @@ async function getCoreMessage (name, user) {
   }
 }
 
-async function get (name, user) {
+async function get (name, user, renderData) {
   try {
     user = user || {}
-
-    const message = await getCoreMessage(name, user)
+    renderData = renderData || {}
+    renderData.first_name = user.first_name
+    renderData.last_name = user.last_name
+    const message = await getCoreMessage(name, user, renderData)
     return new incredbot.Frame(message, user.messenger_id)
   } catch (e) {
     throw e
