@@ -4,7 +4,7 @@ const apiLogger = require('../api_logger')
 
 async function list (req, res) {
   try {
-    let users = await knex('users').where('moderator_chat', true)
+    let users = await knex('users').where('moderator_chat', true).orderBy('moderator_chat_time', 'desc')
     res.json(users)
   } catch (e) {
     apiLogger.error(e)

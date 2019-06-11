@@ -138,7 +138,8 @@ class User {
       await knex('users').update({
         moderator_chat: true,
         waiting_for_reason: true,
-        bot_lock: true
+        bot_lock: true,
+        moderator_chat_time: new Date()
       }).where('messenger_id', this.messenger_id).returning('*')
     } catch (e) {
       throw e
@@ -151,7 +152,8 @@ class User {
         moderator_chat: false,
         bot_lock: false,
         chat_reason: '',
-        waiting_for_reason: false
+        waiting_for_reason: false,
+        moderator_chat_time: null
       }).where('messenger_id', this.messenger_id).returning('*')
       if (updated) {
         if (!silent) await incredbot.send.raw(await messages.get('contact_ended', updated))
