@@ -132,5 +132,6 @@ async function get (name, user) {
 
 module.exports = {
   getCoreMessage,
-  get
+  get,
+  getDefaultLanguage
 }

@@ -219,6 +219,10 @@ router.post('/api/broadcast', auth.authenticate(), async (req, res) => {
   api.broadcast.push(req, res)
 })
 
+router.post('/api/broadcast/loop', auth.authenticate(), async (req, res) => {
+  api.broadcast.loop(req, res)
+})
+
 router.post('/api/chat_request', auth.authenticate(), async (req, res) => {
   api.chats.unlock(req, res)
 })

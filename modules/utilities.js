@@ -47,9 +47,13 @@ function detectFileFormat (buf) {
   else return null
 }
 
+const reflect = p => p.then(v => v,
+  e => e)
+
 module.exports = {
   matchAll,
   downloadFile,
   downloadFileToBuffer,
-  detectFileFormat
+  detectFileFormat,
+  reflect
 }

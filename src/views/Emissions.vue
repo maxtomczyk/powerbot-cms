@@ -46,6 +46,17 @@
           <div class="row">
             <div class="col-xs-12">
               <label class="label label--centered">
+                Mode
+                <div class="emissions__radio-wrapper">
+                  <radio
+                    :actual="broadcast.mode"
+                    v-model="broadcast.mode"
+                    val="broadcast_api"
+                  >Broadcast API</radio>
+                  <radio :actual="broadcast.mode" v-model="broadcast.mode" val="loop">Loop</radio>
+                </div>
+              </label>
+              <label class="label label--centered">
                 Message
                 <select class="input select" v-model="broadcast.message_id">
                   <option
@@ -67,28 +78,57 @@
                 </select>
               </label>
 
-              <label class="label label--centered">
-                Notification type
-                <select class="input select" v-model="broadcast.notification_type">
-                  <option value="REGULAR">Sound / Vibration</option>
-                  <option value="SILENT_PUSH">On screen notification only</option>
-                  <option value="NO_PUSH">No notification</option>
-                </select>
-              </label>
+              <div v-show="broadcast.mode === 'broadcast_api'">
+                <label class="label label--centered">
+                  Notification type
+                  <select
+                    class="input select"
+                    v-model="broadcast.notification_type"
+                  >
+                    <option value="REGULAR">Sound / Vibration</option>
+                    <option value="SILENT_PUSH">On screen notification only</option>
+                    <option value="NO_PUSH">No notification</option>
+                  </select>
+                </label>
 
-              <checkbox v-model="broadcast.schedule" :val="broadcast.schedule">Schedule</checkbox>
+                <checkbox v-model="broadcast.schedule" :val="broadcast.schedule">Schedule</checkbox>
 
-              <div v-show="broadcast.schedule">
-                <div class="emissions__datetime-input">
-                  <label class="label label--centered emissions__date">
-                    Date
-                    <input type="date" class="input" v-model="broadcast.scheduleData.date">
-                  </label>
-                  <label class="label label--centered emissions__time">
-                    Time
-                    <input type="time" class="input" v-model="broadcast.scheduleData.time">
-                  </label>
+                <div v-show="broadcast.schedule">
+                  <div class="emissions__datetime-input">
+                    <label class="label label--centered emissions__date">
+                      Date
+                      <input type="date" class="input" v-model="broadcast.scheduleData.date">
+                    </label>
+                    <label class="label label--centered emissions__time">
+                      Time
+                      <input type="time" class="input" v-model="broadcast.scheduleData.time">
+                    </label>
+                  </div>
                 </div>
+              </div>
+              <div v-show="broadcast.mode === 'loop'">
+                <label class="label label--centered">
+                  Message tag
+                  <select class="input select" v-model="broadcast.tag">
+                    <option value="BUSINESS_PRODUCTIVITY">BUSINESS_PRODUCTIVITY</option>
+                    <option value="COMMUNITY_ALERT">COMMUNITY_ALERT</option>
+                    <option value="CONFIRMED_EVENT_REMINDER">CONFIRMED_EVENT_REMINDER</option>
+                    <option value="NON_PROMOTIONAL_SUBSCRIPTION">NON_PROMOTIONAL_SUBSCRIPTION</option>
+                    <option value="PAIRING_UPDATE">PAIRING_UPDATE</option>
+                    <option value="APPLICATION_UPDATE">APPLICATION_UPDATE</option>
+                    <option value="ACCOUNT_UPDATE">ACCOUNT_UPDATE</option>
+                    <option value="PAYMENT_UPDATE">PAYMENT_UPDATE</option>
+                    <option value="PERSONAL_FINANCE_UPDATE">PERSONAL_FINANCE_UPDATE</option>
+                    <option value="SHIPPING_UPDATE">SHIPPING_UPDATE</option>
+                    <option value="RESERVATION_UPDATE">RESERVATION_UPDATE</option>
+                    <option value="ISSUE_RESOLUTION">ISSUE_RESOLUTION</option>
+                    <option value="APPOINTMENT_UPDATE">APPOINTMENT_UPDATE</option>
+                    <option value="GAME_EVENT">GAME_EVENT</option>
+                    <option value="TRANSPORTATION_UPDATE">TRANSPORTATION_UPDATE</option>
+                    <option value="FEATURE_FUNCTIONALITY_UPDATE">FEATURE_FUNCTIONALITY_UPDATE</option>
+                    <option value="TICKET_UPDATE">TICKET_UPDATE</option>
+                  </select>
+                </label>
               </div>
             </div>
           </div>
@@ -102,23 +142,29 @@
     <table class="emissions__table table">
       <tr>
         <th>ID</th>
+        <th>Mode</th>
         <th>Message</th>
         <th>Label</th>
+        <th>Tag</th>
         <th>Scheduled on</th>
         <th>Status</th>
         <th>Range</th>
         <th>Actions</th>
       </tr>
       <tr v-for="broadcast in broadcasts" :key="broadcast.id">
-        <td>{{ broadcast.broadcast_id || '---' }}</td>
+        <td>{{ (broadcast.mode === 'broadcast_api') ? broadcast.broadcast_id || '---' : broadcast.id}}</td>
+        <td>
+          <b>{{ (broadcast.mode === 'loop') ? 'L' : 'B' }}</b>
+        </td>
         <td>{{ broadcast.message_name }}</td>
         <td>{{ broadcast.label_name }}</td>
+        <td>{{ broadcast.tag || '---' }}</td>
         <td>{{ makeDate(broadcast.schedule_time) || 'Instant broadcast'}}</td>
         <td>{{ broadcast.status }}</td>
-        <td>{{ broadcast.range || '---'}}</td>
+        <td>{{ broadcast.range || '---' }}</td>
         <td>
           <font-awesome-icon
-            v-if="broadcast.status === 'CREATED_MESSAGE'"
+            v-if="broadcast.status === 'CREATED_MESSAGE' || broadcast.status === 'READY_TO_START'"
             @click="openBroadcastDialog(broadcast)"
             v-tooltip.top-center="'Start this broadcast'"
             icon="bullhorn"
@@ -127,7 +173,7 @@
             fixed-width
           />
           <font-awesome-icon
-            v-if="broadcast.status === 'IN_PROGRESS' || broadcast.status === 'CANCELED' || broadcast.status === 'FINISHED' || broadcast.status === 'SCHEDULED'"
+            v-if="broadcast.mode === 'broadcast_api' && (broadcast.status === 'IN_PROGRESS' || broadcast.status === 'CANCELED' || broadcast.status === 'FINISHED' || broadcast.status === 'SCHEDULED')"
             @click="getBroadcastStatus(broadcast.id)"
             v-tooltip.top-center="'Get broadcast status from Facebook server.'"
             icon="sync-alt"
@@ -136,7 +182,7 @@
             fixed-width
           />
           <font-awesome-icon
-            v-if="broadcast.status === 'CREATED_MESSAGE' || broadcast.status === 'CANCELED'"
+            v-if="broadcast.status === 'CREATED_MESSAGE' || broadcast.status === 'CANCELED' || broadcast.status === 'READY_TO_START'"
             @click="removeBroadcastDialog(broadcast.id)"
             v-tooltip.top-center="'Remove this broadcast from panel.'"
             icon="trash-alt"
@@ -190,6 +236,8 @@ export default {
         message_id: null,
         schedule: false,
         notification_type: 'REGULAR',
+        mode: 'broadcast_api',
+        tag: null,
         scheduleData: {
           date: null,
           time: null
@@ -235,20 +283,21 @@ export default {
     async pushBroadcast (id) {
       try {
         this.$refs.loader.open('Pushing broadcast...')
-        const pushed = await axios.post('/api/broadcast', {
-          id: id
-        })
+        let pushed = await axios.post('/api/broadcast', { id })
+        if (pushed.data.useLoopEndpoint) pushed = await axios.post('/api/broadcast/loop', { id })
         this.warnDialog.show = false
         this.broadcasts.map(b => {
           if (b.id === pushed.data.db_id) {
             b.status = pushed.data.status
-            b.broadcast_id = pushed.data.id
+            if (pushed.data.id) b.broadcast_id = pushed.data.id
+            if (pushed.data.range) b.range = pushed.data.range
           }
         })
-        this.$refs.notifier.pushNotification('pushed', 'Broadcast hass been successfully pushed to Facebook server.', 'success', 5000)
+        this.$refs.notifier.pushNotification('pushed', 'Broadcast has been successfully pushed to Facebook server.', 'success', 5000)
         this.$refs.warningDialog.closeDialog()
         this.$refs.loader.close()
       } catch (e) {
+        console.error(e)
         this.$refs.notifier.pushNotification('cannot push!', `An error occured on broadcast push request. Error code: ${e.response.status}`, 'error')
         this.$refs.warningDialog.closeDialog()
         this.$refs.loader.close()
@@ -357,6 +406,11 @@ export default {
     display: flex;
     justify-content: space-between;
     margin: 0 auto;
+  }
+
+  &__radio-wrapper {
+    display: flex;
+    margin-top: 5px;
   }
 
   &__date {
