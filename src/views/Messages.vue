@@ -203,6 +203,8 @@ export default {
             }
             if (!plug.json[lang].buttons) plug.json[lang].buttons = []
             if (!plug.json[lang].quick_replies) plug.json[lang].quick_replies = []
+            if (!plug.json[lang].texts) plug.json[lang].texts = ['']
+            if (!plug.json[lang].cards) plug.json[lang].cards = []
           }
         }
       })
