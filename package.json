@@ -1,6 +1,6 @@
 {
   "name": "powerbot-cms",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "CMS for Facebook Messenger bots packed into NPM package",
   "author": "Maksymilian Tomczyk <m.tomczyk.dev@gmail.com>",
   "scripts": {
