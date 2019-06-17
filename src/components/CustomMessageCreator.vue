@@ -843,6 +843,17 @@ export default {
 
               for (let i = 0; i < cards.length; i++) {
                 let card = cards[i]
+                for (let o = 0; o < card.buttons.length; o++) {
+                  let button = card.buttons[o]
+                  if (this.isUrl(button.payload)) {
+                    button.type = 'web_url'
+                    button.url = button.payload
+                    delete button.payload
+                  } else {
+                    button.type = 'postback'
+                    delete button.url
+                  }
+                }
                 if (!card.image_changed || card.image_type === 'empty' || card.image_type === 'remote') {
                   if (card.image_type === 'empty') delete card.image_url
                   continue
@@ -1033,7 +1044,6 @@ export default {
     }
 
     this.type = this.mType
-
     for (let lang in this.message) {
       if (!this.message[lang].quick_replies) this.message[lang].quick_replies = [Object.assign({}, this.elements.quick_reply), Object.assign({}, this.elements.quick_reply)]
       if (!this.message[lang].buttons) this.message[lang].buttons = [Object.assign({}, this.elements.button)]

@@ -190,10 +190,16 @@ export default {
           for (let lang in plug.json) {
             if (plug.json[lang].buttons) {
               plug.json[lang].buttons.map(btn => {
-                if (btn.url) {
-                  btn.payload = btn.url
-                }
+                if (btn.url) btn.payload = btn.url
               })
+            }
+            if (plug.json[lang].cards) {
+              for (let card of plug.json[lang].cards) {
+                if (!card.buttons) continue
+                for (let btn of card.buttons) {
+                  if (btn.url) btn.payload = btn.url
+                }
+              }
             }
             if (!plug.json[lang].buttons) plug.json[lang].buttons = []
             if (!plug.json[lang].quick_replies) plug.json[lang].quick_replies = []
@@ -237,6 +243,14 @@ export default {
               if (!btn.payload) btn.payload = btn.url
               delete btn.url
             })
+          }
+          if (plug.json[lang].cards) {
+            for (let card of plug.json[lang].cards) {
+              if (!card.buttons) continue
+              for (let btn of card.buttons) {
+                if (btn.url) btn.payload = btn.url
+              }
+            }
           }
         }
       })
