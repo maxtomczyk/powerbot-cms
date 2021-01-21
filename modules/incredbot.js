@@ -6,4 +6,6 @@ const incredbot = new Incredbot({
   log_to_console: false
 })
 
+incredbot.send.natural_typing = false
+
 module.exports = incredbot
