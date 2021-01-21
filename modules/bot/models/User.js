@@ -64,17 +64,16 @@ class User {
         return this
       } else if (!noCreate) {
         let additionalData = (config.settings.usersAdditionalData) ? config.settings.usersAdditionalData.split(' ') : []
-        let data = await incredbot.User(this.messenger_id).getData('first_name', 'last_name', 'id', ...additionalData)
         let defaultChannels = await this.getDefaultChannels()
 
         let user = {
-          first_name: data.first_name,
-          last_name: data.last_name,
-          locale: data.locale,
-          gender: data.gender,
-          timezone: data.timezone,
-          messenger_id: data.id,
-          profile_pic: data.profile_pic
+          first_name: 'User',
+          last_name: '#' + Math.floor(1000 + Math.random() * 9000),
+          locale: 'pl_PL',
+          gender: 'female',
+          timezone: null,
+          messenger_id: this.messenger_id,
+          profile_pic: ''
         }
 
         let createdUser = null
